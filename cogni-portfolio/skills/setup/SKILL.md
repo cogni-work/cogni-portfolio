@@ -3,7 +3,8 @@ name: setup
 description: |
   This skill should be used when the user asks to "create a portfolio",
   "new portfolio project", "set up portfolio", "initialize portfolio",
-  or "start portfolio planning". Initializes a cogni-portfolio project.
+  or "start portfolio planning". If a project already exists, redirect
+  to the resume skill instead. Initializes a cogni-portfolio project.
 ---
 
 # Portfolio Project Setup

@@ -96,6 +96,79 @@ if [ "$FEATURES" -gt 0 ] && [ "$MARKETS" -gt 0 ]; then
 fi
 missing_arr="$missing_arr]"
 
+MISSING_COUNT=$((EXPECTED - SOLUTIONS))
+if [ "$MISSING_COUNT" -lt 0 ]; then MISSING_COUNT=0; fi
+
+SOLUTIONS_PCT=$(( EXPECTED > 0 ? (SOLUTIONS * 100 / EXPECTED) : 0 ))
+COMPETITORS_PCT=$(( SOLUTIONS > 0 ? (COMPETITORS * 100 / SOLUTIONS) : 0 ))
+CUSTOMERS_PCT=$(( MARKETS > 0 ? (CUSTOMERS * 100 / MARKETS) : 0 ))
+
+HAS_README="false"
+if [ -f "$PROJECT_DIR/output/README.md" ]; then HAS_README="true"; fi
+HAS_XLSX="false"
+if [ -f "$PROJECT_DIR/output/portfolio.xlsx" ]; then HAS_XLSX="true"; fi
+
+# Determine workflow phase (evaluated in priority order)
+if [ "$PRODUCTS" -eq 0 ]; then
+  PHASE="products"
+elif [ "$FEATURES" -eq 0 ]; then
+  PHASE="features"
+elif [ "$MARKETS" -eq 0 ]; then
+  PHASE="markets"
+elif [ "$MISSING_COUNT" -gt 0 ]; then
+  PHASE="solutions"
+elif [ "$COMPETITORS_PCT" -lt 100 ] || [ "$CUSTOMERS_PCT" -lt 100 ]; then
+  PHASE="enrichment"
+elif [ "$HAS_README" = "false" ]; then
+  PHASE="synthesis"
+elif [ "$HAS_XLSX" = "false" ]; then
+  PHASE="export"
+else
+  PHASE="complete"
+fi
+
+# Build next_actions array
+next_actions="["
+na_first=true
+add_action() {
+  if $na_first; then na_first=false; else next_actions="$next_actions, "; fi
+  next_actions="$next_actions{\"skill\": \"$1\", \"reason\": \"$2\"}"
+}
+
+case "$PHASE" in
+  products)
+    add_action "products" "No products defined yet"
+    ;;
+  features)
+    add_action "features" "$PRODUCTS product(s) exist but no features defined"
+    ;;
+  markets)
+    add_action "markets" "Features defined but no target markets yet"
+    ;;
+  solutions)
+    add_action "solutions" "$MISSING_COUNT of $EXPECTED Feature x Market pairs pending"
+    ;;
+  enrichment)
+    if [ "$COMPETITORS_PCT" -lt 100 ]; then
+      missing_comp=$((SOLUTIONS - COMPETITORS))
+      add_action "compete" "$missing_comp solution(s) lack competitor analysis"
+    fi
+    if [ "$CUSTOMERS_PCT" -lt 100 ]; then
+      missing_cust=$((MARKETS - CUSTOMERS))
+      add_action "customers" "$missing_cust market(s) lack customer profiles"
+    fi
+    ;;
+  synthesis)
+    add_action "synthesize" "All entities complete -- ready to generate portfolio overview"
+    ;;
+  export)
+    add_action "export" "Synthesis done -- ready to generate deliverables"
+    ;;
+  complete)
+    ;;
+esac
+next_actions="$next_actions]"
+
 cat << EOF
 {
   "counts": {
@@ -111,10 +184,12 @@ cat << EOF
   "features": $feature_arr,
   "markets": $market_arr,
   "missing_solutions": $missing_arr,
+  "phase": "$PHASE",
+  "next_actions": $next_actions,
   "completion": {
-    "solutions_pct": $(( EXPECTED > 0 ? (SOLUTIONS * 100 / EXPECTED) : 0 )),
-    "competitors_pct": $(( SOLUTIONS > 0 ? (COMPETITORS * 100 / SOLUTIONS) : 0 )),
-    "customers_pct": $(( MARKETS > 0 ? (CUSTOMERS * 100 / MARKETS) : 0 ))
+    "solutions_pct": $SOLUTIONS_PCT,
+    "competitors_pct": $COMPETITORS_PCT,
+    "customers_pct": $CUSTOMERS_PCT
   }
 }
 EOF

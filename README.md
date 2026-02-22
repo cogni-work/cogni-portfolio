@@ -19,12 +19,16 @@ A **product** groups related features into a named offering. A **feature** (IS) 
 
 ## Workflow
 
-1. Define products (named offerings)
-2. Add features per product (market-independent)
-3. Propose and select target markets (TAM/SAM/SOM)
-4. For each Feature x Market combination: generate advantage and benefit messaging
-5. Per solution: analyze competitors and customer profiles
-6. Output: structured messaging repository
+1. **Setup** — create project and define company context
+2. **Products** — define named offerings
+3. **Features** — add features per product (market-independent)
+4. **Markets** — propose and select target markets (TAM/SAM/SOM)
+5. **Solutions** — for each Feature x Market pair, generate IS/DOES/MEANS messaging
+6. **Enrichment** — analyze competitors and customer profiles per solution/market
+7. **Synthesis** — generate structured messaging repository
+8. **Export** — produce deliverables (markdown, XLSX)
+
+Use `/resume` to pick up where you left off. It detects the current phase and recommends the next action.
 
 ## Downstream Use
 
