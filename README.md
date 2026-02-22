@@ -4,7 +4,7 @@ Portfolio messaging and solution planning tool for SMEs.
 
 ## Core Concept
 
-A **product** groups related features into a named offering. A **feature** (IS) is product-inherent and market-independent. An **advantage** (DOES) and **benefit** (MEANS) are always market-specific. A **solution** = one feature mapped to a specific target market with its DOES and MEANS. The same feature produces different solutions for different markets.
+A **product** groups related features into a named offering. A **feature** (IS) is product-inherent and market-independent. An **advantage** (DOES) and **benefit** (MEANS) are always market-specific. A product's complete value proposition for a market is composed from its feature-level solutions. Each **solution** maps one feature to one target market with its DOES and MEANS -- the atomic unit of messaging. The same feature produces different solutions for different markets.
 
 ## Data Model
 
@@ -30,6 +30,10 @@ A **product** groups related features into a named offering. A **feature** (IS) 
 
 - **Proposals** — solution-specific sales documents for target customers
 - **Marketing content** — market-specific messaging for campaigns, website, collateral
+
+## Prerequisites
+
+- XLSX export requires the `document-skills:xlsx` plugin to be available
 
 ## Framework Reference
 

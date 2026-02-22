@@ -26,7 +26,7 @@ if [ ! -f "$PROJECT_DIR/portfolio.json" ]; then
   add_error "portfolio" "portfolio.json" "Missing portfolio.json"
 fi
 
-# Validate products have required fields (slug, name)
+# Validate products have required fields (slug, name, description)
 if [ -d "$PROJECT_DIR/products" ]; then
   for p in "$PROJECT_DIR/products"/*.json; do
     [ -f "$p" ] || continue
@@ -36,29 +36,31 @@ import json, sys
 with open('$p') as fh:
     d = json.load(fh)
     if 'name' not in d: sys.exit(1)
+    if 'description' not in d: sys.exit(1)
     if 'slug' in d and d['slug'] != '$slug': sys.exit(2)
     if 'maturity' in d and d['maturity'] not in ['concept','development','launch','growth','mature','decline']: sys.exit(3)
 " 2>/dev/null; then
-      add_error "product" "$slug" "Invalid JSON, missing name field, or invalid maturity value"
+      add_error "product" "$slug" "Invalid JSON, missing required field (name, description), or invalid maturity value"
     fi
   done
 fi
 
-# Validate features have required fields (slug, name, product_slug)
+# Validate features have required fields (slug, name, description, product_slug)
 if [ -d "$PROJECT_DIR/features" ]; then
   for f in "$PROJECT_DIR/features"/*.json; do
     [ -f "$f" ] || continue
     slug=$(basename "$f" .json)
-    # Check file is valid JSON and has name and product_slug fields
+    # Check file is valid JSON and has required fields
     if ! python3 -c "
 import json, sys
 with open('$f') as fh:
     d = json.load(fh)
     if 'name' not in d: sys.exit(1)
+    if 'description' not in d: sys.exit(1)
     if 'slug' in d and d['slug'] != '$slug': sys.exit(2)
     if 'product_slug' not in d: sys.exit(3)
 " 2>/dev/null; then
-      add_error "feature" "$slug" "Invalid JSON, missing name field, or missing product_slug"
+      add_error "feature" "$slug" "Invalid JSON, missing required field (name, description), or missing product_slug"
     else
       # Check referenced product exists
       p_slug=$(python3 -c "import json; print(json.load(open('$f')).get('product_slug',''))" 2>/dev/null)
@@ -69,7 +71,7 @@ with open('$f') as fh:
   done
 fi
 
-# Validate markets have required fields (slug, name)
+# Validate markets have required fields (slug, name, description)
 if [ -d "$PROJECT_DIR/markets" ]; then
   for m in "$PROJECT_DIR/markets"/*.json; do
     [ -f "$m" ] || continue
@@ -79,9 +81,10 @@ import json, sys
 with open('$m') as fh:
     d = json.load(fh)
     if 'name' not in d: sys.exit(1)
+    if 'description' not in d: sys.exit(1)
     if 'slug' in d and d['slug'] != '$slug': sys.exit(2)
 " 2>/dev/null; then
-      add_error "market" "$slug" "Invalid JSON or missing name field"
+      add_error "market" "$slug" "Invalid JSON or missing required field (name, description)"
     fi
   done
 fi
@@ -106,15 +109,15 @@ if [ -d "$PROJECT_DIR/solutions" ]; then
     if [ ! -f "$PROJECT_DIR/markets/${m_slug}.json" ]; then
       add_error "solution" "$slug" "References missing market: $m_slug"
     fi
-    # Check required fields
+    # Check required fields including foreign keys
     if ! python3 -c "
 import json, sys
 with open('$s') as fh:
     d = json.load(fh)
-    for field in ['is_statement', 'does_statement', 'means_statement']:
+    for field in ['feature_slug', 'market_slug', 'is_statement', 'does_statement', 'means_statement']:
         if field not in d: sys.exit(1)
 " 2>/dev/null; then
-      add_error "solution" "$slug" "Missing required fields (is_statement, does_statement, means_statement)"
+      add_error "solution" "$slug" "Missing required fields (feature_slug, market_slug, is_statement, does_statement, means_statement)"
     fi
   done
 fi
