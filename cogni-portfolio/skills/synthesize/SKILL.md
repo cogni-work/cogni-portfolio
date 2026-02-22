@@ -25,7 +25,8 @@ bash $CLAUDE_PLUGIN_ROOT/scripts/project-status.sh "<project-dir>"
 ```
 
 Minimum requirements for synthesis:
-- At least 1 feature defined
+- At least 1 product defined
+- At least 1 feature defined (with valid product_slug)
 - At least 1 market defined
 - At least 1 solution generated (Feature x Market)
 - portfolio.json has company context filled in
@@ -38,6 +39,7 @@ Warn the user about gaps but allow synthesis with partial data if they choose to
 
 Read all entity files from the project directory:
 - `portfolio.json` for company context
+- All `products/*.json`
 - All `features/*.json`
 - All `markets/*.json`
 - All `solutions/*.json`
@@ -54,28 +56,34 @@ Write a comprehensive `output/README.md` as the main messaging repository docume
 ## Company Overview
 [From portfolio.json]
 
-## Features
-[Table of all features with IS descriptions]
+## Products
+[For each product: name, description, positioning, maturity, pricing tier]
+
+## Product Deep Dives
+[For each product:]
+### [Product Name]
+#### Features
+[Table of features belonging to this product with IS descriptions]
 
 ## Target Markets
 [For each market: description, segmentation, TAM/SAM/SOM summary]
 
 ## Solution Messaging Matrix
-[Table: Feature x Market with IS/DOES/MEANS for each cell]
+[Table: Feature x Market with IS/DOES/MEANS for each cell, grouped by product]
 
 ## Market Deep Dives
 [For each market:]
 ### [Market Name]
 #### Customer Profile
 [Buyer profiles from customers/{market}.json]
-#### Solutions
-[All solutions targeting this market with full IS/DOES/MEANS]
+#### Solutions by Product
+[All solutions targeting this market, grouped by product, with full IS/DOES/MEANS]
 #### Competitive Landscape
 [Competitor analysis for each solution in this market]
 
 ## Feature Deep Dives
 [For each feature:]
-### [Feature Name]
+### [Feature Name] (Product: [Product Name])
 #### Cross-Market Messaging
 [How this feature's messaging varies across markets]
 ```
@@ -92,7 +100,7 @@ For each market, create `output/{market-slug}.md` with:
 ### 4. Present Summary
 
 Show the user:
-- Total entities synthesized (X features, Y markets, Z solutions)
+- Total entities synthesized (W products, X features, Y markets, Z solutions)
 - Completion percentage
 - Files generated in `output/`
 - Suggested next steps (export for proposals or marketing)

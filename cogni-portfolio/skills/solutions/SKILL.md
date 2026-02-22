@@ -37,7 +37,7 @@ The `missing_solutions` array lists Feature x Market pairs without solution file
 
 Two generation modes:
 
-**Single solution**: Generate one solution interactively. Read the feature and market JSON files, then craft IS/DOES/MEANS statements with the user.
+**Single solution**: Generate one solution interactively. Read the feature, its parent product, and the market JSON files, then craft IS/DOES/MEANS statements with the user.
 
 **Batch generation**: For multiple pending solutions, delegate each to the `solution-generator` agent. Launch agents in parallel for independent Feature x Market pairs.
 
@@ -96,6 +96,7 @@ By default, generate solutions from LLM knowledge and company context. When the 
 ## Important Notes
 
 - The `is_statement` should closely match the feature description but may be slightly tailored for market context
+- Product positioning and pricing tier provide useful context for crafting DOES/MEANS statements
 - Never use the same DOES/MEANS across different markets -- that signals the markets aren't distinct enough
 - Evidence is optional but strengthens downstream proposals
 - Refer to `$CLAUDE_PLUGIN_ROOT/skills/setup/references/data-model.md` for complete entity schemas

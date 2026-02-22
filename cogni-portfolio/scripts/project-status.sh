@@ -29,12 +29,26 @@ count_json() {
   fi
 }
 
+PRODUCTS=$(count_json "products")
 FEATURES=$(count_json "features")
 MARKETS=$(count_json "markets")
 SOLUTIONS=$(count_json "solutions")
 COMPETITORS=$(count_json "competitors")
 CUSTOMERS=$(count_json "customers")
 EXPECTED=$((FEATURES * MARKETS))
+
+# Collect product slugs as JSON array
+product_arr="["
+first=true
+if [ -d "$PROJECT_DIR/products" ]; then
+  for p in "$PROJECT_DIR/products"/*.json; do
+    [ -f "$p" ] || continue
+    slug=$(basename "$p" .json)
+    if $first; then first=false; else product_arr="$product_arr, "; fi
+    product_arr="$product_arr\"$slug\""
+  done
+fi
+product_arr="$product_arr]"
 
 # Collect feature slugs as JSON array
 feature_arr="["
@@ -85,6 +99,7 @@ missing_arr="$missing_arr]"
 cat << EOF
 {
   "counts": {
+    "products": $PRODUCTS,
     "features": $FEATURES,
     "markets": $MARKETS,
     "solutions": $SOLUTIONS,
@@ -92,6 +107,7 @@ cat << EOF
     "competitors": $COMPETITORS,
     "customers": $CUSTOMERS
   },
+  "products": $product_arr,
   "features": $feature_arr,
   "markets": $market_arr,
   "missing_solutions": $missing_arr,

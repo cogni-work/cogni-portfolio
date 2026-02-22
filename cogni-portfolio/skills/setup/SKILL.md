@@ -42,6 +42,7 @@ The workspace directory is the user's current working directory. The script crea
 
 ```
 cogni-portfolio/<project-slug>/
+  products/
   features/
   markets/
   solutions/
@@ -57,16 +58,18 @@ After the script creates directories, write `portfolio.json` in the project root
 ### 5. Confirm and Guide Next Steps
 
 Present the created project structure and suggest next steps:
-- Define features with the `features` skill
+- Define products with the `products` skill
+- Add features to each product with the `features` skill
 - Discover target markets with the `markets` skill
 
 ## Data Model Overview
 
-The portfolio data model has five entity types:
+The portfolio data model has six entity types:
 
 | Entity | Storage | Key Concept |
 |---|---|---|
-| Feature (IS) | `features/{slug}.json` | Market-independent capability |
+| Product | `products/{slug}.json` | Named offering that bundles features |
+| Feature (IS) | `features/{slug}.json` | Market-independent capability (belongs to a product) |
 | Market | `markets/{slug}.json` | Target segment with TAM/SAM/SOM |
 | Solution | `solutions/{feat}--{mkt}.json` | Feature x Market = DOES + MEANS |
 | Competitor | `competitors/{feat}--{mkt}.json` | Per-solution competitive landscape |

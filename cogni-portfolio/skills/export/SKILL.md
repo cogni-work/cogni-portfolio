@@ -51,9 +51,10 @@ Structured spreadsheet with all portfolio data for analysis and sharing.
 **Output**: `output/portfolio.xlsx`
 
 **Sheets**:
-- **Features**: All features with descriptions and categories
+- **Products**: All products with positioning, pricing tier, and maturity
+- **Features**: All features with descriptions, categories, and parent product
 - **Markets**: All markets with segmentation and TAM/SAM/SOM
-- **Solution Matrix**: Feature x Market grid with IS/DOES/MEANS
+- **Solution Matrix**: Feature x Market grid with IS/DOES/MEANS, grouped by product
 - **Competitors**: Competitive analysis per solution
 - **Customers**: Buyer profiles per market
 - **Summary**: Portfolio statistics and completion status

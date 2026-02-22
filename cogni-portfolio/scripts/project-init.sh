@@ -21,6 +21,7 @@ if [ -d "$PROJECT_DIR" ]; then
   exit 0
 fi
 
+mkdir -p "$PROJECT_DIR/products"
 mkdir -p "$PROJECT_DIR/features"
 mkdir -p "$PROJECT_DIR/markets"
 mkdir -p "$PROJECT_DIR/solutions"

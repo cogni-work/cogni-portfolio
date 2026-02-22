@@ -20,13 +20,37 @@
 
 Required fields: `slug`, `company.name`, `company.description`, `company.industry`
 
+### products/{slug}.json
+
+A product is a named offering that bundles related features. Every feature belongs to exactly one product.
+
+```json
+{
+  "slug": "cloud-platform",
+  "name": "Cloud Platform",
+  "description": "Unified cloud infrastructure management platform for mid-market SaaS companies.",
+  "positioning": "The most developer-friendly cloud management solution.",
+  "pricing_tier": "Enterprise",
+  "maturity": "growth",
+  "launch_date": "2024-03-01",
+  "version": "2.1",
+  "created": "2026-01-15"
+}
+```
+
+Required fields: `slug`, `name`, `description`
+Optional fields: `positioning`, `pricing_tier`, `maturity`, `launch_date`, `version`, `created`
+
+Valid `maturity` values: `concept`, `development`, `launch`, `growth`, `mature`, `decline`
+
 ### features/{slug}.json
 
-A feature is market-independent. It describes what the product/service IS.
+A feature is market-independent. It describes what the product/service IS. Each feature belongs to exactly one product.
 
 ```json
 {
   "slug": "cloud-monitoring",
+  "product_slug": "cloud-platform",
   "name": "Cloud Infrastructure Monitoring",
   "description": "Real-time monitoring of cloud infrastructure including servers, containers, and network components with automated alerting.",
   "category": "observability",
@@ -34,7 +58,7 @@ A feature is market-independent. It describes what the product/service IS.
 }
 ```
 
-Required fields: `slug`, `name`, `description`
+Required fields: `slug`, `product_slug`, `name`, `description`
 Optional fields: `category`, `created`
 
 ### markets/{slug}.json
@@ -164,6 +188,7 @@ Optional fields: `created`
 | Convention | Rule | Example |
 |---|---|---|
 | Project slug | kebab-case, descriptive | `acme-cloud-services` |
+| Product slug | kebab-case, product name | `cloud-platform` |
 | Feature slug | kebab-case, noun-based | `cloud-monitoring` |
 | Market slug | kebab-case, segment-based | `mid-market-saas` |
 | Solution slug | `{feature}--{market}` | `cloud-monitoring--mid-market-saas` |
@@ -173,17 +198,21 @@ Optional fields: `created`
 ## Entity Relationships
 
 ```
-Feature (IS)                    Target Market
-    |                               |
-    +---------> Solution <----------+
-              (DOES + MEANS)
-                  |                 |
-            Competitor         Customer Profile
-         (per solution)         (per market)
+Product
+    |
+    +--contains--> Feature (IS)              Target Market
+                       |                         |
+                       +------> Solution <-------+
+                              (DOES + MEANS)
+                                  |              |
+                            Competitor      Customer Profile
+                          (per solution)     (per market)
 ```
 
+- One product contains many features (1:N exclusive)
 - One feature can map to many markets (producing many solutions)
 - One market can receive many features (producing many solutions)
 - Each solution has exactly one competitor analysis
 - Each market has exactly one customer profile
+- Features reference their parent product by `product_slug`
 - Solutions, competitors, and customers reference their parents by slug

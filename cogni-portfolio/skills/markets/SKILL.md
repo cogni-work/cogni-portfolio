@@ -22,7 +22,7 @@ A target market is defined by segmentation criteria (geography, company size, ve
 
 ### 1. Propose Markets
 
-Analyze existing features (read all files in `features/`) and the company context (read `portfolio.json`) to propose 3-7 candidate target markets. For each candidate, provide:
+Analyze existing products (read `products/`), their features (read `features/`), and the company context (read `portfolio.json`) to propose 3-7 candidate target markets. For each candidate, provide:
 
 - Suggested slug and name
 - Brief rationale (why this market fits these features)
