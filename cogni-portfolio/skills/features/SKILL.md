@@ -3,7 +3,8 @@ name: features
 description: |
   This skill should be used when the user asks to "define features",
   "add a feature", "list features", "edit feature", "manage features",
-  or "what does the product do". Manages market-independent features (IS layer).
+  "capabilities", or "what does the product do". Manages market-independent
+  features (IS layer).
 ---
 
 # Feature Management

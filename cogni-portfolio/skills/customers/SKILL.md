@@ -1,8 +1,8 @@
 ---
 name: customers
 description: |
-  This skill should be used when the user asks to "customer profiles",
-  "ideal buyer", "buyer persona", "target customer", "buying center",
+  This skill should be used when the user asks to "create customer profiles",
+  "ideal buyer", "buyer persona", "ICP", "target customer", "buying center",
   or "who buys this". Creates customer profiles per target market.
 ---
 

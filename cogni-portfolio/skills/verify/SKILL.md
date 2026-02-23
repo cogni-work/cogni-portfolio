@@ -13,7 +13,7 @@ Workflow phase that verifies claims submitted by portfolio research agents (mark
 
 ## Prerequisites
 
-This skill requires the `cogni-claims` plugin to be installed and active. It provides the verification engine (claim-verifier agent) and claim management UI (dashboard, inspect, resolve).
+This skill requires the `cogni-claims` plugin to be installed and active. It provides the verification engine (claim-verifier agent) and claim management UI (dashboard, inspect, resolve). If the `cogni-claims:claims` skill is not available, inform the user that verification requires the cogni-claims plugin and provide installation guidance.
 
 Check that claims exist:
 

@@ -2,8 +2,9 @@
 name: compete
 description: |
   This skill should be used when the user asks to "analyze competitors",
-  "competitive analysis", "competitor research", "who competes", or
-  "competitive landscape". Analyzes competitors per solution.
+  "competitive analysis", "competitor research", "who competes",
+  "competitive landscape", "battle card", or "competitive positioning".
+  Analyzes competitors per solution.
 ---
 
 # Competitive Analysis

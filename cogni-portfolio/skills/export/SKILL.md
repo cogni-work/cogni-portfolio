@@ -103,7 +103,7 @@ List generated files with paths and sizes. Suggest how to use each deliverable.
 - Exports read from entity files, not from `output/README.md` -- they are independently generated
 - Running `synthesize` first is recommended but not strictly required
 - Proposals and briefs use professional but concise language suitable for B2B contexts
-- XLSX export requires the `document-skills:xlsx` skill to be available
+- XLSX export requires the `document-skills:xlsx` skill to be available. If it is not installed, inform the user and offer to generate the same data as CSV files instead
 - All exports go to subdirectories within `output/`
 - If `.claims/claims.json` exists, claims with status `deviated` or `unverified` are marked with `[unverified]` in markdown exports and flagged in the XLSX Summary sheet
 - Proposals and briefs include a "Data Quality" note when unverified claims are present, advising readers to validate flagged data points independently

@@ -99,9 +99,21 @@ missing_arr="$missing_arr]"
 MISSING_COUNT=$((EXPECTED - SOLUTIONS))
 if [ "$MISSING_COUNT" -lt 0 ]; then MISSING_COUNT=0; fi
 
-SOLUTIONS_PCT=$(( EXPECTED > 0 ? (SOLUTIONS * 100 / EXPECTED) : 0 ))
-COMPETITORS_PCT=$(( SOLUTIONS > 0 ? (COMPETITORS * 100 / SOLUTIONS) : 0 ))
-CUSTOMERS_PCT=$(( MARKETS > 0 ? (CUSTOMERS * 100 / MARKETS) : 0 ))
+if [ "$EXPECTED" -gt 0 ]; then
+  SOLUTIONS_PCT=$(( SOLUTIONS * 100 / EXPECTED ))
+else
+  SOLUTIONS_PCT=0
+fi
+if [ "$SOLUTIONS" -gt 0 ]; then
+  COMPETITORS_PCT=$(( COMPETITORS * 100 / SOLUTIONS ))
+else
+  COMPETITORS_PCT=0
+fi
+if [ "$MARKETS" -gt 0 ]; then
+  CUSTOMERS_PCT=$(( CUSTOMERS * 100 / MARKETS ))
+else
+  CUSTOMERS_PCT=0
+fi
 
 HAS_README="false"
 if [ -f "$PROJECT_DIR/output/README.md" ]; then HAS_README="true"; fi
