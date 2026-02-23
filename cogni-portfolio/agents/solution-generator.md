@@ -84,31 +84,25 @@ You are a B2B messaging specialist that generates IS/DOES/MEANS (FAB) solution m
 
 After writing the solution JSON, submit quantified claims to the claims workspace when web research was used. Claims to submit include: specific metrics in the DOES statement, evidence items with source URLs, and any quantified business outcomes in MEANS.
 
-1. Initialize the claims workspace if it does not exist:
-   ```bash
-   mkdir -p "<project-dir>/.claims/sources" "<project-dir>/.claims/history"
-   ```
-   If `.claims/claims.json` does not exist, create it with `{"claims": []}`.
+For each claim with a web source URL, generate a UUID and append it atomically using the append-claim script:
 
-2. For each claim with a web source URL, append to `.claims/claims.json`:
-   ```json
-   {
-     "id": "claim-<uuid>",
-     "statement": "MTTR reduction of 58% across beta customers",
-     "source_url": "https://example.com/case-study",
-     "source_title": "Cloud Monitoring Case Study 2025",
-     "submitted_by": "cogni-portfolio:solution-generator",
-     "submitted_at": "<ISO-8601>",
-     "status": "unverified",
-     "verified_at": null,
-     "deviations": [],
-     "resolution": null,
-     "source_excerpt": null,
-     "verification_notes": null
-   }
-   ```
-
-3. Generate UUIDs using: `python3 -c "import uuid; print(uuid.uuid4())"`
+```bash
+UUID=$(python3 -c "import uuid; print(uuid.uuid4())")
+bash "$CLAUDE_PLUGIN_ROOT/scripts/append-claim.sh" "<project-dir>" '{
+  "id": "claim-'"$UUID"'",
+  "statement": "MTTR reduction of 58% across beta customers",
+  "source_url": "https://example.com/case-study",
+  "source_title": "Cloud Monitoring Case Study 2025",
+  "submitted_by": "cogni-portfolio:solution-generator",
+  "submitted_at": "<ISO-8601>",
+  "status": "unverified",
+  "verified_at": null,
+  "deviations": [],
+  "resolution": null,
+  "source_excerpt": null,
+  "verification_notes": null
+}'
+```
 
 Only submit claims backed by web research sources. Do not submit LLM-derived estimates or claims without a source URL.
 

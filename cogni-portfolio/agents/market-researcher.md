@@ -76,33 +76,25 @@ Update the market JSON file's `tam`, `sam`, and `som` fields:
 
 **Claim Submission:**
 
-After writing the market JSON, submit all quantified claims to the claims workspace for downstream verification. For each TAM/SAM/SOM value that has a web source URL (not internal estimates):
+After writing the market JSON, submit all quantified claims to the claims workspace for downstream verification. For each TAM/SAM/SOM value that has a web source URL (not internal estimates), generate a UUID and append it atomically using the append-claim script:
 
-1. Initialize the claims workspace if it does not exist:
-   ```bash
-   mkdir -p "<project-dir>/.claims/sources" "<project-dir>/.claims/history"
-   ```
-   If `.claims/claims.json` does not exist, create it with `{"claims": []}`.
-
-2. For each quantified claim with a source URL, append a claim entry to `.claims/claims.json`:
-   ```json
-   {
-     "id": "claim-<uuid>",
-     "statement": "The global cloud monitoring market is valued at EUR 5B (2025)",
-     "source_url": "https://example.com/report",
-     "source_title": "Gartner 2025 Cloud Monitoring Report",
-     "submitted_by": "cogni-portfolio:market-researcher",
-     "submitted_at": "<ISO-8601>",
-     "status": "unverified",
-     "verified_at": null,
-     "deviations": [],
-     "resolution": null,
-     "source_excerpt": null,
-     "verification_notes": null
-   }
-   ```
-
-3. Generate UUIDs using: `python3 -c "import uuid; print(uuid.uuid4())"`
+```bash
+UUID=$(python3 -c "import uuid; print(uuid.uuid4())")
+bash "$CLAUDE_PLUGIN_ROOT/scripts/append-claim.sh" "<project-dir>" '{
+  "id": "claim-'"$UUID"'",
+  "statement": "The global cloud monitoring market is valued at EUR 5B (2025)",
+  "source_url": "https://example.com/report",
+  "source_title": "Gartner 2025 Cloud Monitoring Report",
+  "submitted_by": "cogni-portfolio:market-researcher",
+  "submitted_at": "<ISO-8601>",
+  "status": "unverified",
+  "verified_at": null,
+  "deviations": [],
+  "resolution": null,
+  "source_excerpt": null,
+  "verification_notes": null
+}'
+```
 
 Only submit claims that reference external web sources. Skip claims sourced from internal estimates or bottom-up calculations.
 

@@ -58,10 +58,15 @@ After the script creates directories, write `portfolio.json` in the project root
 
 ### 5. Confirm and Guide Next Steps
 
-Present the created project structure and suggest next steps:
-- Define products with the `products` skill
-- Add features to each product with the `features` skill
-- Discover target markets with the `markets` skill
+Present the created project structure and suggest the full workflow:
+1. Define products with the `products` skill
+2. Add features to each product with the `features` skill
+3. Discover target markets with the `markets` skill
+4. Generate solution messaging with the `solutions` skill
+5. Enrich with `compete` (competitor analysis) and `customers` (buyer profiles)
+6. Verify web-sourced claims with the `verify` skill
+7. Aggregate into messaging repository with the `synthesize` skill
+8. Generate deliverables with the `export` skill
 
 ## Data Model Overview
 
@@ -75,6 +80,7 @@ The portfolio data model has six entity types:
 | Solution | `solutions/{feat}--{mkt}.json` | Feature x Market = DOES + MEANS |
 | Competitor | `competitors/{feat}--{mkt}.json` | Per-solution competitive landscape |
 | Customer | `customers/{mkt}.json` | Per-market ideal buyer profile |
+| Claims | `.claims/claims.json` | Web-sourced claim verification registry |
 
 For complete entity schemas and naming conventions, consult `$CLAUDE_PLUGIN_ROOT/skills/setup/references/data-model.md`.
 

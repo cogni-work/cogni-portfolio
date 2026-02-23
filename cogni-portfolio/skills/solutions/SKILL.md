@@ -72,7 +72,16 @@ Write each solution to `solutions/{feature-slug}--{market-slug}.json`:
   "does_statement": "Reduces mean-time-to-resolution by 60% through intelligent alert correlation, eliminating alert fatigue in growing engineering teams.",
   "means_statement": "Mid-market SaaS companies maintain 99.95% uptime SLAs without hiring additional SRE staff, protecting revenue during rapid scaling.",
   "evidence": [
-    "Average MTTR reduction of 58% across beta customers (n=12)"
+    {
+      "statement": "Average MTTR reduction of 58% across beta customers (n=12)",
+      "source_url": "https://example.com/case-study",
+      "source_title": "Cloud Monitoring Case Study 2025"
+    },
+    {
+      "statement": "3 of 5 mid-market SaaS customers eliminated dedicated on-call rotation",
+      "source_url": null,
+      "source_title": null
+    }
   ],
   "created": "2026-01-20"
 }
@@ -80,6 +89,8 @@ Write each solution to `solutions/{feature-slug}--{market-slug}.json`:
 
 Required: `slug`, `feature_slug`, `market_slug`, `is_statement`, `does_statement`, `means_statement`
 Optional: `evidence`, `created`
+
+Each evidence entry is an object with `statement` (required), `source_url` (string or null), and `source_title` (string or null). Entries from web research include the source URL for claim verification; entries without a source use null.
 
 ### 5. Review with User
 

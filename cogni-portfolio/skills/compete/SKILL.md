@@ -56,6 +56,7 @@ Write to `competitors/{feature-slug}--{market-slug}.json` (same slug as the solu
   "competitors": [
     {
       "name": "Datadog",
+      "source_url": "https://example.com/datadog-review",
       "positioning": "Full-stack observability for cloud-scale",
       "strengths": ["Brand recognition", "Broad integrations"],
       "weaknesses": ["Expensive at scale", "Complex for mid-market"],
