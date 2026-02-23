@@ -75,6 +75,13 @@ Generate all deliverables at once: proposals for each solution, briefs for each 
 
 Read `output/README.md` to confirm synthesis has been run. If not, suggest running the `synthesize` skill first.
 
+If `.claims/claims.json` exists, read it and check for unresolved deviations or unverified claims. If found, warn the user:
+```
+Claim Status: N unverified, N deviated (unresolved)
+Exports will include verification status markers for unverified claims.
+Consider running the verify skill first for highest-quality output.
+```
+
 ### 2. Determine Export Scope
 
 Ask the user what to export:
@@ -98,3 +105,5 @@ List generated files with paths and sizes. Suggest how to use each deliverable.
 - Proposals and briefs use professional but concise language suitable for B2B contexts
 - XLSX export requires the `document-skills:xlsx` skill to be available
 - All exports go to subdirectories within `output/`
+- If `.claims/claims.json` exists, claims with status `deviated` or `unverified` are marked with `[unverified]` in markdown exports and flagged in the XLSX Summary sheet
+- Proposals and briefs include a "Data Quality" note when unverified claims are present, advising readers to validate flagged data points independently

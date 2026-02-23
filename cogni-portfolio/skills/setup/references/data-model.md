@@ -114,8 +114,16 @@ A solution maps one feature to one target market with market-specific messaging.
   "does_statement": "Reduces mean-time-to-resolution (MTTR) by 60% through intelligent alert correlation and root-cause analysis, eliminating alert fatigue that plagues growing engineering teams.",
   "means_statement": "Mid-market SaaS companies maintain 99.95% uptime SLAs without hiring additional SRE staff, protecting revenue and customer trust during rapid scaling phases.",
   "evidence": [
-    "Average MTTR reduction of 58% across beta customers (n=12)",
-    "3 of 5 mid-market SaaS customers eliminated dedicated on-call rotation"
+    {
+      "statement": "Average MTTR reduction of 58% across beta customers (n=12)",
+      "source_url": "https://example.com/case-study",
+      "source_title": "Cloud Monitoring Case Study 2025"
+    },
+    {
+      "statement": "3 of 5 mid-market SaaS customers eliminated dedicated on-call rotation",
+      "source_url": null,
+      "source_title": null
+    }
   ],
   "created": "2026-01-20"
 }
@@ -123,6 +131,8 @@ A solution maps one feature to one target market with market-specific messaging.
 
 Required fields: `slug`, `feature_slug`, `market_slug`, `is_statement`, `does_statement`, `means_statement`
 Optional fields: `evidence`, `created`
+
+Each evidence entry can be a structured object with `statement` (string, required), `source_url` (string or null), and `source_title` (string or null). When web research produces evidence, include the source URL for claim verification. Entries without a source use null for URL/title fields.
 
 **Naming convention**: Solution file names use double-dash (`--`) to join feature and market slugs: `{feature-slug}--{market-slug}.json`
 
@@ -137,6 +147,7 @@ Competitive landscape for a specific solution (same slug as the solution it anal
   "competitors": [
     {
       "name": "Datadog",
+      "source_url": "https://example.com/datadog-review",
       "positioning": "Full-stack observability platform for cloud-scale companies",
       "strengths": ["Brand recognition", "Broad integration ecosystem", "APM + logs + metrics unified"],
       "weaknesses": ["Expensive at scale", "Complexity overkill for mid-market", "Opaque pricing"],
@@ -149,6 +160,8 @@ Competitive landscape for a specific solution (same slug as the solution it anal
 
 Required fields: `slug`, `solution_slug`, `competitors` (array with at least `name`)
 Optional fields: `created`
+
+Each competitor entry may include `source_url` (string or null) pointing to the primary research source used for positioning and pricing claims. This enables downstream claim verification.
 
 ### customers/{market-slug}.json
 

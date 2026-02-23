@@ -108,6 +108,39 @@ if [ -f "$PROJECT_DIR/output/README.md" ]; then HAS_README="true"; fi
 HAS_XLSX="false"
 if [ -f "$PROJECT_DIR/output/portfolio.xlsx" ]; then HAS_XLSX="true"; fi
 
+# Count claims by status
+CLAIMS_TOTAL=0
+CLAIMS_UNVERIFIED=0
+CLAIMS_VERIFIED=0
+CLAIMS_DEVIATED=0
+CLAIMS_RESOLVED=0
+CLAIMS_UNAVAILABLE=0
+HAS_CLAIMS="false"
+if [ -f "$PROJECT_DIR/.claims/claims.json" ]; then
+  HAS_CLAIMS="true"
+  eval "$(python3 -c "
+import json, sys
+try:
+    with open('$PROJECT_DIR/.claims/claims.json') as f:
+        data = json.load(f)
+    claims = data.get('claims', [])
+    counts = {}
+    for c in claims:
+        s = c.get('status', 'unverified')
+        counts[s] = counts.get(s, 0) + 1
+    print(f'CLAIMS_TOTAL={len(claims)}')
+    print(f'CLAIMS_UNVERIFIED={counts.get(\"unverified\", 0)}')
+    print(f'CLAIMS_VERIFIED={counts.get(\"verified\", 0)}')
+    print(f'CLAIMS_DEVIATED={counts.get(\"deviated\", 0)}')
+    print(f'CLAIMS_RESOLVED={counts.get(\"resolved\", 0)}')
+    print(f'CLAIMS_UNAVAILABLE={counts.get(\"source_unavailable\", 0)}')
+except Exception:
+    print('CLAIMS_TOTAL=0')
+" 2>/dev/null)"
+fi
+CLAIMS_CLEAN=$((CLAIMS_VERIFIED + CLAIMS_RESOLVED))
+CLAIMS_PENDING=$((CLAIMS_UNVERIFIED + CLAIMS_DEVIATED))
+
 # Determine workflow phase (evaluated in priority order)
 if [ "$PRODUCTS" -eq 0 ]; then
   PHASE="products"
@@ -119,6 +152,8 @@ elif [ "$MISSING_COUNT" -gt 0 ]; then
   PHASE="solutions"
 elif [ "$COMPETITORS_PCT" -lt 100 ] || [ "$CUSTOMERS_PCT" -lt 100 ]; then
   PHASE="enrichment"
+elif [ "$HAS_CLAIMS" = "true" ] && [ "$CLAIMS_PENDING" -gt 0 ]; then
+  PHASE="verification"
 elif [ "$HAS_README" = "false" ]; then
   PHASE="synthesis"
 elif [ "$HAS_XLSX" = "false" ]; then
@@ -158,6 +193,9 @@ case "$PHASE" in
       add_action "customers" "$missing_cust market(s) lack customer profiles"
     fi
     ;;
+  verification)
+    add_action "verify" "$CLAIMS_PENDING claim(s) pending verification ($CLAIMS_UNVERIFIED unverified, $CLAIMS_DEVIATED deviated)"
+    ;;
   synthesis)
     add_action "synthesize" "All entities complete -- ready to generate portfolio overview"
     ;;
@@ -179,6 +217,14 @@ cat << EOF
     "expected_solutions": $EXPECTED,
     "competitors": $COMPETITORS,
     "customers": $CUSTOMERS
+  },
+  "claims": {
+    "total": $CLAIMS_TOTAL,
+    "unverified": $CLAIMS_UNVERIFIED,
+    "verified": $CLAIMS_VERIFIED,
+    "deviated": $CLAIMS_DEVIATED,
+    "resolved": $CLAIMS_RESOLVED,
+    "source_unavailable": $CLAIMS_UNAVAILABLE
   },
   "products": $product_arr,
   "features": $feature_arr,

@@ -59,6 +59,7 @@ Display a concise status dashboard:
 | Solutions | N / expected | pct% |
 | Competitors | N / solutions | pct% |
 | Customers | N / markets | pct% |
+| Claims | N total | V verified, D deviated, U unverified |
 
 **Current phase**: The `phase` value, explained in plain language.
 
@@ -81,6 +82,7 @@ If the phase is `complete`, congratulate the user and suggest reviewing the outp
 | `markets` | Features defined but no target markets |
 | `solutions` | Feature x Market pairs need IS/DOES/MEANS messaging |
 | `enrichment` | Solutions exist but competitor or customer analysis incomplete |
-| `synthesis` | All entities complete, ready to generate overview |
+| `verification` | Claims submitted but unverified or deviated -- run verify skill |
+| `synthesis` | All entities complete and claims verified, ready to generate overview |
 | `export` | Overview generated, ready for deliverable export |
 | `complete` | All workflow stages finished |

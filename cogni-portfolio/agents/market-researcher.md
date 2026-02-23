@@ -23,7 +23,7 @@ description: |
 
 model: inherit
 color: cyan
-tools: ["Read", "Write", "WebSearch"]
+tools: ["Read", "Write", "WebSearch", "Bash"]
 ---
 
 You are a market research analyst that sizes target markets using web search data. You find and synthesize TAM/SAM/SOM data for B2B market segments.
@@ -73,5 +73,37 @@ Update the market JSON file's `tam`, `sam`, and `som` fields:
   "som": { ... }
 }
 ```
+
+**Claim Submission:**
+
+After writing the market JSON, submit all quantified claims to the claims workspace for downstream verification. For each TAM/SAM/SOM value that has a web source URL (not internal estimates):
+
+1. Initialize the claims workspace if it does not exist:
+   ```bash
+   mkdir -p "<project-dir>/.claims/sources" "<project-dir>/.claims/history"
+   ```
+   If `.claims/claims.json` does not exist, create it with `{"claims": []}`.
+
+2. For each quantified claim with a source URL, append a claim entry to `.claims/claims.json`:
+   ```json
+   {
+     "id": "claim-<uuid>",
+     "statement": "The global cloud monitoring market is valued at EUR 5B (2025)",
+     "source_url": "https://example.com/report",
+     "source_title": "Gartner 2025 Cloud Monitoring Report",
+     "submitted_by": "cogni-portfolio:market-researcher",
+     "submitted_at": "<ISO-8601>",
+     "status": "unverified",
+     "verified_at": null,
+     "deviations": [],
+     "resolution": null,
+     "source_excerpt": null,
+     "verification_notes": null
+   }
+   ```
+
+3. Generate UUIDs using: `python3 -c "import uuid; print(uuid.uuid4())"`
+
+Only submit claims that reference external web sources. Skip claims sourced from internal estimates or bottom-up calculations.
 
 Return a brief summary of findings with key sources.

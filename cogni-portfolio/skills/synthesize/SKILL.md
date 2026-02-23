@@ -31,6 +31,17 @@ Minimum requirements for synthesis:
 - At least 1 solution generated (Feature x Market)
 - portfolio.json has company context filled in
 
+Also check claim verification status if `.claims/claims.json` exists:
+- Read the claims registry and count by status
+- If unverified or deviated claims exist, warn the user:
+  ```
+  Claim Verification Warning:
+  - N unverified claims (not yet checked against sources)
+  - N deviated claims (source discrepancies detected)
+  Recommendation: Run the verify skill before synthesis.
+  ```
+- Allow synthesis to proceed if the user chooses, but flag unverified content in output
+
 Warn the user about gaps but allow synthesis with partial data if they choose to proceed.
 
 ## Workflow
@@ -46,7 +57,18 @@ Read all entity files from the project directory:
 - All `competitors/*.json` (if available)
 - All `customers/*.json` (if available)
 
-### 2. Generate README.md
+### 2. Load Claim Verification Status
+
+If `.claims/claims.json` exists, read it and build a lookup of claim status by statement text. This enables marking claims in the output with their verification status.
+
+Claim status indicators for output:
+- Verified claims: no marker needed (trusted)
+- Resolved claims: no marker needed (user-approved)
+- Deviated claims: mark with `[unverified]` in the output
+- Unverified claims: mark with `[unverified]` in the output
+- Source unavailable: mark with `[source unavailable]` in the output
+
+### 3. Generate README.md
 
 Write a comprehensive `output/README.md` as the main messaging repository document. Structure:
 
@@ -88,7 +110,7 @@ Write a comprehensive `output/README.md` as the main messaging repository docume
 [How this feature's messaging varies across markets]
 ```
 
-### 3. Generate Per-Market Summaries
+### 4. Generate Per-Market Summaries
 
 For each market, create `output/{market-slug}.md` with:
 - Market definition and sizing
@@ -97,7 +119,7 @@ For each market, create `output/{market-slug}.md` with:
 - Competitive analysis per solution
 - Recommended messaging priorities
 
-### 4. Present Summary
+### 5. Present Summary
 
 Show the user:
 - Total entities synthesized (W products, X features, Y markets, Z solutions)
@@ -111,3 +133,5 @@ Show the user:
 - Re-running synthesis overwrites previous `output/` content
 - The messaging repository is the input for the `export` skill
 - Incomplete portfolios produce incomplete synthesis -- gaps are noted in the output
+- If `.claims/claims.json` exists, claim verification status is reflected in the output
+- Claims marked `[unverified]` signal that the source has not been checked -- readers should treat these with appropriate caution
