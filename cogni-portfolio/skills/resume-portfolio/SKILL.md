@@ -1,5 +1,5 @@
 ---
-name: resume
+name: resume-portfolio
 description: |
   This skill should be used when the user asks to "continue portfolio",
   "resume portfolio", "pick up where I left off", "portfolio status",

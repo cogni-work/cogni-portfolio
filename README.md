@@ -28,7 +28,7 @@ A **product** groups related features into a named offering. A **feature** (IS) 
 7. **Synthesis** — generate structured messaging repository
 8. **Export** — produce deliverables (markdown, XLSX)
 
-Use `/resume` to pick up where you left off. It detects the current phase and recommends the next action.
+Use `/resume-portfolio` to pick up where you left off. It detects the current phase and recommends the next action.
 
 ## Downstream Use
 
