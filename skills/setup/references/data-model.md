@@ -39,7 +39,7 @@ A product is a named offering that bundles related features. Every feature belon
 ```
 
 Required fields: `slug`, `name`, `description`
-Optional fields: `positioning`, `pricing_tier`, `maturity`, `launch_date`, `version`, `created`
+Optional fields: `positioning`, `pricing_tier`, `maturity`, `launch_date`, `version`, `source_file`, `created`
 
 Valid `maturity` values: `concept`, `development`, `launch`, `growth`, `mature`, `decline`
 
@@ -59,7 +59,7 @@ A feature is market-independent. It describes what the product/service IS. Each 
 ```
 
 Required fields: `slug`, `product_slug`, `name`, `description`
-Optional fields: `category`, `created`
+Optional fields: `category`, `source_file`, `created`
 
 ### markets/{slug}.json
 
@@ -99,7 +99,9 @@ A target market defined by segmentation and sized by TAM/SAM/SOM.
 ```
 
 Required fields: `slug`, `name`, `description`
-Optional fields: `segmentation`, `tam`, `sam`, `som`, `created`
+Optional fields: `segmentation`, `tam`, `sam`, `som`, `source_file`, `created`
+
+`source_file` (optional, all entity types): Filename of the document in `uploads/` from which this entity was extracted during ingestion.
 
 ### solutions/{feature-slug}--{market-slug}.json
 

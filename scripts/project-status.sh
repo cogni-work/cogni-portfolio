@@ -189,6 +189,11 @@ add_action() {
   next_actions="$next_actions{\"skill\": \"$1\", \"reason\": \"$2\"}"
 }
 
+# Recommend ingest when uploads exist (phase-independent)
+if [ "$UPLOADS" -gt 0 ]; then
+  add_action "ingest" "$UPLOADS file(s) in uploads/ awaiting ingestion"
+fi
+
 case "$PHASE" in
   products)
     add_action "products" "No products defined yet"

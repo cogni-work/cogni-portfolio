@@ -35,7 +35,11 @@ find <project-dir>/uploads -maxdepth 1 -type f \( -name '*.md' -o -name '*.docx'
 
 If no files are found, inform the user the uploads folder is empty and list the supported file types.
 
-### 2. Extract Text Content
+### 2. Check File Type Requirements
+
+After scanning uploads, check file types. If non-markdown files are present (.docx, .pptx, .xlsx, .pdf), verify document-skills availability. If unavailable, inform the user which files cannot be processed, process only the .md files, and leave the binary files in uploads/ for later.
+
+### 3. Extract Text Content
 
 Process each file based on its type:
 
@@ -47,7 +51,9 @@ Process each file based on its type:
 
 For each file, note the filename and extracted content for analysis.
 
-### 3. Analyze and Classify Content
+For large documents (PDFs over 20 pages, Excel workbooks with many sheets), process in focused segments. For PDFs, use the `pages` parameter to read 10-20 pages at a time. For Excel, process one sheet at a time. Present extracted entities per segment so the user can confirm incrementally rather than reviewing dozens of entities at once.
+
+### 4. Analyze and Classify Content
 
 Read the existing `portfolio.json` to understand the company context. Then analyze extracted content against the portfolio data model to identify potential entities:
 
@@ -61,7 +67,7 @@ Note any competitive intelligence or buyer persona data found in documents, but 
 
 Cross-reference with existing entities in the project to avoid duplicates. Read existing JSON files from `products/`, `features/`, and `markets/` directories to know what already exists.
 
-### 4. Present Extracted Entities for Confirmation
+### 5. Present Extracted Entities for Confirmation
 
 Group extracted entities by type and present them in tables:
 
@@ -86,7 +92,7 @@ Allow the user to:
 - **Select individually** -- approve, edit, or skip each entity
 - **Edit before creating** -- modify fields before writing JSON
 
-### 5. Write Entity JSON Files
+### 6. Write Entity JSON Files
 
 For each confirmed entity, write a JSON file following the schemas in `$CLAUDE_PLUGIN_ROOT/skills/setup/references/data-model.md`:
 
@@ -94,9 +100,11 @@ For each confirmed entity, write a JSON file following the schemas in `$CLAUDE_P
 - Features to `features/{slug}.json`
 - Markets to `markets/{slug}.json`
 
-Set `created` to today's date. For features, ensure `product_slug` references a valid product. If a referenced product does not exist, propose creating it first or ask the user to assign a different product.
+Set `created` to today's date. Include `"source_file": "<filename>"` in each entity JSON, where `<filename>` is the name of the source file in uploads/ (e.g., `"product-overview.md"`). This enables tracing entity origins.
 
-### 6. Move Processed Files
+For features, ensure `product_slug` references a valid product. If a referenced product does not exist, propose creating it first or ask the user to assign a different product.
+
+### 7. Move Processed Files
 
 After all confirmed entities are written, move processed files to `uploads/processed/`:
 
@@ -107,7 +115,7 @@ mv <project-dir>/uploads/<filename> <project-dir>/uploads/processed/
 
 Only move files that were successfully processed. If a file yielded no usable entities (user skipped everything from it), still move it to avoid re-processing.
 
-### 7. Present Summary and Next Steps
+### 8. Present Summary and Next Steps
 
 Show a summary of what was created:
 
@@ -122,6 +130,8 @@ Suggest the logical next step based on what was ingested:
 - If markets were created, suggest the `solutions` skill
 - If only partial data was ingested, suggest completing the entity type manually
 - If competitive or buyer persona data was observed in documents, mention it and suggest running `compete` or `customers` after the prerequisite entities (solutions/markets) are in place
+
+If any markets were created without TAM/SAM/SOM data, list them explicitly: "N market(s) created without sizing data: [slugs]. Run the `markets` skill to add TAM/SAM/SOM estimates."
 
 ## Important Notes
 
