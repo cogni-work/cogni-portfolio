@@ -1,7 +1,7 @@
 #!/bin/bash
 # Show cogni-portfolio project status with entity counts and gap analysis.
 # Usage: project-status.sh <project-dir>
-# Outputs JSON with counts, feature/market slugs, missing solutions, and completion ratios.
+# Outputs JSON with counts, feature/market slugs, missing propositions, and completion ratios.
 # Exit codes: 0 = success, 1 = error
 set -euo pipefail
 
@@ -32,10 +32,10 @@ count_json() {
 PRODUCTS=$(count_json "products")
 FEATURES=$(count_json "features")
 MARKETS=$(count_json "markets")
-SOLUTIONS=$(count_json "solutions")
+PROPOSITIONS=$(count_json "propositions")
 COMPETITORS=$(count_json "competitors")
 CUSTOMERS=$(count_json "customers")
-EXPECTED=$((FEATURES * MARKETS))
+EXPECTED_PROPOSITIONS=$((FEATURES * MARKETS))
 
 # Collect product slugs as JSON array
 product_arr="["
@@ -76,7 +76,7 @@ if [ -d "$PROJECT_DIR/markets" ]; then
 fi
 market_arr="$market_arr]"
 
-# Find missing solutions (Feature x Market pairs without a solution file)
+# Find missing propositions (Feature x Market pairs without a proposition file)
 missing_arr="["
 first=true
 if [ "$FEATURES" -gt 0 ] && [ "$MARKETS" -gt 0 ]; then
@@ -86,8 +86,8 @@ if [ "$FEATURES" -gt 0 ] && [ "$MARKETS" -gt 0 ]; then
     for m in "$PROJECT_DIR/markets"/*.json; do
       [ -f "$m" ] || continue
       m_slug=$(basename "$m" .json)
-      sol="$PROJECT_DIR/solutions/${f_slug}--${m_slug}.json"
-      if [ ! -f "$sol" ]; then
+      prop="$PROJECT_DIR/propositions/${f_slug}--${m_slug}.json"
+      if [ ! -f "$prop" ]; then
         if $first; then first=false; else missing_arr="$missing_arr, "; fi
         missing_arr="$missing_arr\"${f_slug}--${m_slug}\""
       fi
@@ -96,16 +96,16 @@ if [ "$FEATURES" -gt 0 ] && [ "$MARKETS" -gt 0 ]; then
 fi
 missing_arr="$missing_arr]"
 
-MISSING_COUNT=$((EXPECTED - SOLUTIONS))
+MISSING_COUNT=$((EXPECTED_PROPOSITIONS - PROPOSITIONS))
 if [ "$MISSING_COUNT" -lt 0 ]; then MISSING_COUNT=0; fi
 
-if [ "$EXPECTED" -gt 0 ]; then
-  SOLUTIONS_PCT=$(( SOLUTIONS * 100 / EXPECTED ))
+if [ "$EXPECTED_PROPOSITIONS" -gt 0 ]; then
+  PROPOSITIONS_PCT=$(( PROPOSITIONS * 100 / EXPECTED_PROPOSITIONS ))
 else
-  SOLUTIONS_PCT=0
+  PROPOSITIONS_PCT=0
 fi
-if [ "$SOLUTIONS" -gt 0 ]; then
-  COMPETITORS_PCT=$(( COMPETITORS * 100 / SOLUTIONS ))
+if [ "$PROPOSITIONS" -gt 0 ]; then
+  COMPETITORS_PCT=$(( COMPETITORS * 100 / PROPOSITIONS ))
 else
   COMPETITORS_PCT=0
 fi
@@ -168,7 +168,7 @@ elif [ "$FEATURES" -eq 0 ]; then
 elif [ "$MARKETS" -eq 0 ]; then
   PHASE="markets"
 elif [ "$MISSING_COUNT" -gt 0 ]; then
-  PHASE="solutions"
+  PHASE="propositions"
 elif [ "$COMPETITORS_PCT" -lt 100 ] || [ "$CUSTOMERS_PCT" -lt 100 ]; then
   PHASE="enrichment"
 elif [ "$HAS_CLAIMS" = "true" ] && [ "$CLAIMS_PENDING" -gt 0 ]; then
@@ -204,13 +204,13 @@ case "$PHASE" in
   markets)
     add_action "markets" "Features defined but no target markets yet"
     ;;
-  solutions)
-    add_action "solutions" "$MISSING_COUNT of $EXPECTED Feature x Market pairs pending"
+  propositions)
+    add_action "propositions" "$MISSING_COUNT of $EXPECTED_PROPOSITIONS Feature x Market pairs pending"
     ;;
   enrichment)
     if [ "$COMPETITORS_PCT" -lt 100 ]; then
-      missing_comp=$((SOLUTIONS - COMPETITORS))
-      add_action "compete" "$missing_comp solution(s) lack competitor analysis"
+      missing_comp=$((PROPOSITIONS - COMPETITORS))
+      add_action "compete" "$missing_comp proposition(s) lack competitor analysis"
     fi
     if [ "$CUSTOMERS_PCT" -lt 100 ]; then
       missing_cust=$((MARKETS - CUSTOMERS))
@@ -237,8 +237,8 @@ cat << EOF
     "products": $PRODUCTS,
     "features": $FEATURES,
     "markets": $MARKETS,
-    "solutions": $SOLUTIONS,
-    "expected_solutions": $EXPECTED,
+    "propositions": $PROPOSITIONS,
+    "expected_propositions": $EXPECTED_PROPOSITIONS,
     "competitors": $COMPETITORS,
     "customers": $CUSTOMERS,
     "uploads": $UPLOADS
@@ -254,11 +254,11 @@ cat << EOF
   "products": $product_arr,
   "features": $feature_arr,
   "markets": $market_arr,
-  "missing_solutions": $missing_arr,
+  "missing_propositions": $missing_arr,
   "phase": "$PHASE",
   "next_actions": $next_actions,
   "completion": {
-    "solutions_pct": $SOLUTIONS_PCT,
+    "propositions_pct": $PROPOSITIONS_PCT,
     "competitors_pct": $COMPETITORS_PCT,
     "customers_pct": $CUSTOMERS_PCT
   }

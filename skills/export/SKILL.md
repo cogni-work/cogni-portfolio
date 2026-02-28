@@ -13,9 +13,9 @@ Generate downstream deliverables from the portfolio messaging repository. Suppor
 
 ## Export Types
 
-### 1. Solution Proposal (Markdown)
+### 1. Proposition Proposal (Markdown)
 
-A sales proposal for a specific solution, targeting a specific customer in a specific market.
+A sales proposal for a specific proposition, targeting a specific customer in a specific market.
 
 **Output**: `output/proposals/{feature-slug}--{market-slug}.md`
 
@@ -24,21 +24,21 @@ A sales proposal for a specific solution, targeting a specific customer in a spe
 - The challenge (customer pain points from customer profile)
 - Our approach (IS and DOES statements)
 - Why us (differentiation from competitor analysis)
-- Evidence (from solution evidence array)
+- Evidence (from proposition evidence array)
 - Next steps
 
 **Trigger**: "Create a proposal for [feature] in [market]"
 
 ### 2. Market Brief (Markdown)
 
-Marketing content package for a specific target market, covering all solutions that address it.
+Marketing content package for a specific target market, covering all propositions that address it.
 
 **Output**: `output/briefs/{market-slug}.md`
 
 **Content structure**:
 - Market overview (from market definition)
 - Target buyer (from customer profile)
-- Value propositions (all solutions targeting this market)
+- Value propositions (all propositions targeting this market)
 - Competitive positioning (aggregated differentiation)
 - Recommended messaging themes
 
@@ -54,8 +54,8 @@ Structured spreadsheet with all portfolio data for analysis and sharing.
 - **Products**: All products with positioning, pricing tier, and maturity
 - **Features**: All features with descriptions, categories, and parent product
 - **Markets**: All markets with segmentation and TAM/SAM/SOM
-- **Solution Matrix**: Feature x Market grid with IS/DOES/MEANS, grouped by product
-- **Competitors**: Competitive analysis per solution
+- **Proposition Matrix**: Feature x Market grid with IS/DOES/MEANS, grouped by product
+- **Competitors**: Competitive analysis per proposition
 - **Customers**: Buyer profiles per market
 - **Summary**: Portfolio statistics and completion status
 
@@ -65,7 +65,7 @@ To create the XLSX file, use the `document-skills:xlsx` skill. Prepare the data 
 
 ### 4. Full Export
 
-Generate all deliverables at once: proposals for each solution, briefs for each market, and the portfolio workbook.
+Generate all deliverables at once: proposals for each proposition, briefs for each market, and the portfolio workbook.
 
 **Trigger**: "Export everything" or "full export"
 
@@ -85,7 +85,7 @@ Consider running the verify skill first for highest-quality output.
 ### 2. Determine Export Scope
 
 Ask the user what to export:
-- A specific proposal (which solution?)
+- A specific proposal (which proposition?)
 - A specific brief (which market?)
 - The portfolio workbook
 - Everything

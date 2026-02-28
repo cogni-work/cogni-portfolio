@@ -12,7 +12,7 @@ Create ideal customer profiles (ICPs) for each target market. Customer profiles 
 
 ## Core Concept
 
-Customer profiles are market-scoped, not solution-scoped. All solutions targeting "mid-market SaaS" share the same customer profile because the buyer is the same person regardless of which feature they are evaluating. The profile captures the buyer's world -- their pain points, decision criteria, and information habits.
+Customer profiles are market-scoped, not proposition-scoped. All propositions targeting "mid-market SaaS" share the same customer profile because the buyer is the same person regardless of which feature they are evaluating. The profile captures the buyer's world -- their pain points, decision criteria, and information habits.
 
 ## Workflow
 
@@ -29,7 +29,7 @@ For each market, build the customer profile from available context:
 
 - **Company context** (`portfolio.json`): Industry knowledge informs buyer types
 - **Market definition** (`markets/{slug}.json`): Segmentation criteria constrain the buyer
-- **Solution messaging** (`solutions/`): DOES/MEANS statements reveal which pain points are being addressed
+- **Proposition messaging** (`propositions/`): DOES/MEANS statements reveal which pain points are being addressed
 - **User input**: The user may know their buyers well -- ask directly
 
 ### 3. Build Customer Profiles
@@ -71,11 +71,11 @@ Write to `customers/{market-slug}.json` (same slug as the market):
 }
 ```
 
-### 5. Validate Against Solutions
+### 5. Validate Against Propositions
 
-Cross-reference customer pain points with solution DOES/MEANS statements. Each pain point should connect to at least one solution's advantage. Flag gaps where:
-- A pain point has no matching solution
-- A solution addresses a pain point not listed in the customer profile
+Cross-reference customer pain points with proposition DOES/MEANS statements. Each pain point should connect to at least one proposition's advantage. Flag gaps where:
+- A pain point has no matching proposition
+- A proposition addresses a pain point not listed in the customer profile
 
 ## Important Notes
 

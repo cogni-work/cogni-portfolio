@@ -63,7 +63,7 @@ Read the existing `portfolio.json` to understand the company context. Then analy
 | Features | Capabilities, specifications, functions, technical components |
 | Markets | Target segments, customer groups, geographic regions, verticals |
 
-Note any competitive intelligence or buyer persona data found in documents, but do not create competitor or customer entities during ingestion. These entity types require solutions or markets as parents and are handled by the `compete` and `customers` skills after the prerequisite entities exist.
+Note any competitive intelligence or buyer persona data found in documents, but do not create competitor or customer entities during ingestion. These entity types require propositions or markets as parents and are handled by the `compete` and `customers` skills after the prerequisite entities exist.
 
 Cross-reference with existing entities in the project to avoid duplicates. Read existing JSON files from `products/`, `features/`, and `markets/` directories to know what already exists.
 
@@ -127,9 +127,9 @@ Show a summary of what was created:
 
 Suggest the logical next step based on what was ingested:
 - If products and features were created, suggest the `markets` skill
-- If markets were created, suggest the `solutions` skill
+- If markets were created, suggest the `propositions` skill
 - If only partial data was ingested, suggest completing the entity type manually
-- If competitive or buyer persona data was observed in documents, mention it and suggest running `compete` or `customers` after the prerequisite entities (solutions/markets) are in place
+- If competitive or buyer persona data was observed in documents, mention it and suggest running `compete` or `customers` after the prerequisite entities (propositions/markets) are in place
 
 If any markets were created without TAM/SAM/SOM data, list them explicitly: "N market(s) created without sizing data: [slugs]. Run the `markets` skill to add TAM/SAM/SOM estimates."
 

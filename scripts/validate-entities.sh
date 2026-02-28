@@ -89,25 +89,25 @@ with open('$m') as fh:
   done
 fi
 
-# Validate solutions reference valid features and markets
-if [ -d "$PROJECT_DIR/solutions" ]; then
-  for s in "$PROJECT_DIR/solutions"/*.json; do
+# Validate propositions reference valid features and markets
+if [ -d "$PROJECT_DIR/propositions" ]; then
+  for s in "$PROJECT_DIR/propositions"/*.json; do
     [ -f "$s" ] || continue
     slug=$(basename "$s" .json)
     # Check naming convention: feature-slug--market-slug
     if [[ "$slug" != *"--"* ]]; then
-      add_error "solution" "$slug" "Invalid naming: expected feature-slug--market-slug"
+      add_error "proposition" "$slug" "Invalid naming: expected feature-slug--market-slug"
       continue
     fi
     f_slug="${slug%%--*}"
     m_slug="${slug#*--}"
     # Check referenced feature exists
     if [ ! -f "$PROJECT_DIR/features/${f_slug}.json" ]; then
-      add_error "solution" "$slug" "References missing feature: $f_slug"
+      add_error "proposition" "$slug" "References missing feature: $f_slug"
     fi
     # Check referenced market exists
     if [ ! -f "$PROJECT_DIR/markets/${m_slug}.json" ]; then
-      add_error "solution" "$slug" "References missing market: $m_slug"
+      add_error "proposition" "$slug" "References missing market: $m_slug"
     fi
     # Check required fields including foreign keys
     if ! python3 -c "
@@ -117,18 +117,18 @@ with open('$s') as fh:
     for field in ['feature_slug', 'market_slug', 'is_statement', 'does_statement', 'means_statement']:
         if field not in d: sys.exit(1)
 " 2>/dev/null; then
-      add_error "solution" "$slug" "Missing required fields (feature_slug, market_slug, is_statement, does_statement, means_statement)"
+      add_error "proposition" "$slug" "Missing required fields (feature_slug, market_slug, is_statement, does_statement, means_statement)"
     fi
   done
 fi
 
-# Validate competitors reference valid solutions
+# Validate competitors reference valid propositions
 if [ -d "$PROJECT_DIR/competitors" ]; then
   for c in "$PROJECT_DIR/competitors"/*.json; do
     [ -f "$c" ] || continue
     slug=$(basename "$c" .json)
-    if [ ! -f "$PROJECT_DIR/solutions/${slug}.json" ]; then
-      add_error "competitor" "$slug" "References missing solution: $slug"
+    if [ ! -f "$PROJECT_DIR/propositions/${slug}.json" ]; then
+      add_error "competitor" "$slug" "References missing proposition: $slug"
     fi
   done
 fi

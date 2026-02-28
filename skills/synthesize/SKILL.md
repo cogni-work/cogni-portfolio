@@ -28,7 +28,7 @@ Minimum requirements for synthesis:
 - At least 1 product defined
 - At least 1 feature defined (with valid product_slug)
 - At least 1 market defined
-- At least 1 solution generated (Feature x Market)
+- At least 1 proposition generated (Feature x Market)
 - portfolio.json has company context filled in
 
 Also check claim verification status if `.claims/claims.json` exists:
@@ -53,7 +53,7 @@ Read all entity files from the project directory:
 - All `products/*.json`
 - All `features/*.json`
 - All `markets/*.json`
-- All `solutions/*.json`
+- All `propositions/*.json`
 - All `competitors/*.json` (if available)
 - All `customers/*.json` (if available)
 
@@ -90,7 +90,7 @@ Write a comprehensive `output/README.md` as the main messaging repository docume
 ## Target Markets
 [For each market: description, segmentation, TAM/SAM/SOM summary]
 
-## Solution Messaging Matrix
+## Proposition Messaging Matrix
 [Table: Feature x Market with IS/DOES/MEANS for each cell, grouped by product]
 
 ## Market Deep Dives
@@ -98,10 +98,10 @@ Write a comprehensive `output/README.md` as the main messaging repository docume
 ### [Market Name]
 #### Customer Profile
 [Buyer profiles from customers/{market}.json]
-#### Solutions by Product
-[All solutions targeting this market, grouped by product, with full IS/DOES/MEANS]
+#### Propositions by Product
+[All propositions targeting this market, grouped by product, with full IS/DOES/MEANS]
 #### Competitive Landscape
-[Competitor analysis for each solution in this market]
+[Competitor analysis for each proposition in this market]
 
 ## Feature Deep Dives
 [For each feature:]
@@ -115,14 +115,14 @@ Write a comprehensive `output/README.md` as the main messaging repository docume
 For each market, create `output/{market-slug}.md` with:
 - Market definition and sizing
 - Customer profile
-- All solutions targeting this market
-- Competitive analysis per solution
+- All propositions targeting this market
+- Competitive analysis per proposition
 - Recommended messaging priorities
 
 ### 5. Present Summary
 
 Show the user:
-- Total entities synthesized (W products, X features, Y markets, Z solutions)
+- Total entities synthesized (W products, X features, Y markets, Z propositions)
 - Completion percentage
 - Files generated in `output/`
 - Suggested next steps (export for proposals or marketing)

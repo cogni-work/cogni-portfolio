@@ -79,7 +79,7 @@ A product can only be deleted if it has no features. If features exist, instruct
 When the user asks about a specific product, show:
 1. Product metadata (name, description, positioning, maturity, etc.)
 2. List of features belonging to this product (scan `features/` for matching `product_slug`)
-3. Count of solutions generated from those features
+3. Count of propositions generated from those features
 
 ## Important Notes
 

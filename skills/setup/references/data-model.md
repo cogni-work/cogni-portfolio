@@ -103,9 +103,9 @@ Optional fields: `segmentation`, `tam`, `sam`, `som`, `source_file`, `created`
 
 `source_file` (optional, all entity types): Filename of the document in `uploads/` from which this entity was extracted during ingestion.
 
-### solutions/{feature-slug}--{market-slug}.json
+### propositions/{feature-slug}--{market-slug}.json
 
-A solution maps one feature to one target market with market-specific messaging.
+A proposition maps one feature to one target market with market-specific messaging.
 
 ```json
 {
@@ -136,16 +136,16 @@ Optional fields: `evidence`, `created`
 
 Each evidence entry can be a structured object with `statement` (string, required), `source_url` (string or null), and `source_title` (string or null). When web research produces evidence, include the source URL for claim verification. Entries without a source use null for URL/title fields.
 
-**Naming convention**: Solution file names use double-dash (`--`) to join feature and market slugs: `{feature-slug}--{market-slug}.json`
+**Naming convention**: Proposition file names use double-dash (`--`) to join feature and market slugs: `{feature-slug}--{market-slug}.json`
 
 ### competitors/{feature-slug}--{market-slug}.json
 
-Competitive landscape for a specific solution (same slug as the solution it analyzes).
+Competitive landscape for a specific proposition (same slug as the proposition it analyzes).
 
 ```json
 {
   "slug": "cloud-monitoring--mid-market-saas",
-  "solution_slug": "cloud-monitoring--mid-market-saas",
+  "proposition_slug": "cloud-monitoring--mid-market-saas",
   "competitors": [
     {
       "name": "Datadog",
@@ -160,7 +160,7 @@ Competitive landscape for a specific solution (same slug as the solution it anal
 }
 ```
 
-Required fields: `slug`, `solution_slug`, `competitors` (array with at least `name`)
+Required fields: `slug`, `proposition_slug`, `competitors` (array with at least `name`)
 Optional fields: `created`
 
 Each competitor entry may include `source_url` (string or null) pointing to the primary research source used for positioning and pricing claims. This enables downstream claim verification.
@@ -206,8 +206,8 @@ Optional fields: `created`
 | Product slug | kebab-case, product name | `cloud-platform` |
 | Feature slug | kebab-case, noun-based | `cloud-monitoring` |
 | Market slug | kebab-case, segment-based | `mid-market-saas` |
-| Solution slug | `{feature}--{market}` | `cloud-monitoring--mid-market-saas` |
-| Competitor slug | Same as solution slug | `cloud-monitoring--mid-market-saas` |
+| Proposition slug | `{feature}--{market}` | `cloud-monitoring--mid-market-saas` |
+| Competitor slug | Same as proposition slug | `cloud-monitoring--mid-market-saas` |
 | Customer slug | Same as market slug | `mid-market-saas` |
 
 ## Entity Relationships
@@ -217,17 +217,17 @@ Product
     |
     +--contains--> Feature (IS)              Target Market
                        |                         |
-                       +------> Solution <-------+
+                       +------> Proposition <----+
                               (DOES + MEANS)
                                   |              |
                             Competitor      Customer Profile
-                          (per solution)     (per market)
+                        (per proposition)    (per market)
 ```
 
 - One product contains many features (1:N exclusive)
-- One feature can map to many markets (producing many solutions)
-- One market can receive many features (producing many solutions)
-- Each solution has exactly one competitor analysis
+- One feature can map to many markets (producing many propositions)
+- One market can receive many features (producing many propositions)
+- Each proposition has exactly one competitor analysis
 - Each market has exactly one customer profile
 - Features reference their parent product by `product_slug`
-- Solutions, competitors, and customers reference their parents by slug
+- Propositions, competitors, and customers reference their parents by slug

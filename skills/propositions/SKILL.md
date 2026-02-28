@@ -1,13 +1,13 @@
 ---
-name: solutions
+name: propositions
 description: |
-  This skill should be used when the user asks to "generate solutions",
+  This skill should be used when the user asks to "generate propositions",
   "create messaging", "IS DOES MEANS", "feature advantage benefit",
-  "map features to markets", or "FAB messaging". Generates solution messaging
+  "map features to markets", or "FAB messaging". Generates proposition messaging
   per Feature x Market combination.
 ---
 
-# Solution Generation
+# Proposition Generation
 
 Generate IS/DOES/MEANS messaging for each Feature x Market combination. This is the core of the portfolio -- transforming market-independent features into market-specific value propositions.
 
@@ -23,25 +23,25 @@ The same feature produces different DOES and MEANS statements for different mark
 
 ## Workflow
 
-### 1. Identify Pending Solutions
+### 1. Identify Pending Propositions
 
-Run the project status script to find missing solutions:
+Run the project status script to find missing propositions:
 
 ```bash
 bash $CLAUDE_PLUGIN_ROOT/scripts/project-status.sh "<project-dir>"
 ```
 
-The `missing_solutions` array lists Feature x Market pairs without solution files.
+The `missing_propositions` array lists Feature x Market pairs without proposition files.
 
-### 2. Generate Solutions
+### 2. Generate Propositions
 
 Two generation modes:
 
-**Single solution**: Generate one solution interactively. Read the feature, its parent product, and the market JSON files, then craft IS/DOES/MEANS statements with the user.
+**Single proposition**: Generate one proposition interactively. Read the feature, its parent product, and the market JSON files, then craft IS/DOES/MEANS statements with the user.
 
-**Batch generation**: For multiple pending solutions, delegate each to the `solution-generator` agent. Launch agents in parallel for independent Feature x Market pairs.
+**Batch generation**: For multiple pending propositions, delegate each to the `proposition-generator` agent. Launch agents in parallel for independent Feature x Market pairs.
 
-### 3. Solution Quality Criteria
+### 3. Proposition Quality Criteria
 
 Strong IS/DOES/MEANS statements follow these patterns:
 
@@ -59,9 +59,9 @@ Strong IS/DOES/MEANS statements follow these patterns:
 - References the buyer's strategic goals or KPIs
 - Connects operational advantage to commercial impact
 
-### 4. Write Solution Entities
+### 4. Write Proposition Entities
 
-Write each solution to `solutions/{feature-slug}--{market-slug}.json`:
+Write each proposition to `propositions/{feature-slug}--{market-slug}.json`:
 
 ```json
 {
@@ -94,11 +94,11 @@ Each evidence entry is an object with `statement` (required), `source_url` (stri
 
 ### 5. Review with User
 
-After generation, present solutions grouped by feature or by market (user's preference). Allow the user to refine wording before finalizing.
+After generation, present propositions grouped by feature or by market (user's preference). Allow the user to refine wording before finalizing.
 
 ## Hybrid Research Mode
 
-By default, generate solutions from LLM knowledge and company context. When the user requests research-backed messaging:
+By default, generate propositions from LLM knowledge and company context. When the user requests research-backed messaging:
 
 - Use web research to validate claims and find supporting evidence
 - Search for industry benchmarks relevant to each market segment

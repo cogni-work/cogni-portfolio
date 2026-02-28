@@ -39,9 +39,9 @@ bash $CLAUDE_PLUGIN_ROOT/scripts/project-status.sh "<project-dir>"
 
 Parse the JSON output. The key fields are:
 - `counts` -- entity counts per type
-- `phase` -- current workflow phase (products, features, markets, solutions, enrichment, synthesis, export, complete)
+- `phase` -- current workflow phase (products, features, markets, propositions, enrichment, synthesis, export, complete)
 - `next_actions` -- ordered list of recommended skills with reasons
-- `completion` -- percentage progress for solutions, competitors, customers
+- `completion` -- percentage progress for propositions, competitors, customers
 
 ### 4. Present Status Summary
 
@@ -56,8 +56,8 @@ Display a concise status dashboard:
 | Products | N | ... |
 | Features | N | ... |
 | Markets | N | ... |
-| Solutions | N / expected | pct% |
-| Competitors | N / solutions | pct% |
+| Propositions | N / expected | pct% |
+| Competitors | N / propositions | pct% |
 | Customers | N / markets | pct% |
 | Claims | N total | V verified, D deviated, U unverified |
 | Uploads | N | pending ingestion (if > 0) |
@@ -66,7 +66,7 @@ Display a concise status dashboard:
 
 **Uploads**: If `counts.uploads` is greater than 0, display a notice: "N file(s) in uploads/ awaiting ingestion. Run the `ingest` skill to import them." This notice appears regardless of current phase.
 
-**Gaps**: If `missing_solutions` is non-empty, list the first few missing pairs. If competitors or customers are incomplete, note the counts.
+**Gaps**: If `missing_propositions` is non-empty, list the first few missing pairs. If competitors or customers are incomplete, note the counts.
 
 ### 5. Recommend Next Action
 
@@ -83,8 +83,8 @@ If the phase is `complete`, congratulate the user and suggest reviewing the outp
 | `products` | Portfolio initialized but no products defined |
 | `features` | Products exist but no features added |
 | `markets` | Features defined but no target markets |
-| `solutions` | Feature x Market pairs need IS/DOES/MEANS messaging |
-| `enrichment` | Solutions exist but competitor or customer analysis incomplete |
+| `propositions` | Feature x Market pairs need IS/DOES/MEANS messaging |
+| `enrichment` | Propositions exist but competitor or customer analysis incomplete |
 | `verification` | Claims submitted but unverified or deviated -- run verify skill |
 | `synthesis` | All entities complete and claims verified, ready to generate overview |
 | `export` | Overview generated, ready for deliverable export |

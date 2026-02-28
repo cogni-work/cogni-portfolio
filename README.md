@@ -1,6 +1,6 @@
 # Portfolio Messaging Plugin
 
-A portfolio messaging and solution planning plugin for Claude Code. Helps SMEs build structured, market-specific value propositions using the IS/DOES/MEANS (FAB) framework — from product definition through competitive analysis to export-ready deliverables.
+A portfolio messaging and proposition planning plugin for Claude Code. Helps SMEs build structured, market-specific value propositions using the IS/DOES/MEANS (FAB) framework — from product definition through competitive analysis to export-ready deliverables.
 
 > **Note**: This plugin assists with B2B messaging strategy and portfolio planning. All outputs — especially market sizing, competitive intelligence, and claim verification — should be reviewed by domain experts before use in sales materials, proposals, or strategic decisions.
 
@@ -19,12 +19,12 @@ claude plugins add cogni-portfolio
 | `features` | Add market-independent capabilities (IS layer) per product, with bulk import from documentation |
 | `ingest` | Extract portfolio entities from uploaded documents (md, docx, pptx, xlsx, pdf) in the uploads folder |
 | `markets` | Discover and size target markets with TAM/SAM/SOM — via LLM estimation or delegated web research |
-| `solutions` | Generate IS/DOES/MEANS messaging for each Feature x Market pair, individually or in batch |
-| `compete` | Analyze 3-5 competitors per solution with positioning, strengths, weaknesses, and differentiation |
+| `propositions` | Generate IS/DOES/MEANS messaging for each Feature x Market pair, individually or in batch |
+| `compete` | Analyze 3-5 competitors per proposition with positioning, strengths, weaknesses, and differentiation |
 | `customers` | Create ideal customer profiles and buyer personas per target market |
 | `verify` | Orchestrate claim verification for research-backed assertions (delegates to cogni-claims plugin) |
 | `synthesize` | Generate structured messaging repository with per-market summaries and integrated claim status |
-| `export` | Produce deliverables — solution proposals, market briefs, portfolio workbooks (markdown and XLSX) |
+| `export` | Produce deliverables — proposition proposals, market briefs, portfolio workbooks (markdown and XLSX) |
 | `resume-portfolio` | Detect current workflow phase and recommend next actions for an existing project |
 
 ## Agents
@@ -32,8 +32,8 @@ claude plugins add cogni-portfolio
 | Agent | Description |
 |-------|-------------|
 | `market-researcher` | Web research agent for TAM/SAM/SOM sizing data with claim submission for verification |
-| `competitor-researcher` | Web research agent for competitive intelligence per solution with claim tracking |
-| `solution-generator` | Generates IS/DOES/MEANS messaging for a single Feature x Market pair with optional web research |
+| `competitor-researcher` | Web research agent for competitive intelligence per proposition with claim tracking |
+| `proposition-generator` | Generates IS/DOES/MEANS messaging for a single Feature x Market pair with optional web research |
 
 ## Example Workflows
 
@@ -44,8 +44,8 @@ claude plugins add cogni-portfolio
 3. Run `/products` to define your named offerings
 4. Run `/features` to add capabilities per product
 5. Run `/markets` to discover and size 3-7 target markets
-6. Run `/solutions` to generate IS/DOES/MEANS messaging for all Feature x Market pairs
-7. Run `/compete` to analyze competitors per solution
+6. Run `/propositions` to generate IS/DOES/MEANS messaging for all Feature x Market pairs
+7. Run `/compete` to analyze competitors per proposition
 8. Run `/customers` to create buyer personas per market
 9. Run `/verify` to check research-backed claims against sources
 10. Run `/synthesize` to generate the messaging repository
@@ -61,7 +61,7 @@ claude plugins add cogni-portfolio
 1. Run `/setup` with a focused product scope
 2. Run `/features` to define key capabilities
 3. Run `/markets` with web research for validated sizing
-4. Run `/solutions` to generate messaging for priority markets
+4. Run `/propositions` to generate messaging for priority markets
 5. Run `/export market-brief` to produce market-specific content
 
 ## Data Model
@@ -74,7 +74,7 @@ All entities are stored as JSON files in the project directory:
 | Product | `products/{slug}.json` | name, positioning, pricing tier, maturity |
 | Feature | `features/{slug}.json` | product_slug, name, description, category |
 | Market | `markets/{slug}.json` | name, segmentation, TAM/SAM/SOM |
-| Solution | `solutions/{feature}--{market}.json` | IS/DOES/MEANS statements, evidence |
+| Proposition | `propositions/{feature}--{market}.json` | IS/DOES/MEANS statements, evidence |
 | Competitor | `competitors/{feature}--{market}.json` | name, positioning, strengths, weaknesses |
 | Customer | `customers/{market}.json` | role, pain points, buying criteria |
 

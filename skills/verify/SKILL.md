@@ -9,7 +9,7 @@ description: |
 
 # Portfolio Claim Verification
 
-Workflow phase that verifies claims submitted by portfolio research agents (market-researcher, competitor-researcher, solution-generator) against their cited web sources. Runs between the enrichment phase and synthesis phase.
+Workflow phase that verifies claims submitted by portfolio research agents (market-researcher, competitor-researcher, proposition-generator) against their cited web sources. Runs between the enrichment phase and synthesis phase.
 
 ## Prerequisites
 
@@ -21,7 +21,7 @@ Check that claims exist:
 test -f "<project-dir>/.claims/claims.json" && echo "Claims workspace found" || echo "No claims workspace"
 ```
 
-If no `.claims/` directory exists, inform the user that no claims have been submitted yet. Research agents submit claims automatically during market research, competitor research, and solution generation (when web search is used). Suggest running those skills with web research enabled first.
+If no `.claims/` directory exists, inform the user that no claims have been submitted yet. Research agents submit claims automatically during market research, competitor research, and proposition generation (when web search is used). Suggest running those skills with web research enabled first.
 
 ## Workflow
 
@@ -39,7 +39,7 @@ Claims Summary:
 Total: N claims from K unique sources
 ```
 
-Also show breakdown by submitter (cogni-portfolio:market-researcher, cogni-portfolio:competitor-researcher, cogni-portfolio:solution-generator).
+Also show breakdown by submitter (cogni-portfolio:market-researcher, cogni-portfolio:competitor-researcher, cogni-portfolio:proposition-generator).
 
 ### 2. Verification
 

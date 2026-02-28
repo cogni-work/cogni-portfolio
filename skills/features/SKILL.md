@@ -13,7 +13,7 @@ Define and manage market-independent product features -- the IS layer of the FAB
 
 ## Core Concept
 
-A feature is a factual, market-independent statement about a product capability, specification, or function. Features do not include advantages or benefits -- those emerge when a feature meets a specific target market (handled by the `solutions` skill).
+A feature is a factual, market-independent statement about a product capability, specification, or function. Features do not include advantages or benefits -- those emerge when a feature meets a specific target market (handled by the `propositions` skill).
 
 Good features are:
 - **Specific**: "Real-time container orchestration monitoring" not "monitoring"
@@ -61,7 +61,7 @@ Read all JSON files in the project's `features/` directory. Present as a table:
 
 ### Editing Features
 
-Read the existing feature JSON, apply the user's changes, and write back. Changing a feature slug requires renaming the file and updating any dependent solutions. Changing `product_slug` reassigns the feature to a different product.
+Read the existing feature JSON, apply the user's changes, and write back. Changing a feature slug requires renaming the file and updating any dependent propositions. Changing `product_slug` reassigns the feature to a different product.
 
 ### Bulk Import
 
@@ -74,8 +74,8 @@ When the user provides a product description, website content, or document:
 ## Important Notes
 
 - Products must exist before features can be created -- use the `products` skill first
-- Features are the foundation -- markets, solutions, and all downstream entities build on them
-- Changing a feature slug after solutions exist requires renaming solution files (`{feature}--{market}.json`)
+- Features are the foundation -- markets, propositions, and all downstream entities build on them
+- Changing a feature slug after propositions exist requires renaming proposition files (`{feature}--{market}.json`)
 - Aim for 5-15 features per product; too many signals insufficient abstraction
 - Each feature should be testable: "Does this product have this capability? Yes/No."
 - Refer to `$CLAUDE_PLUGIN_ROOT/skills/setup/references/data-model.md` for complete entity schemas

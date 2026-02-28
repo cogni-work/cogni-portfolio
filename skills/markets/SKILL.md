@@ -82,7 +82,7 @@ Required: `slug`, `name`, `description`. Optional: `segmentation`, `tam`, `sam`,
 
 ### 4. Review Feature x Market Matrix
 
-After markets are defined, show the user the Feature x Market matrix to preview which solutions will need to be generated:
+After markets are defined, show the user the Feature x Market matrix to preview which propositions will need to be generated:
 
 | Feature \ Market | mid-market-saas | enterprise-fintech |
 |---|---|---|
@@ -94,7 +94,7 @@ Use `$CLAUDE_PLUGIN_ROOT/scripts/project-status.sh` to generate this overview.
 ## Market Selection Criteria
 
 When proposing markets, prioritize segments where:
-- Multiple features create combined value (solution density)
+- Multiple features create combined value (proposition density)
 - The company has existing relationships or domain expertise
 - Market size justifies the effort (SOM > meaningful revenue threshold)
 - Competitive intensity is manageable

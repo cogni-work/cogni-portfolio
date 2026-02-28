@@ -4,30 +4,30 @@ description: |
   This skill should be used when the user asks to "analyze competitors",
   "competitive analysis", "competitor research", "who competes",
   "competitive landscape", "battle card", or "competitive positioning".
-  Analyzes competitors per solution.
+  Analyzes competitors per proposition.
 ---
 
 # Competitive Analysis
 
-Analyze the competitive landscape for each solution (Feature x Market combination). Competitors are solution-specific because the same feature competes against different players in different markets.
+Analyze the competitive landscape for each proposition (Feature x Market combination). Competitors are proposition-specific because the same feature competes against different players in different markets.
 
 ## Core Concept
 
-Competitive analysis is scoped to solutions, not features or markets alone. A "cloud monitoring" feature may compete against Datadog in mid-market SaaS but against Splunk in enterprise fintech. The competitive positioning and differentiation are always market-dependent.
+Competitive analysis is scoped to propositions, not features or markets alone. A "cloud monitoring" feature may compete against Datadog in mid-market SaaS but against Splunk in enterprise fintech. The competitive positioning and differentiation are always market-dependent.
 
 ## Workflow
 
-### 1. Select Solutions to Analyze
+### 1. Select Propositions to Analyze
 
-List existing solutions (read `solutions/` directory) and identify those without competitor files. Present options to the user:
+List existing propositions (read `propositions/` directory) and identify those without competitor files. Present options to the user:
 
-- Analyze all pending solutions
-- Analyze a specific solution
-- Analyze all solutions for a specific market
+- Analyze all pending propositions
+- Analyze a specific proposition
+- Analyze all propositions for a specific market
 
 ### 2. Research Competitors
 
-For each selected solution, identify 3-5 relevant competitors. Two modes:
+For each selected proposition, identify 3-5 relevant competitors. Two modes:
 
 **LLM knowledge (default)**: Identify known competitors based on the feature category and market segment. Clearly note that competitor data is based on training knowledge and may not reflect latest positioning.
 
@@ -44,16 +44,16 @@ For each competitor, capture:
 - **Positioning**: Their stated value proposition for this market
 - **Strengths**: What they do well (3-5 points)
 - **Weaknesses**: Where they fall short (3-5 points)
-- **Differentiation**: How the user's solution is specifically different/better
+- **Differentiation**: How the user's proposition is specifically different/better
 
 ### 4. Write Competitor Entities
 
-Write to `competitors/{feature-slug}--{market-slug}.json` (same slug as the solution):
+Write to `competitors/{feature-slug}--{market-slug}.json` (same slug as the proposition):
 
 ```json
 {
   "slug": "cloud-monitoring--mid-market-saas",
-  "solution_slug": "cloud-monitoring--mid-market-saas",
+  "proposition_slug": "cloud-monitoring--mid-market-saas",
   "competitors": [
     {
       "name": "Datadog",
@@ -70,19 +70,19 @@ Write to `competitors/{feature-slug}--{market-slug}.json` (same slug as the solu
 
 ### 5. Review with User
 
-Present competitor analysis per solution. The user may know competitors the research missed, or may disagree with positioning claims. Iterate until accurate.
+Present competitor analysis per proposition. The user may know competitors the research missed, or may disagree with positioning claims. Iterate until accurate.
 
 ## Differentiation Guidelines
 
 Strong differentiation statements:
 - Reference a specific weakness of the competitor
-- Connect to the solution's DOES or MEANS statement
+- Connect to the proposition's DOES or MEANS statement
 - Are verifiable or at least defensible
 - Avoid generic claims ("better", "faster", "cheaper" without specifics)
 
 ## Important Notes
 
-- Competitor files share the same slug as their parent solution
-- One competitor file per solution, containing an array of all competitors
+- Competitor files share the same slug as their parent proposition
+- One competitor file per proposition, containing an array of all competitors
 - Competitive intelligence ages quickly -- note the date of analysis
 - Refer to `$CLAUDE_PLUGIN_ROOT/skills/setup/references/data-model.md` for complete entity schemas
