@@ -49,6 +49,7 @@ cogni-portfolio/<project-slug>/
   solutions/
   competitors/
   customers/
+  uploads/
   output/
 ```
 
@@ -58,15 +59,17 @@ After the script creates directories, write `portfolio.json` in the project root
 
 ### 5. Confirm and Guide Next Steps
 
-Present the created project structure and suggest the full workflow:
-1. Define products with the `products` skill
-2. Add features to each product with the `features` skill
-3. Discover target markets with the `markets` skill
-4. Generate solution messaging with the `solutions` skill
-5. Enrich with `compete` (competitor analysis) and `customers` (buyer profiles)
-6. Verify web-sourced claims with the `verify` skill
-7. Aggregate into messaging repository with the `synthesize` skill
-8. Generate deliverables with the `export` skill
+Present the created project structure and suggest the full workflow. If the user has existing documents (product specs, market research, pitch decks, etc.), mention they can drop files into the `uploads/` folder and run the `ingest` skill to import data automatically.
+
+1. (Optional) Drop existing documents into `uploads/` and run the `ingest` skill
+2. Define products with the `products` skill
+3. Add features to each product with the `features` skill
+4. Discover target markets with the `markets` skill
+5. Generate solution messaging with the `solutions` skill
+6. Enrich with `compete` (competitor analysis) and `customers` (buyer profiles)
+7. Verify web-sourced claims with the `verify` skill
+8. Aggregate into messaging repository with the `synthesize` skill
+9. Generate deliverables with the `export` skill
 
 ## Data Model Overview
 

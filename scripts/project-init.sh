@@ -27,6 +27,7 @@ mkdir -p "$PROJECT_DIR/markets"
 mkdir -p "$PROJECT_DIR/solutions"
 mkdir -p "$PROJECT_DIR/competitors"
 mkdir -p "$PROJECT_DIR/customers"
+mkdir -p "$PROJECT_DIR/uploads"
 mkdir -p "$PROJECT_DIR/output/proposals"
 mkdir -p "$PROJECT_DIR/output/briefs"
 

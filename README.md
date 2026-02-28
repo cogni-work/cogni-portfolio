@@ -17,6 +17,7 @@ claude plugins add cogni-portfolio
 | `setup` | Create a new portfolio project — capture company context, initialize directory structure, and generate portfolio.json |
 | `products` | Define and manage named product offerings with positioning, pricing tier, maturity, and versioning |
 | `features` | Add market-independent capabilities (IS layer) per product, with bulk import from documentation |
+| `ingest` | Extract portfolio entities from uploaded documents (md, docx, pptx, xlsx, pdf) in the uploads folder |
 | `markets` | Discover and size target markets with TAM/SAM/SOM — via LLM estimation or delegated web research |
 | `solutions` | Generate IS/DOES/MEANS messaging for each Feature x Market pair, individually or in batch |
 | `compete` | Analyze 3-5 competitors per solution with positioning, strengths, weaknesses, and differentiation |
@@ -39,19 +40,20 @@ claude plugins add cogni-portfolio
 ### Full Portfolio Build
 
 1. Run `/setup` to create a new project and define your company context
-2. Run `/products` to define your named offerings
-3. Run `/features` to add capabilities per product
-4. Run `/markets` to discover and size 3-7 target markets
-5. Run `/solutions` to generate IS/DOES/MEANS messaging for all Feature x Market pairs
-6. Run `/compete` to analyze competitors per solution
-7. Run `/customers` to create buyer personas per market
-8. Run `/verify` to check research-backed claims against sources
-9. Run `/synthesize` to generate the messaging repository
-10. Run `/export` to produce proposals, briefs, and workbooks
+2. (Optional) Drop existing documents into `uploads/` and run `/ingest` to import data
+3. Run `/products` to define your named offerings
+4. Run `/features` to add capabilities per product
+5. Run `/markets` to discover and size 3-7 target markets
+6. Run `/solutions` to generate IS/DOES/MEANS messaging for all Feature x Market pairs
+7. Run `/compete` to analyze competitors per solution
+8. Run `/customers` to create buyer personas per market
+9. Run `/verify` to check research-backed claims against sources
+10. Run `/synthesize` to generate the messaging repository
+11. Run `/export` to produce proposals, briefs, and workbooks
 
 ### Resume Existing Work
 
-1. Run `/resume-portfolio` to detect your current phase and see progress
+1. Run `/resume-portfolio` to detect your current phase and see progress (also detects unprocessed uploads)
 2. Follow the recommended next action
 
 ### Quick Market Entry Analysis
@@ -81,7 +83,7 @@ All entities are stored as JSON files in the project directory:
 This plugin works standalone for core messaging workflows. Optional integrations enhance specific capabilities:
 
 - **cogni-claims plugin** — Required for `/verify` (claim verification against cited sources)
-- **document-skills:xlsx plugin** — Required for XLSX export in `/export`
+- **document-skills plugin** — Required for `/ingest` (docx, pptx, xlsx, pdf extraction) and XLSX export in `/export`
 
 > **Note:** Without these plugins, you can still build the full portfolio through synthesis. Verification and XLSX export will be unavailable.
 

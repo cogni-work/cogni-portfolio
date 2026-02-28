@@ -10,9 +10,9 @@
   "keywords": ["portfolio", "messaging", "b2b", "fab", "sme"],
   "skills": [
     "./skills/compete", "./skills/customers", "./skills/export",
-    "./skills/features", "./skills/markets", "./skills/products",
-    "./skills/resume-portfolio", "./skills/setup", "./skills/solutions",
-    "./skills/synthesize", "./skills/verify"
+    "./skills/features", "./skills/ingest", "./skills/markets",
+    "./skills/products", "./skills/resume-portfolio", "./skills/setup",
+    "./skills/solutions", "./skills/synthesize", "./skills/verify"
   ],
   "agents": [
     "./agents/competitor-researcher.md",

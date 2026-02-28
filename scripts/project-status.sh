@@ -120,6 +120,13 @@ if [ -f "$PROJECT_DIR/output/README.md" ]; then HAS_README="true"; fi
 HAS_XLSX="false"
 if [ -f "$PROJECT_DIR/output/portfolio.xlsx" ]; then HAS_XLSX="true"; fi
 
+# Count unprocessed uploads (exclude processed/ subdirectory)
+UPLOADS=0
+if [ -d "$PROJECT_DIR/uploads" ]; then
+  UPLOADS=$(find "$PROJECT_DIR/uploads" -maxdepth 1 -type f \( -name '*.md' -o -name '*.docx' -o -name '*.pptx' -o -name '*.xlsx' -o -name '*.pdf' \) 2>/dev/null | wc -l)
+  UPLOADS=$(echo "$UPLOADS" | tr -d ' ')
+fi
+
 # Count claims by status
 CLAIMS_TOTAL=0
 CLAIMS_UNVERIFIED=0
@@ -228,7 +235,8 @@ cat << EOF
     "solutions": $SOLUTIONS,
     "expected_solutions": $EXPECTED,
     "competitors": $COMPETITORS,
-    "customers": $CUSTOMERS
+    "customers": $CUSTOMERS,
+    "uploads": $UPLOADS
   },
   "claims": {
     "total": $CLAIMS_TOTAL,

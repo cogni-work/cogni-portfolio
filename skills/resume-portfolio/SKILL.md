@@ -60,8 +60,11 @@ Display a concise status dashboard:
 | Competitors | N / solutions | pct% |
 | Customers | N / markets | pct% |
 | Claims | N total | V verified, D deviated, U unverified |
+| Uploads | N | pending ingestion (if > 0) |
 
 **Current phase**: The `phase` value, explained in plain language.
+
+**Uploads**: If `counts.uploads` is greater than 0, display a notice: "N file(s) in uploads/ awaiting ingestion. Run the `ingest` skill to import them." This notice appears regardless of current phase.
 
 **Gaps**: If `missing_solutions` is non-empty, list the first few missing pairs. If competitors or customers are incomplete, note the counts.
 
