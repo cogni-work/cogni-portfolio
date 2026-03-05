@@ -63,15 +63,15 @@ Optional fields: `category`, `source_file`, `created`
 
 ### markets/{slug}.json
 
-A target market defined by segmentation and sized by TAM/SAM/SOM.
+A target market defined by region, segmentation criteria, and sized by TAM/SAM/SOM. The slug encodes the segment and region: `{segment}-{region}` (e.g., `mid-market-saas-dach`).
 
 ```json
 {
-  "slug": "mid-market-saas",
-  "name": "Mid-Market SaaS Companies",
+  "slug": "mid-market-saas-dach",
+  "name": "Mid-Market SaaS Companies (DACH)",
+  "region": "dach",
   "description": "SaaS companies with 50-500 employees and $5M-$100M ARR in DACH region.",
   "segmentation": {
-    "geography": "DACH",
     "company_size": "50-500 employees",
     "revenue_range": "$5M-$100M ARR",
     "vertical": "Software as a Service"
@@ -98,8 +98,12 @@ A target market defined by segmentation and sized by TAM/SAM/SOM.
 }
 ```
 
-Required fields: `slug`, `name`, `description`
+Required fields: `slug`, `name`, `region`, `description`
 Optional fields: `segmentation`, `tam`, `sam`, `som`, `source_file`, `created`
+
+The `region` field must be a valid region code from the standard taxonomy in `$CLAUDE_PLUGIN_ROOT/skills/setup/references/regions.json`. Valid codes: `de`, `dach`, `eu`, `uk`, `nordics`, `us`, `na`, `cn`, `apac`, `jp`, `latam`, `mea`, `global`.
+
+The `segmentation` object captures non-geographic criteria (company size, revenue, vertical, etc.). Geographic scope is expressed solely through `region` -- do not duplicate it in `segmentation.geography`.
 
 `source_file` (optional, all entity types): Filename of the document in `uploads/` from which this entity was extracted during ingestion.
 
@@ -205,29 +209,81 @@ Optional fields: `created`
 | Project slug | kebab-case, descriptive | `acme-cloud-services` |
 | Product slug | kebab-case, product name | `cloud-platform` |
 | Feature slug | kebab-case, noun-based | `cloud-monitoring` |
-| Market slug | kebab-case, segment-based | `mid-market-saas` |
-| Proposition slug | `{feature}--{market}` | `cloud-monitoring--mid-market-saas` |
-| Competitor slug | Same as proposition slug | `cloud-monitoring--mid-market-saas` |
-| Customer slug | Same as market slug | `mid-market-saas` |
+| Market slug | `{segment}-{region}` | `mid-market-saas-dach` |
+| Proposition slug | `{feature}--{market}` | `cloud-monitoring--mid-market-saas-dach` |
+| Competitor slug | Same as proposition slug | `cloud-monitoring--mid-market-saas-dach` |
+| Customer slug | Same as market slug | `mid-market-saas-dach` |
 
 ## Entity Relationships
 
-```
-Product
-    |
-    +--contains--> Feature (IS)              Target Market
-                       |                         |
-                       +------> Proposition <----+
-                              (DOES + MEANS)
-                                  |              |
-                            Competitor      Customer Profile
-                        (per proposition)    (per market)
+```mermaid
+erDiagram
+    Product ||--|{ Feature : contains
+    Feature ||--|{ Proposition : "maps to"
+    Market ||--|{ Proposition : "targets"
+    Region ||--|{ Market : "scopes"
+    Proposition ||--|| Competitor : "analyzed by"
+    Market ||--|| Customer : "profiled by"
+
+    Product {
+        string slug PK
+        string name
+        string description
+        string positioning
+        string maturity
+    }
+    Feature {
+        string slug PK
+        string product_slug FK
+        string name
+        string description
+        string category
+    }
+    Region {
+        string code PK
+        string name
+        string[] scope
+        string currency
+        string locale
+    }
+    Market {
+        string slug PK "segment-region"
+        string region FK
+        string name
+        string description
+        object segmentation
+        object tam
+        object sam
+        object som
+    }
+    Proposition {
+        string slug PK "feature--market"
+        string feature_slug FK
+        string market_slug FK
+        string is_statement
+        string does_statement
+        string means_statement
+        array evidence
+    }
+    Competitor {
+        string slug PK "feature--market"
+        string proposition_slug FK
+        array competitors
+    }
+    Customer {
+        string slug PK "market-slug"
+        string market_slug FK
+        array profiles
+    }
 ```
 
 - One product contains many features (1:N exclusive)
+- One region scopes many markets (1:N)
 - One feature can map to many markets (producing many propositions)
 - One market can receive many features (producing many propositions)
 - Each proposition has exactly one competitor analysis
 - Each market has exactly one customer profile
+- Region is defined in the taxonomy (`regions.json`), not as a project entity
 - Features reference their parent product by `product_slug`
+- Markets reference their region by `region` code
 - Propositions, competitors, and customers reference their parents by slug

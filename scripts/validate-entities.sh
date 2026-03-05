@@ -71,7 +71,10 @@ with open('$f') as fh:
   done
 fi
 
-# Validate markets have required fields (slug, name, description)
+# Valid region codes from the taxonomy
+VALID_REGIONS="de dach eu uk nordics us na cn apac jp latam mea global"
+
+# Validate markets have required fields (slug, name, region, description)
 if [ -d "$PROJECT_DIR/markets" ]; then
   for m in "$PROJECT_DIR/markets"/*.json; do
     [ -f "$m" ] || continue
@@ -83,8 +86,19 @@ with open('$m') as fh:
     if 'name' not in d: sys.exit(1)
     if 'description' not in d: sys.exit(1)
     if 'slug' in d and d['slug'] != '$slug': sys.exit(2)
+    if 'region' not in d: sys.exit(3)
 " 2>/dev/null; then
-      add_error "market" "$slug" "Invalid JSON or missing required field (name, description)"
+      add_error "market" "$slug" "Invalid JSON or missing required field (name, description, region)"
+    else
+      # Validate region code against taxonomy
+      region=$(python3 -c "import json; print(json.load(open('$m')).get('region',''))" 2>/dev/null)
+      region_valid=false
+      for r in $VALID_REGIONS; do
+        if [ "$region" = "$r" ]; then region_valid=true; break; fi
+      done
+      if [ "$region_valid" = "false" ]; then
+        add_error "market" "$slug" "Invalid region '$region' -- must be one of: $VALID_REGIONS"
+      fi
     fi
   done
 fi

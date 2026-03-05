@@ -63,7 +63,7 @@ if [ -d "$PROJECT_DIR/features" ]; then
 fi
 feature_arr="$feature_arr]"
 
-# Collect market slugs as JSON array
+# Collect market slugs as JSON array and build region summary
 market_arr="["
 first=true
 if [ -d "$PROJECT_DIR/markets" ]; then
@@ -75,6 +75,24 @@ if [ -d "$PROJECT_DIR/markets" ]; then
   done
 fi
 market_arr="$market_arr]"
+
+# Build region summary: {"dach": 2, "us": 1, ...}
+region_summary="{}"
+if [ -d "$PROJECT_DIR/markets" ]; then
+  region_summary=$(python3 -c "
+import json, os, glob
+counts = {}
+for f in glob.glob('$PROJECT_DIR/markets/*.json'):
+    try:
+        with open(f) as fh:
+            d = json.load(fh)
+        r = d.get('region', 'unknown')
+        counts[r] = counts.get(r, 0) + 1
+    except Exception:
+        pass
+print(json.dumps(counts, sort_keys=True))
+" 2>/dev/null || echo "{}")
+fi
 
 # Find missing propositions (Feature x Market pairs without a proposition file)
 missing_arr="["
@@ -254,6 +272,7 @@ cat << EOF
   "products": $product_arr,
   "features": $feature_arr,
   "markets": $market_arr,
+  "regions": $region_summary,
   "missing_propositions": $missing_arr,
   "phase": "$PHASE",
   "next_actions": $next_actions,
