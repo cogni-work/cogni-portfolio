@@ -1,21 +1,29 @@
 ---
 name: setup
 description: |
-  This skill should be used when the user asks to "create a portfolio",
-  "new portfolio project", "set up portfolio", "initialize portfolio",
-  or "start portfolio planning". If a project already exists, redirect
-  to the resume-portfolio skill instead. Initializes a cogni-portfolio project.
+  Initialize a new cogni-portfolio project with company context and directory structure.
+  Use whenever the user mentions creating a portfolio, new portfolio project, setting up
+  portfolio, "start portfolio planning", "new company", "new project", or wants to begin
+  structuring their product/market messaging — even if they don't say "setup" explicitly.
 ---
 
 # Portfolio Project Setup
 
 Initialize a cogni-portfolio project by capturing company context and creating the project directory structure.
 
+## Core Concept
+
+A portfolio project is the container for all downstream work — products, features, markets, propositions, competitors, and customers all live inside it. Setup captures the minimum viable company context (name, description, industry, products) and scaffolds the directory structure that every other skill depends on.
+
+Getting this right matters because the company context in `portfolio.json` informs every downstream skill. A clear description and accurate industry help the products, markets, and propositions skills generate relevant, on-target output instead of generic filler. A few minutes of care here saves hours of correction later.
+
+If a project already exists for the company, redirect to the `resume-portfolio` skill instead of creating a duplicate.
+
 ## Workflow
 
 ### 1. Gather Company Context
 
-Ask the user for four required fields:
+Collect four required fields:
 
 - **Company name**: Legal or trading name
 - **Description**: One-sentence summary of what the company does
@@ -24,12 +32,28 @@ Ask the user for four required fields:
 
 If the user has provided some context already, extract what is available and ask only for missing fields.
 
-### 2. Determine Project Slug
+**Web research (optional)**: When the user provides a company URL or website, delegate to a subagent (Agent tool) to extract company description, industry, and product offerings from the company's public pages. This is especially useful when the user knows the company but hasn't articulated structured context yet. Present findings to the user for confirmation — never auto-populate without review.
 
-Derive a project slug from the company name:
-- Convert to kebab-case
-- Keep it short and recognizable (e.g., "Acme Cloud Services" -> `acme-cloud`)
-- Confirm the slug with the user
+### 2. Review with User
+
+Present the gathered context as a summary for confirmation before creating anything:
+
+| Field | Value |
+|---|---|
+| Company | Acme Cloud Services |
+| Description | Cloud infrastructure management for mid-market SaaS |
+| Industry | Cloud Infrastructure |
+| Products | Cloud Platform, Monitoring Suite |
+| Proposed slug | `acme-cloud` |
+
+The slug is derived from the company name in kebab-case — keep it short and recognizable (e.g., "Acme Cloud Services" -> `acme-cloud`).
+
+Ask explicitly:
+- Does this look right?
+- Anything to add or correct?
+- Happy with the project slug?
+
+Iterate until the user confirms. They know their business best.
 
 ### 3. Create Project Structure
 
@@ -55,7 +79,7 @@ cogni-portfolio/<project-slug>/
 
 ### 4. Write portfolio.json
 
-After the script creates directories, write `portfolio.json` in the project root with the company context gathered in step 1. Follow the schema in `$CLAUDE_PLUGIN_ROOT/skills/setup/references/data-model.md`.
+After the script creates directories, write `portfolio.json` in the project root with the confirmed company context. Follow the schema in `$CLAUDE_PLUGIN_ROOT/skills/setup/references/data-model.md`.
 
 ### 5. Confirm and Guide Next Steps
 
