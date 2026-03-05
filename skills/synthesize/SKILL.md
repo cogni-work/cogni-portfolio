@@ -1,48 +1,44 @@
 ---
 name: synthesize
 description: |
-  This skill should be used when the user asks to "synthesize portfolio",
-  "messaging repository", "portfolio overview", "aggregate portfolio",
-  or "portfolio summary". Generates the complete structured messaging repository.
+  Aggregate all portfolio entities into a structured messaging repository.
+  Use whenever the user mentions synthesize, portfolio overview, messaging repository,
+  aggregate portfolio, portfolio summary, "put it all together", "compile portfolio",
+  or wants a single document covering all products, markets, and propositions —
+  even if they don't say "synthesize" explicitly.
 ---
 
 # Portfolio Synthesis
 
-Aggregate all portfolio entities into a structured messaging repository -- the definitive reference document for sales and marketing messaging.
+Aggregate all portfolio entities into a structured messaging repository — the definitive reference document for sales and marketing messaging.
+
+## Core Concept
+
+Synthesis is where scattered entity files become a coherent story. Products, features, markets, propositions, competitors, and customers each live in isolated JSON files optimized for creation and editing. But no one reads JSON files — sales teams need a document they can scan before a call, marketing teams need a matrix they can mine for campaign angles, and leadership needs a single view of the portfolio's coverage and gaps.
+
+The messaging repository (`output/README.md`) serves all three audiences. Its structure mirrors the way people actually use portfolio data: top-down from company overview through products and markets, then deep dives that cross-reference entities. The Proposition Messaging Matrix is the centrepiece — it makes Feature x Market coverage visible at a glance, revealing both strengths (where messaging is sharp) and gaps (where it's missing or generic).
+
+This matters because synthesis is the quality gate before deliverables. If the README reads well, exports (proposals, briefs, workbooks) will be strong. If it exposes thin messaging or missing entities, the user knows exactly where to go back and improve.
 
 ## Prerequisites
 
-Before synthesis, verify the portfolio is sufficiently complete. Run validation:
+Before synthesis, verify the portfolio is sufficiently complete:
 
 ```bash
 bash $CLAUDE_PLUGIN_ROOT/scripts/validate-entities.sh "<project-dir>"
-```
-
-And check project status:
-
-```bash
 bash $CLAUDE_PLUGIN_ROOT/scripts/project-status.sh "<project-dir>"
 ```
 
-Minimum requirements for synthesis:
-- At least 1 product defined
-- At least 1 feature defined (with valid product_slug)
-- At least 1 market defined
-- At least 1 proposition generated (Feature x Market)
-- portfolio.json has company context filled in
+Minimum requirements:
+- At least 1 product, 1 feature (with valid product_slug), 1 market, and 1 proposition
+- `portfolio.json` has company context filled in
 
-Also check claim verification status if `.claims/claims.json` exists:
-- Read the claims registry and count by status
-- If unverified or deviated claims exist, warn the user:
-  ```
-  Claim Verification Warning:
-  - N unverified claims (not yet checked against sources)
-  - N deviated claims (source discrepancies detected)
-  Recommendation: Run the verify skill before synthesis.
-  ```
-- Allow synthesis to proceed if the user chooses, but flag unverified content in output
+If `.claims/claims.json` exists, check claim verification status:
+- Count claims by status (verified, deviated, unverified, source unavailable)
+- If unverified or deviated claims exist, warn the user and recommend running the `verify` skill first
+- Allow synthesis to proceed if the user chooses — flag unverified content in the output
 
-Warn the user about gaps but allow synthesis with partial data if they choose to proceed.
+Warn about gaps but allow synthesis with partial data if the user chooses to proceed. An incomplete synthesis is more useful than no synthesis — gaps become visible and actionable.
 
 ## Workflow
 
@@ -50,27 +46,17 @@ Warn the user about gaps but allow synthesis with partial data if they choose to
 
 Read all entity files from the project directory:
 - `portfolio.json` for company context
-- All `products/*.json`
-- All `features/*.json`
-- All `markets/*.json`
-- All `propositions/*.json`
-- All `competitors/*.json` (if available)
-- All `customers/*.json` (if available)
+- All `products/*.json`, `features/*.json`, `markets/*.json`, `propositions/*.json`
+- All `competitors/*.json` and `customers/*.json` (if available)
 
-### 2. Load Claim Verification Status
+If `.claims/claims.json` exists, build a lookup of claim status by statement text for marking claims in the output:
+- Verified / resolved claims: no marker needed (trusted)
+- Deviated / unverified claims: mark with `[unverified]`
+- Source unavailable: mark with `[source unavailable]`
 
-If `.claims/claims.json` exists, read it and build a lookup of claim status by statement text. This enables marking claims in the output with their verification status.
+### 2. Generate README.md
 
-Claim status indicators for output:
-- Verified claims: no marker needed (trusted)
-- Resolved claims: no marker needed (user-approved)
-- Deviated claims: mark with `[unverified]` in the output
-- Unverified claims: mark with `[unverified]` in the output
-- Source unavailable: mark with `[source unavailable]` in the output
-
-### 3. Generate README.md
-
-Write a comprehensive `output/README.md` as the main messaging repository document. Structure:
+Write `output/README.md` as the main messaging repository. The structure is designed so each section serves a different use case — the top sections give quick orientation, the matrix gives coverage visibility, and the deep dives provide the detail needed for specific sales or marketing tasks.
 
 ```markdown
 # [Company Name] Portfolio Messaging Repository
@@ -110,7 +96,7 @@ Write a comprehensive `output/README.md` as the main messaging repository docume
 [How this feature's messaging varies across markets]
 ```
 
-### 4. Generate Per-Market Summaries
+### 3. Generate Per-Market Summaries
 
 For each market, create `output/{market-slug}.md` with:
 - Market definition and sizing
@@ -119,19 +105,29 @@ For each market, create `output/{market-slug}.md` with:
 - Competitive analysis per proposition
 - Recommended messaging priorities
 
-### 5. Present Summary
+These standalone market files are useful for handing directly to a sales rep or marketing lead who owns a specific segment.
 
-Show the user:
+### 4. Review with User
+
+Present a synthesis summary before finalizing:
+
 - Total entities synthesized (W products, X features, Y markets, Z propositions)
-- Completion percentage
+- Completion percentage from project-status
+- Coverage gaps (missing propositions, markets without customer profiles, propositions without competitor analysis)
+- Claim verification status (if applicable)
 - Files generated in `output/`
-- Suggested next steps (export for proposals or marketing)
+
+Ask explicitly:
+- Does the README structure capture what you need?
+- Any sections to expand or trim?
+- Ready to proceed to export, or want to fill gaps first?
+
+The user may want to iterate — go back and add missing entities, then re-synthesize. This is the intended workflow: synthesize exposes gaps, upstream skills fill them, re-synthesize produces a more complete repository.
 
 ## Important Notes
 
-- Synthesis is non-destructive -- it reads entity files and writes only to `output/`
+- Synthesis is non-destructive — it reads entity files and writes only to `output/`
 - Re-running synthesis overwrites previous `output/` content
-- The messaging repository is the input for the `export` skill
-- Incomplete portfolios produce incomplete synthesis -- gaps are noted in the output
-- If `.claims/claims.json` exists, claim verification status is reflected in the output
-- Claims marked `[unverified]` signal that the source has not been checked -- readers should treat these with appropriate caution
+- The messaging repository is the primary input for the `export` skill
+- Incomplete portfolios produce incomplete synthesis — gaps are noted in the output
+- Claims marked `[unverified]` signal the source has not been checked — readers should treat these with appropriate caution
