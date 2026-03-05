@@ -51,6 +51,15 @@ weaknesses only where they contrast with genuine strengths.]
 [From the proposition's evidence array. Present as brief case studies
 or data points. Mark any [unverified] claims clearly.]
 
+## Implementation Approach
+[From the solution's implementation phases — phased plan with
+durations. Only include if a solution exists for this proposition.]
+
+## Investment
+[Pricing tiers table from the solution — PoV, Small, Medium, Large
+with price, currency, and scope. Framed as investment levels,
+not a price list. Only include if a solution exists.]
+
 ## Next Steps
 [Concrete call to action appropriate for B2B context:
 demo scheduling, pilot program, technical evaluation.]
@@ -104,6 +113,7 @@ Structured spreadsheet with all portfolio data for analysis and sharing.
 - **Features**: All features with descriptions, categories, and parent product
 - **Markets**: All markets with segmentation and TAM/SAM/SOM
 - **Proposition Matrix**: Feature x Market grid with IS/DOES/MEANS, grouped by product
+- **Solutions**: Implementation phases and pricing tiers per proposition
 - **Competitors**: Competitive analysis per proposition
 - **Customers**: Buyer profiles per market
 - **Summary**: Portfolio statistics and completion status
@@ -144,7 +154,7 @@ When the request is vague ("export my portfolio"), present the options:
 ### 3. Gather Source Data
 
 Read all entity files relevant to the export type:
-- **Proposals** need: the proposition, its feature, its product, the market, the customer profile, and the competitor analysis
+- **Proposals** need: the proposition, its feature, its product, the market, the customer profile, the competitor analysis, and the solution (if available)
 - **Briefs** need: the market, all propositions targeting it, customer profile, and all competitor analyses for those propositions
 - **Workbook** needs: everything
 

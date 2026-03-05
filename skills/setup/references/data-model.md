@@ -142,6 +142,64 @@ Each evidence entry can be a structured object with `statement` (string, require
 
 **Naming convention**: Proposition file names use double-dash (`--`) to join feature and market slugs: `{feature-slug}--{market-slug}.json`
 
+### solutions/{feature-slug}--{market-slug}.json
+
+A solution attaches an implementation plan and pricing tiers to a proposition (same slug). It provides the commercial grounding for customer business cases.
+
+```json
+{
+  "slug": "cloud-monitoring--mid-market-saas",
+  "proposition_slug": "cloud-monitoring--mid-market-saas",
+  "implementation": [
+    {
+      "phase": "Discovery & Setup",
+      "duration_weeks": 2,
+      "description": "Requirements gathering, environment audit, monitoring strategy definition"
+    },
+    {
+      "phase": "Core Deployment",
+      "duration_weeks": 4,
+      "description": "Agent rollout, alerting rules, dashboard configuration, integration with existing tools"
+    },
+    {
+      "phase": "Tuning & Handover",
+      "duration_weeks": 2,
+      "description": "Alert threshold optimization, team training, runbook documentation"
+    }
+  ],
+  "pricing": {
+    "proof_of_value": {
+      "price": 15000,
+      "currency": "EUR",
+      "scope": "Single environment, 2-week guided pilot with defined success criteria"
+    },
+    "small": {
+      "price": 50000,
+      "currency": "EUR",
+      "scope": "Up to 50 nodes, basic alerting, 8-week implementation"
+    },
+    "medium": {
+      "price": 120000,
+      "currency": "EUR",
+      "scope": "Up to 200 nodes, advanced alerting and dashboards, 12-week implementation"
+    },
+    "large": {
+      "price": 250000,
+      "currency": "EUR",
+      "scope": "Unlimited nodes, full observability stack, 16-week implementation with dedicated CSM"
+    }
+  },
+  "created": "2026-03-05"
+}
+```
+
+Required fields: `slug`, `proposition_slug`, `implementation` (array with at least one phase entry), `pricing` (object with `proof_of_value`, `small`, `medium`, `large` tiers)
+Optional fields: `created`
+
+Each implementation phase has `phase` (string, required), `duration_weeks` (number, required), and `description` (string, required). Each pricing tier has `price` (number, required), `currency` (string, required), and `scope` (string, required).
+
+**Naming convention**: Solution file names use the same double-dash (`--`) convention as propositions: `{feature-slug}--{market-slug}.json`
+
 ### competitors/{feature-slug}--{market-slug}.json
 
 Competitive landscape for a specific proposition (same slug as the proposition it analyzes).
@@ -211,6 +269,7 @@ Optional fields: `created`
 | Feature slug | kebab-case, noun-based | `cloud-monitoring` |
 | Market slug | `{segment}-{region}` | `mid-market-saas-dach` |
 | Proposition slug | `{feature}--{market}` | `cloud-monitoring--mid-market-saas-dach` |
+| Solution slug | Same as proposition slug | `cloud-monitoring--mid-market-saas-dach` |
 | Competitor slug | Same as proposition slug | `cloud-monitoring--mid-market-saas-dach` |
 | Customer slug | Same as market slug | `mid-market-saas-dach` |
 
@@ -222,6 +281,7 @@ erDiagram
     Feature ||--|{ Proposition : "maps to"
     Market ||--|{ Proposition : "targets"
     Region ||--|{ Market : "scopes"
+    Proposition ||--o| Solution : "costed by"
     Proposition ||--|| Competitor : "analyzed by"
     Market ||--|| Customer : "profiled by"
 
@@ -265,6 +325,12 @@ erDiagram
         string means_statement
         array evidence
     }
+    Solution {
+        string slug PK "feature--market"
+        string proposition_slug FK
+        array implementation
+        object pricing
+    }
     Competitor {
         string slug PK "feature--market"
         string proposition_slug FK
@@ -281,9 +347,10 @@ erDiagram
 - One region scopes many markets (1:N)
 - One feature can map to many markets (producing many propositions)
 - One market can receive many features (producing many propositions)
+- Each proposition has at most one solution (implementation plan + pricing)
 - Each proposition has exactly one competitor analysis
 - Each market has exactly one customer profile
 - Region is defined in the taxonomy (`regions.json`), not as a project entity
 - Features reference their parent product by `product_slug`
 - Markets reference their region by `region` code
-- Propositions, competitors, and customers reference their parents by slug
+- Propositions, solutions, competitors, and customers reference their parents by slug

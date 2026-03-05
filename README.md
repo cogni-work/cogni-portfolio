@@ -20,6 +20,7 @@ claude plugins add cogni-portfolio
 | `ingest` | Extract portfolio entities from uploaded documents (md, docx, pptx, xlsx, pdf) in the uploads folder |
 | `markets` | Discover and size target markets with TAM/SAM/SOM — via LLM estimation or delegated web research |
 | `propositions` | Generate IS/DOES/MEANS messaging for each Feature x Market pair, individually or in batch |
+| `solutions` | Define implementation plans and pricing tiers (PoV/S/M/L) per proposition for customer business cases |
 | `compete` | Analyze 3-5 competitors per proposition with positioning, strengths, weaknesses, and differentiation |
 | `customers` | Create ideal customer profiles and buyer personas per target market |
 | `verify` | Orchestrate claim verification for research-backed assertions (delegates to cogni-claims plugin) |
@@ -45,7 +46,8 @@ claude plugins add cogni-portfolio
 4. Run `/features` to add capabilities per product
 5. Run `/markets` to discover and size 3-7 target markets
 6. Run `/propositions` to generate IS/DOES/MEANS messaging for all Feature x Market pairs
-7. Run `/compete` to analyze competitors per proposition
+7. Run `/solutions` to define implementation plans and pricing tiers
+8. Run `/compete` to analyze competitors per proposition
 8. Run `/customers` to create buyer personas per market
 9. Run `/verify` to check research-backed claims against sources
 10. Run `/synthesize` to generate the messaging repository
@@ -75,6 +77,7 @@ All entities are stored as JSON files in the project directory:
 | Feature | `features/{slug}.json` | product_slug, name, description, category |
 | Market | `markets/{slug}.json` | name, segmentation, TAM/SAM/SOM |
 | Proposition | `propositions/{feature}--{market}.json` | IS/DOES/MEANS statements, evidence |
+| Solution | `solutions/{feature}--{market}.json` | implementation phases, pricing tiers (PoV/S/M/L) |
 | Competitor | `competitors/{feature}--{market}.json` | name, positioning, strengths, weaknesses |
 | Customer | `customers/{market}.json` | role, pain points, buying criteria |
 

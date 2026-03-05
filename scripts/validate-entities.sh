@@ -136,6 +136,34 @@ with open('$s') as fh:
   done
 fi
 
+# Validate solutions reference valid propositions and have required structure
+if [ -d "$PROJECT_DIR/solutions" ]; then
+  for s in "$PROJECT_DIR/solutions"/*.json; do
+    [ -f "$s" ] || continue
+    slug=$(basename "$s" .json)
+    if [ ! -f "$PROJECT_DIR/propositions/${slug}.json" ]; then
+      add_error "solution" "$slug" "References missing proposition: $slug"
+    fi
+    if ! python3 -c "
+import json, sys
+with open('$s') as fh:
+    d = json.load(fh)
+    if 'proposition_slug' not in d: sys.exit(1)
+    impl = d.get('implementation')
+    if not isinstance(impl, list) or len(impl) == 0: sys.exit(2)
+    for phase in impl:
+        if 'phase' not in phase or 'duration_weeks' not in phase: sys.exit(3)
+    pricing = d.get('pricing')
+    if not isinstance(pricing, dict): sys.exit(4)
+    for tier in ['proof_of_value', 'small', 'medium', 'large']:
+        t = pricing.get(tier)
+        if not isinstance(t, dict) or 'price' not in t or 'currency' not in t: sys.exit(5)
+" 2>/dev/null; then
+      add_error "solution" "$slug" "Missing required fields or invalid structure (needs proposition_slug, implementation phases, pricing tiers)"
+    fi
+  done
+fi
+
 # Validate competitors reference valid propositions
 if [ -d "$PROJECT_DIR/competitors" ]; then
   for c in "$PROJECT_DIR/competitors"/*.json; do

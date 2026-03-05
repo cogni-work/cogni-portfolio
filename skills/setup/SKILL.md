@@ -71,6 +71,7 @@ cogni-portfolio/<project-slug>/
   features/
   markets/
   propositions/
+  solutions/
   competitors/
   customers/
   uploads/
@@ -90,8 +91,9 @@ Present the created project structure and suggest the full workflow. If the user
 3. Add features to each product with the `features` skill
 4. Discover target markets with the `markets` skill
 5. Generate proposition messaging with the `propositions` skill
-6. Enrich with `compete` (competitor analysis) and `customers` (buyer profiles)
-7. Verify web-sourced claims with the `verify` skill
+6. Define implementation plans and pricing with the `solutions` skill
+7. Enrich with `compete` (competitor analysis) and `customers` (buyer profiles)
+8. Verify web-sourced claims with the `verify` skill
 8. Aggregate into messaging repository with the `synthesize` skill
 9. Generate deliverables with the `export` skill
 
@@ -105,6 +107,7 @@ The portfolio data model has six entity types:
 | Feature (IS) | `features/{slug}.json` | Market-independent capability (belongs to a product) |
 | Market | `markets/{slug}.json` | Target segment with TAM/SAM/SOM |
 | Proposition | `propositions/{feat}--{mkt}.json` | Feature x Market = DOES + MEANS |
+| Solution | `solutions/{feat}--{mkt}.json` | Implementation plan + pricing tiers per proposition |
 | Competitor | `competitors/{feat}--{mkt}.json` | Per-proposition competitive landscape |
 | Customer | `customers/{mkt}.json` | Per-market ideal buyer profile |
 | Claims | `cogni-claims/claims.json` | Web-sourced claim verification registry |

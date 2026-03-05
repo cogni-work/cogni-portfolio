@@ -51,6 +51,7 @@ Show a concise, scannable dashboard. Lead with the company name and project slug
 | Features | N | |
 | Markets | N | |
 | Propositions | N / expected | pct% |
+| Solutions | N / propositions | pct% |
 | Competitors | N / propositions | pct% |
 | Customers | N / markets | pct% |
 | Claims | N total | V verified, D deviated, U unverified |
@@ -59,7 +60,7 @@ Show a concise, scannable dashboard. Lead with the company name and project slug
 After the table:
 - **Phase** — translate the `phase` value into plain language (see reference below)
 - **Uploads notice** — if `counts.uploads > 0`, always mention pending files regardless of phase
-- **Gaps** — if `missing_propositions` is non-empty, list the first few missing pairs; note incomplete competitors/customers
+- **Gaps** — if `missing_propositions` is non-empty, list the first few missing pairs; note incomplete solutions/competitors/customers
 
 Keep the tone warm and oriented toward action — this is a welcome-back moment, not a status report. The user should feel oriented, not overwhelmed.
 
@@ -77,7 +78,7 @@ If the phase is `complete`, congratulate the user and suggest reviewing outputs 
 | `features` | Products exist, no features | Run `features` skill |
 | `markets` | Features defined, no markets | Run `markets` skill |
 | `propositions` | Feature x Market pairs need messaging | Run `propositions` skill |
-| `enrichment` | Propositions exist, competitor/customer gaps remain | Run `compete` and/or `customers` |
+| `enrichment` | Propositions exist, solution/competitor/customer gaps remain | Run `solutions`, `compete`, and/or `customers` |
 | `verification` | Unverified or deviated claims pending | Run `verify` skill |
 | `synthesis` | All entities complete, claims clean | Run `synthesize` skill |
 | `export` | Overview generated, deliverables pending | Run `export` skill |

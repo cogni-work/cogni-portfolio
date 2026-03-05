@@ -47,6 +47,7 @@ Warn about gaps but allow synthesis with partial data if the user chooses to pro
 Read all entity files from the project directory:
 - `portfolio.json` for company context
 - All `products/*.json`, `features/*.json`, `markets/*.json`, `propositions/*.json`
+- All `solutions/*.json` (if available — implementation plans and pricing)
 - All `competitors/*.json` and `customers/*.json` (if available)
 
 If `cogni-claims/claims.json` exists, build a lookup of claim status by statement text for marking claims in the output:
@@ -79,6 +80,9 @@ Write `output/README.md` as the main messaging repository. The structure is desi
 ## Proposition Messaging Matrix
 [Table: Feature x Market with IS/DOES/MEANS for each cell, grouped by product]
 
+## Solution Overview
+[For each solution: proposition, implementation phases summary, pricing tiers table (PoV/S/M/L)]
+
 ## Market Deep Dives
 [For each market:]
 ### [Market Name]
@@ -86,6 +90,8 @@ Write `output/README.md` as the main messaging repository. The structure is desi
 [Buyer profiles from customers/{market}.json]
 #### Propositions by Product
 [All propositions targeting this market, grouped by product, with full IS/DOES/MEANS]
+#### Solution Plans
+[Implementation phases and pricing tiers for each proposition in this market, if solution exists]
 #### Competitive Landscape
 [Competitor analysis for each proposition in this market]
 

@@ -33,6 +33,7 @@ PRODUCTS=$(count_json "products")
 FEATURES=$(count_json "features")
 MARKETS=$(count_json "markets")
 PROPOSITIONS=$(count_json "propositions")
+SOLUTIONS=$(count_json "solutions")
 COMPETITORS=$(count_json "competitors")
 CUSTOMERS=$(count_json "customers")
 EXPECTED_PROPOSITIONS=$((FEATURES * MARKETS))
@@ -96,7 +97,9 @@ fi
 
 # Find missing propositions (Feature x Market pairs without a proposition file)
 missing_arr="["
+missing_sol_arr="["
 first=true
+sol_first=true
 if [ "$FEATURES" -gt 0 ] && [ "$MARKETS" -gt 0 ]; then
   for f in "$PROJECT_DIR/features"/*.json; do
     [ -f "$f" ] || continue
@@ -104,15 +107,24 @@ if [ "$FEATURES" -gt 0 ] && [ "$MARKETS" -gt 0 ]; then
     for m in "$PROJECT_DIR/markets"/*.json; do
       [ -f "$m" ] || continue
       m_slug=$(basename "$m" .json)
-      prop="$PROJECT_DIR/propositions/${f_slug}--${m_slug}.json"
+      pair="${f_slug}--${m_slug}"
+      prop="$PROJECT_DIR/propositions/${pair}.json"
       if [ ! -f "$prop" ]; then
         if $first; then first=false; else missing_arr="$missing_arr, "; fi
-        missing_arr="$missing_arr\"${f_slug}--${m_slug}\""
+        missing_arr="$missing_arr\"${pair}\""
+      else
+        # Only check for missing solution if proposition exists
+        sol="$PROJECT_DIR/solutions/${pair}.json"
+        if [ ! -f "$sol" ]; then
+          if $sol_first; then sol_first=false; else missing_sol_arr="$missing_sol_arr, "; fi
+          missing_sol_arr="$missing_sol_arr\"${pair}\""
+        fi
       fi
     done
   done
 fi
 missing_arr="$missing_arr]"
+missing_sol_arr="$missing_sol_arr]"
 
 MISSING_COUNT=$((EXPECTED_PROPOSITIONS - PROPOSITIONS))
 if [ "$MISSING_COUNT" -lt 0 ]; then MISSING_COUNT=0; fi
@@ -123,8 +135,10 @@ else
   PROPOSITIONS_PCT=0
 fi
 if [ "$PROPOSITIONS" -gt 0 ]; then
+  SOLUTIONS_PCT=$(( SOLUTIONS * 100 / PROPOSITIONS ))
   COMPETITORS_PCT=$(( COMPETITORS * 100 / PROPOSITIONS ))
 else
+  SOLUTIONS_PCT=0
   COMPETITORS_PCT=0
 fi
 if [ "$MARKETS" -gt 0 ]; then
@@ -187,7 +201,7 @@ elif [ "$MARKETS" -eq 0 ]; then
   PHASE="markets"
 elif [ "$MISSING_COUNT" -gt 0 ]; then
   PHASE="propositions"
-elif [ "$COMPETITORS_PCT" -lt 100 ] || [ "$CUSTOMERS_PCT" -lt 100 ]; then
+elif [ "$SOLUTIONS_PCT" -lt 100 ] || [ "$COMPETITORS_PCT" -lt 100 ] || [ "$CUSTOMERS_PCT" -lt 100 ]; then
   PHASE="enrichment"
 elif [ "$HAS_CLAIMS" = "true" ] && [ "$CLAIMS_PENDING" -gt 0 ]; then
   PHASE="verification"
@@ -226,6 +240,10 @@ case "$PHASE" in
     add_action "propositions" "$MISSING_COUNT of $EXPECTED_PROPOSITIONS Feature x Market pairs pending"
     ;;
   enrichment)
+    if [ "$SOLUTIONS_PCT" -lt 100 ]; then
+      missing_sol=$((PROPOSITIONS - SOLUTIONS))
+      add_action "solutions" "$missing_sol proposition(s) lack solution plans"
+    fi
     if [ "$COMPETITORS_PCT" -lt 100 ]; then
       missing_comp=$((PROPOSITIONS - COMPETITORS))
       add_action "compete" "$missing_comp proposition(s) lack competitor analysis"
@@ -257,6 +275,7 @@ cat << EOF
     "markets": $MARKETS,
     "propositions": $PROPOSITIONS,
     "expected_propositions": $EXPECTED_PROPOSITIONS,
+    "solutions": $SOLUTIONS,
     "competitors": $COMPETITORS,
     "customers": $CUSTOMERS,
     "uploads": $UPLOADS
@@ -274,10 +293,12 @@ cat << EOF
   "markets": $market_arr,
   "regions": $region_summary,
   "missing_propositions": $missing_arr,
+  "missing_solutions": $missing_sol_arr,
   "phase": "$PHASE",
   "next_actions": $next_actions,
   "completion": {
     "propositions_pct": $PROPOSITIONS_PCT,
+    "solutions_pct": $SOLUTIONS_PCT,
     "competitors_pct": $COMPETITORS_PCT,
     "customers_pct": $CUSTOMERS_PCT
   }
