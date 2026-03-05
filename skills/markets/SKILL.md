@@ -1,9 +1,11 @@
 ---
 name: markets
 description: |
-  This skill should be used when the user asks to "discover markets",
-  "target markets", "TAM SAM SOM", "market sizing", "select markets",
-  "add a market", or "which markets to target". Proposes and sizes target markets.
+  Discover, evaluate, and size target markets for the portfolio.
+  Use whenever the user mentions target markets, market segments, TAM SAM SOM,
+  market sizing, "which markets to enter", market selection, addressable market,
+  segmentation, or wants to define who they're selling to — even if they don't
+  say "market" explicitly.
 ---
 
 # Market Discovery and Sizing
@@ -17,6 +19,8 @@ A target market is defined by segmentation criteria (geography, company size, ve
 - **TAM** (Total Addressable Market): Total global demand for the capability category
 - **SAM** (Serviceable Available Market): The portion reachable given geography, segment, and channel constraints
 - **SOM** (Serviceable Obtainable Market): Realistically achievable share in 1-3 years
+
+Markets matter because every downstream entity depends on them. Propositions combine a feature with a market. Customer profiles are market-scoped. Competitive analysis is proposition-scoped (and therefore market-scoped). Poorly defined markets propagate fuzzy thinking through the entire portfolio; precise markets make messaging, differentiation, and sizing sharper everywhere.
 
 ## Workflow
 
@@ -32,14 +36,16 @@ Present candidates as a numbered list and ask the user to select which markets t
 
 ### 2. Size Selected Markets
 
-For each selected market, determine TAM/SAM/SOM. Two modes are available:
+For each selected market, determine TAM/SAM/SOM. Two modes:
 
-**LLM estimation (default)**: Generate reasonable estimates from training knowledge. Clearly label these as estimates and note confidence level.
-
-**Web research (optional)**: When the user requests research-backed sizing, delegate to the `market-researcher` agent which performs web searches for market data. Invoke with:
+**Web research (default)**: Delegate to a subagent (Agent tool) to search for market reports, analyst estimates, and industry data. Provide the subagent with:
 - Market name and segmentation criteria
 - Feature categories being addressed
 - Geographic scope
+
+Multiple agents can be launched in parallel for different markets.
+
+**LLM estimation (fallback)**: When web search is unavailable, generate reasonable estimates from training knowledge. Clearly label these as estimates and note confidence level.
 
 ### 3. Create Market Entities
 
@@ -80,16 +86,34 @@ Write each market as a JSON file to `markets/{slug}.json`:
 
 Required: `slug`, `name`, `description`. Optional: `segmentation`, `tam`, `sam`, `som`.
 
-### 4. Review Feature x Market Matrix
+### 4. Review with User
 
-After markets are defined, show the user the Feature x Market matrix to preview which propositions will need to be generated:
+Present proposed markets for review. Ask explicitly:
 
-| Feature \ Market | mid-market-saas | enterprise-fintech |
-|---|---|---|
-| cloud-monitoring | pending | pending |
-| api-gateway | pending | pending |
+- Are these the right segments? Missing any obvious market?
+- Do the segmentation criteria feel right — too narrow or too broad?
+- Do the TAM/SAM/SOM numbers pass the gut check?
+- Any markets that overlap and should be merged?
 
-Use `$CLAUDE_PLUGIN_ROOT/scripts/project-status.sh` to generate this overview.
+The user knows their business better than any research — iterate until the markets feel accurate.
+
+### 5. Validate Against Portfolio
+
+Cross-reference markets with existing portfolio entities:
+
+- **Features**: Preview the Feature x Market matrix to show which propositions will need to be generated. Use `$CLAUDE_PLUGIN_ROOT/scripts/project-status.sh` to generate this overview.
+- **Existing propositions**: Check if any propositions reference markets that don't exist (orphaned references)
+- **Market overlap**: Flag markets with near-identical segmentation criteria — they may need merging
+
+These checks catch gaps early: a market with zero relevant features suggests a misfit; a feature with no matching market suggests an untapped opportunity.
+
+### Editing Markets
+
+Read the existing market JSON, apply the user's changes, and write back. Changing a market slug requires renaming the file and updating any dependent entities (propositions in `propositions/`, customers in `customers/`, competitors in `competitors/`).
+
+### Listing Markets
+
+Read all JSON files in the project's `markets/` directory. Present as a table with segmentation summary and sizing status (sized vs. unsized).
 
 ## Market Selection Criteria
 
