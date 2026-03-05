@@ -135,12 +135,12 @@ CLAIMS_DEVIATED=0
 CLAIMS_RESOLVED=0
 CLAIMS_UNAVAILABLE=0
 HAS_CLAIMS="false"
-if [ -f "$PROJECT_DIR/.claims/claims.json" ]; then
+if [ -f "$PROJECT_DIR/cogni-claims/claims.json" ]; then
   HAS_CLAIMS="true"
   eval "$(python3 -c "
 import json, sys
 try:
-    with open('$PROJECT_DIR/.claims/claims.json') as f:
+    with open('$PROJECT_DIR/cogni-claims/claims.json') as f:
         data = json.load(f)
     claims = data.get('claims', [])
     counts = {}

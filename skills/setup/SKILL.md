@@ -107,7 +107,7 @@ The portfolio data model has six entity types:
 | Proposition | `propositions/{feat}--{mkt}.json` | Feature x Market = DOES + MEANS |
 | Competitor | `competitors/{feat}--{mkt}.json` | Per-proposition competitive landscape |
 | Customer | `customers/{mkt}.json` | Per-market ideal buyer profile |
-| Claims | `.claims/claims.json` | Web-sourced claim verification registry |
+| Claims | `cogni-claims/claims.json` | Web-sourced claim verification registry |
 
 For complete entity schemas and naming conventions, consult `$CLAUDE_PLUGIN_ROOT/skills/setup/references/data-model.md`.
 

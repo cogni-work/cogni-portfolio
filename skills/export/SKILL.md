@@ -124,7 +124,7 @@ Generate all deliverables at once: proposals for each proposition, briefs for ea
 
 Read `output/README.md` to confirm synthesis has been run. If not, suggest running the `synthesize` skill first.
 
-If `.claims/claims.json` exists, read it and check for unresolved deviations or unverified claims. If found, warn the user:
+If `cogni-claims/claims.json` exists, read it and check for unresolved deviations or unverified claims. If found, warn the user:
 ```
 Claim Status: N unverified, N deviated (unresolved)
 Exports will include verification status markers for unverified claims.
@@ -158,7 +158,7 @@ Write each deliverable following the content structures above. Keep these princi
 
 **Length**: Proposals should be 1-2 pages. Briefs should be 2-3 pages. Enough to be useful, short enough to actually get read.
 
-**Claims**: If `.claims/claims.json` exists, cross-reference evidence statements. Mark unverified or deviated claims with `[unverified]`. Include a "Data Quality" note when unverified claims are present, advising readers to validate flagged data points independently.
+**Claims**: If `cogni-claims/claims.json` exists, cross-reference evidence statements. Mark unverified or deviated claims with `[unverified]`. Include a "Data Quality" note when unverified claims are present, advising readers to validate flagged data points independently.
 
 ### 5. Present Results
 

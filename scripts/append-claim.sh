@@ -1,8 +1,8 @@
 #!/bin/bash
-# Atomically append a claim to .claims/claims.json with file locking.
+# Atomically append a claim to cogni-claims/claims.json with file locking.
 # Usage: append-claim.sh <project-dir> <claim-json>
 # The claim-json argument is a single JSON object (the claim to append).
-# Creates .claims/ directory and claims.json if they don't exist.
+# Creates cogni-claims/ directory and claims.json if they don't exist.
 # Uses mkdir-based locking (portable across macOS and Linux) to prevent
 # race conditions when agents run in parallel.
 # Exit codes: 0 = success, 1 = error
@@ -16,7 +16,7 @@ if [ -z "$PROJECT_DIR" ] || [ -z "$CLAIM_JSON" ]; then
   exit 1
 fi
 
-CLAIMS_DIR="$PROJECT_DIR/.claims"
+CLAIMS_DIR="$PROJECT_DIR/cogni-claims"
 CLAIMS_FILE="$CLAIMS_DIR/claims.json"
 LOCK_DIR="$CLAIMS_DIR/.claims.lock"
 

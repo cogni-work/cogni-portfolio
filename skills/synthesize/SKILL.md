@@ -33,7 +33,7 @@ Minimum requirements:
 - At least 1 product, 1 feature (with valid product_slug), 1 market, and 1 proposition
 - `portfolio.json` has company context filled in
 
-If `.claims/claims.json` exists, check claim verification status:
+If `cogni-claims/claims.json` exists, check claim verification status:
 - Count claims by status (verified, deviated, unverified, source unavailable)
 - If unverified or deviated claims exist, warn the user and recommend running the `verify` skill first
 - Allow synthesis to proceed if the user chooses — flag unverified content in the output
@@ -49,7 +49,7 @@ Read all entity files from the project directory:
 - All `products/*.json`, `features/*.json`, `markets/*.json`, `propositions/*.json`
 - All `competitors/*.json` and `customers/*.json` (if available)
 
-If `.claims/claims.json` exists, build a lookup of claim status by statement text for marking claims in the output:
+If `cogni-claims/claims.json` exists, build a lookup of claim status by statement text for marking claims in the output:
 - Verified / resolved claims: no marker needed (trusted)
 - Deviated / unverified claims: mark with `[unverified]`
 - Source unavailable: mark with `[source unavailable]`
