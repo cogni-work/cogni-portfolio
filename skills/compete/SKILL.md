@@ -1,10 +1,11 @@
 ---
 name: compete
 description: |
-  This skill should be used when the user asks to "analyze competitors",
-  "competitive analysis", "competitor research", "who competes",
-  "competitive landscape", "battle card", or "competitive positioning".
-  Analyzes competitors per proposition.
+  Analyze competitors for portfolio propositions — competitive landscape,
+  battle cards, positioning, differentiation. Use whenever the user mentions
+  competitors, competitive analysis, "who else does this", SWOT, win/loss,
+  how a proposition stacks up, or wants to understand competitive positioning
+  in a market — even if they don't say "compete" explicitly.
 ---
 
 # Competitive Analysis
@@ -19,7 +20,9 @@ Competitive analysis is scoped to propositions, not features or markets alone. A
 
 ### 1. Select Propositions to Analyze
 
-List existing propositions (read `propositions/` directory) and identify those without competitor files. Present options to the user:
+List existing propositions (read the `propositions/` directory in the project root) and identify those without corresponding competitor files in `competitors/`. If no propositions exist yet, tell the user they need to create propositions first (via the `propose` skill) before competitive analysis can begin.
+
+Present options to the user:
 
 - Analyze all pending propositions
 - Analyze a specific proposition
@@ -29,12 +32,14 @@ List existing propositions (read `propositions/` directory) and identify those w
 
 For each selected proposition, identify 3-5 relevant competitors. Two modes:
 
-**LLM knowledge (default)**: Identify known competitors based on the feature category and market segment. Clearly note that competitor data is based on training knowledge and may not reflect latest positioning.
-
-**Web research (recommended)**: Delegate to the `competitor-researcher` agent which searches for:
+**Web research (default)**: Use the Agent tool to delegate to the `competitor-researcher` agent, which searches for:
 - Companies offering similar capabilities in this market
 - Recent competitive moves, pricing changes, product launches
 - Market analyst reports and comparisons
+
+Multiple agents can be launched in parallel for different propositions.
+
+**LLM knowledge (fallback)**: When web search is unavailable, identify known competitors based on the feature category and market segment. Clearly note that competitor data is based on training knowledge and may not reflect latest positioning.
 
 ### 3. Structure Competitor Analysis
 
@@ -85,4 +90,5 @@ Strong differentiation statements:
 - Competitor files share the same slug as their parent proposition
 - One competitor file per proposition, containing an array of all competitors
 - Competitive intelligence ages quickly -- note the date of analysis
+- The competitor-researcher agent automatically submits verifiable claims (pricing, market share, positioning quotes) to the claims workspace for downstream verification
 - Refer to `$CLAUDE_PLUGIN_ROOT/skills/setup/references/data-model.md` for complete entity schemas
