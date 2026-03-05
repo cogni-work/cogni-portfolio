@@ -1,10 +1,11 @@
 ---
 name: features
 description: |
-  This skill should be used when the user asks to "define features",
-  "add a feature", "list features", "edit feature", "manage features",
-  "capabilities", or "what does the product do". Manages market-independent
-  features (IS layer).
+  Define and manage market-independent product features (IS layer of FAB).
+  Use whenever the user mentions features, capabilities, product specs,
+  "what does it do", feature extraction, feature inventory, or wants to
+  break a product into its component capabilities — even if they don't
+  say "feature" explicitly.
 ---
 
 # Feature Management
@@ -15,6 +16,8 @@ Define and manage market-independent product features -- the IS layer of the FAB
 
 A feature is a factual, market-independent statement about a product capability, specification, or function. Features do not include advantages or benefits -- those emerge when a feature meets a specific target market (handled by the `propositions` skill).
 
+This matters because features are the foundation of the entire portfolio. Every downstream entity -- propositions, competitors, customers, export deliverables -- traces back to features. Vague or overlapping features propagate confusion through the whole pipeline; precise features make everything downstream sharper.
+
 Good features are:
 - **Specific**: "Real-time container orchestration monitoring" not "monitoring"
 - **Factual**: Describe what exists, not what it enables
@@ -22,21 +25,31 @@ Good features are:
 
 ## Workflow
 
-### Adding Features
+### 1. Select Product
 
-1. First, check that at least one product exists in `products/`. If no products exist, instruct the user to define products first using the `products` skill.
-2. Ask the user which product this feature belongs to (or determine from context if only one product exists)
-3. Ask the user to describe their product capabilities, or review existing product documentation
-4. Extract distinct, market-independent features
-5. For each feature, determine:
-   - **slug**: kebab-case identifier (e.g., `cloud-monitoring`)
-   - **product_slug**: The slug of the parent product (e.g., `cloud-platform`)
-   - **name**: Human-readable name (e.g., "Cloud Infrastructure Monitoring")
-   - **description**: 1-3 sentence factual description of what it IS
-   - **category** (optional): Grouping label (e.g., "observability", "security")
-6. Write each feature as a JSON file to `features/{slug}.json`
+Check that at least one product exists in `products/`. If none exist, tell the user to define products first using the `products` skill. If only one product exists, use it automatically. If multiple exist, ask the user which product these features belong to.
 
-### Feature JSON Schema
+### 2. Gather Feature Intelligence
+
+Build the feature list from available sources:
+
+- **User input**: Ask the user to describe their product capabilities directly
+- **Existing product docs** (`products/{slug}.json`): The product description often contains implicit features
+- **Proposition backfill** (`propositions/`): If propositions already exist, their feature references reveal what features are assumed
+
+**Web research (optional)**: When the user provides a product URL or asks for research-backed features, delegate to a subagent (Agent tool) to extract capabilities from the product's website, documentation, or marketing pages. This is especially useful for products where the user hasn't documented all capabilities yet.
+
+### 3. Extract and Structure Features
+
+For each distinct capability, determine:
+
+- **slug**: kebab-case identifier (e.g., `cloud-monitoring`)
+- **product_slug**: The slug of the parent product (e.g., `cloud-platform`)
+- **name**: Human-readable name (e.g., "Cloud Infrastructure Monitoring")
+- **description**: 1-3 sentence factual description of what it IS
+- **category** (optional): Grouping label (e.g., "observability", "security")
+
+### 4. Feature JSON Schema
 
 ```json
 {
@@ -51,17 +64,40 @@ Good features are:
 
 Required: `slug`, `product_slug`, `name`, `description`. Optional: `category`, `created`.
 
-### Listing Features
+Write each feature as a JSON file to `features/{slug}.json`.
 
-Read all JSON files in the project's `features/` directory. Present as a table:
+### 5. Review with User
+
+Present proposed features as a table for review:
 
 | Slug | Product | Name | Category |
 |---|---|---|---|
 | cloud-monitoring | cloud-platform | Cloud Infrastructure Monitoring | observability |
 
+Ask explicitly:
+- Are these the right capabilities? Missing anything?
+- Any features that overlap or should be merged?
+- Do the names and descriptions feel accurate?
+
+Iterate until the feature set feels right. The user knows their product best.
+
+### 6. Validate Against Portfolio
+
+Cross-reference features with existing portfolio entities:
+
+- **Products**: Every feature must reference a valid `product_slug`
+- **Propositions**: Check if any propositions reference features that don't exist (orphaned references)
+- **Coverage**: Flag products that have zero features -- they need attention
+
+These checks catch data model inconsistencies early, before they cascade into downstream skills.
+
 ### Editing Features
 
 Read the existing feature JSON, apply the user's changes, and write back. Changing a feature slug requires renaming the file and updating any dependent propositions. Changing `product_slug` reassigns the feature to a different product.
+
+### Listing Features
+
+Read all JSON files in the project's `features/` directory. Present grouped by product, with category subgrouping where categories exist.
 
 ### Bulk Import
 
