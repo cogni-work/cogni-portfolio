@@ -15,10 +15,17 @@ fi
 
 errors="["
 first=true
+warnings="["
+first_warning=true
 
 add_error() {
   if $first; then first=false; else errors="$errors, "; fi
   errors="$errors{\"entity\": \"$1\", \"file\": \"$2\", \"message\": \"$3\"}"
+}
+
+add_warning() {
+  if $first_warning; then first_warning=false; else warnings="$warnings, "; fi
+  warnings="$warnings{\"entity\": \"$1\", \"file\": \"$2\", \"message\": \"$3\"}"
 }
 
 # Check portfolio.json exists and has required fields
@@ -144,7 +151,8 @@ if [ -d "$PROJECT_DIR/solutions" ]; then
     if [ ! -f "$PROJECT_DIR/propositions/${slug}.json" ]; then
       add_error "solution" "$slug" "References missing proposition: $slug"
     fi
-    if ! python3 -c "
+    exit_code=0
+    python3 -c "
 import json, sys
 with open('$s') as fh:
     d = json.load(fh)
@@ -153,12 +161,18 @@ with open('$s') as fh:
     if not isinstance(impl, list) or len(impl) == 0: sys.exit(2)
     for phase in impl:
         if 'phase' not in phase or 'duration_weeks' not in phase: sys.exit(3)
+        dw = phase.get('duration_weeks')
+        if not isinstance(dw, (int, float)) and not (isinstance(dw, str) and dw.isdigit()):
+            sys.exit(6)
     pricing = d.get('pricing')
     if not isinstance(pricing, dict): sys.exit(4)
     for tier in ['proof_of_value', 'small', 'medium', 'large']:
         t = pricing.get(tier)
         if not isinstance(t, dict) or 'price' not in t or 'currency' not in t: sys.exit(5)
-" 2>/dev/null; then
+" 2>/dev/null || exit_code=$?
+    if [ "$exit_code" -eq 6 ]; then
+      add_warning "solution" "$slug" "Non-numeric duration_weeks value (e.g. 'ongoing') — accepted but may affect duration totals"
+    elif [ "$exit_code" -ne 0 ]; then
       add_error "solution" "$slug" "Missing required fields or invalid structure (needs proposition_slug, implementation phases, pricing tiers)"
     fi
   done
@@ -187,11 +201,12 @@ if [ -d "$PROJECT_DIR/customers" ]; then
 fi
 
 errors="$errors]"
+warnings="$warnings]"
 
 if $first; then
-  echo '{"valid": true, "errors": []}'
+  echo "{\"valid\": true, \"errors\": [], \"warnings\": $warnings}"
   exit 0
 else
-  echo "{\"valid\": false, \"errors\": $errors}"
+  echo "{\"valid\": false, \"errors\": $errors, \"warnings\": $warnings}"
   exit 1
 fi

@@ -1267,7 +1267,19 @@ body::after {{
         for ss, s_ent in sorted(data["solutions"].items()):
             impl = s_ent.get("implementation", [])
             pricing = s_ent.get("pricing", {})
-            total_weeks = sum(ph.get("duration_weeks", 0) for ph in impl)
+            def safe_weeks(val):
+                try:
+                    return int(val)
+                except (TypeError, ValueError):
+                    return 0
+
+            has_non_numeric = any(
+                not isinstance(ph.get("duration_weeks", 0), (int, float))
+                and not str(ph.get("duration_weeks", "0")).isdigit()
+                for ph in impl
+            )
+            total_weeks = sum(safe_weeks(ph.get("duration_weeks", 0)) for ph in impl)
+            duration_display = f"{total_weeks}w+" if has_non_numeric else f"{total_weeks}w"
             phase_names = " → ".join(ph.get("phase", "?") for ph in impl)
 
             def tier_str(tier_key, pr=pricing):
@@ -1279,7 +1291,7 @@ body::after {{
             html += f"""        <tr style="cursor:pointer" onclick="openProposition('{escape_js_string(ss)}')">
           <td style="font-weight:500">{escape_html(ss)}</td>
           <td style="font-size:12px;color:var(--text2)">{escape_html(phase_names)}</td>
-          <td class="mono">{total_weeks}w</td>
+          <td class="mono">{duration_display}</td>
           <td class="price">{tier_str("proof_of_value")}</td>
           <td class="price">{tier_str("small")}</td>
           <td class="price">{tier_str("medium")}</td>
@@ -1389,7 +1401,7 @@ function openProposition(slug) {{
     html += '<div class="section-label">Implementation</div>';
     html += '<table><thead><tr><th>Phase</th><th>Duration</th><th>Description</th></tr></thead><tbody>';
     (s.implementation || []).forEach(ph => {{
-      html += '<tr><td style="font-weight:500">' + esc(ph.phase) + '</td><td class="mono">' + ph.duration_weeks + 'w</td><td style="color:var(--text2)">' + esc(ph.description) + '</td></tr>';
+      html += '<tr><td style="font-weight:500">' + esc(ph.phase) + '</td><td class="mono">' + (isNaN(ph.duration_weeks) ? esc(String(ph.duration_weeks)) : ph.duration_weeks + 'w') + '</td><td style="color:var(--text2)">' + esc(ph.description) + '</td></tr>';
     }});
     html += '</tbody></table>';
 
