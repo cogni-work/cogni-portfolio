@@ -38,6 +38,8 @@ Read these files to build a complete picture before planning. Read all four in p
 3. **Parent product JSON** at `products/{product_slug}.json` (using `product_slug` from the feature) -- pricing tier and maturity inform price range
 4. **Market JSON** at `markets/{market_slug}.json` -- region (for currency), segmentation (for scope assumptions), and TAM/SAM (for price calibration)
 
+5. Check `portfolio.json` for a `language` field. If present, generate all user-facing text content (phase descriptions, scope text) in that language. JSON field names and slugs remain in English. If no `language` field is present, default to English.
+
 Then analyze the intersection: what does it take to deliver the proposition's DOES statement to this market, and what would a buyer in this segment expect to pay?
 
 ## Implementation Planning

@@ -13,12 +13,16 @@
     "industry": "Industry sector",
     "products": ["Product A", "Product B"]
   },
+  "language": "de",
   "created": "2026-01-15",
   "updated": "2026-02-20"
 }
 ```
 
 Required fields: `slug`, `company.name`, `company.description`, `company.industry`
+Optional fields: `language`, `created`, `updated`
+
+The `language` field is a lowercase ISO 639-1 code (e.g., `"de"`, `"en"`, `"fr"`). If absent, defaults to `"en"`. It controls the language of all generated user-facing text content (descriptions, statements, messaging, proposals, briefs, profile text). JSON field names and slugs always remain in English.
 
 ### products/{slug}.json
 

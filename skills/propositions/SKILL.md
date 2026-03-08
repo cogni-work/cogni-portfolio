@@ -143,4 +143,5 @@ A proposition can be deleted freely -- it has no downstream dependents. Confirm 
 - Aim for one proposition per Feature x Market pair; missing pairs show up in `project-status.sh` output
 - Evidence is optional but strengthens downstream proposals and enables claim verification
 - Changing a feature or market slug after propositions exist requires renaming proposition files
+- **Content Language**: Read `portfolio.json` in the project root. If a `language` field is present, generate all user-facing text content (IS/DOES/MEANS statements, evidence descriptions) in that language. JSON field names and slugs remain in English. If no `language` field is present, default to English.
 - Refer to `$CLAUDE_PLUGIN_ROOT/skills/setup/references/data-model.md` for complete entity schemas

@@ -91,4 +91,5 @@ Strong differentiation statements:
 - One competitor file per proposition, containing an array of all competitors
 - Competitive intelligence ages quickly -- note the date of analysis
 - The competitor-researcher agent automatically submits verifiable claims (pricing, market share, positioning quotes) to the claims workspace for downstream verification
+- **Content Language**: Read `portfolio.json` in the project root. If a `language` field is present, generate all user-facing text content (positioning, strengths/weaknesses, differentiation statements) in that language. JSON field names and slugs remain in English. If no `language` field is present, default to English.
 - Refer to `$CLAUDE_PLUGIN_ROOT/skills/setup/references/data-model.md` for complete entity schemas

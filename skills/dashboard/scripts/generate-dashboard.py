@@ -298,6 +298,7 @@ def generate_html(data, status, project_dir, theme):
     company_desc = escape_html(company.get("description", ""))
     company_industry = escape_html(company.get("industry", ""))
     project_slug = escape_html(portfolio.get("slug", ""))
+    html_lang = escape_html(portfolio.get("language", "en"))
 
     counts = status.get("counts", {}) if status else {}
     completion = status.get("completion", {}) if status else {}
@@ -331,7 +332,7 @@ def generate_html(data, status, project_dir, theme):
     fonts_import = f"@import url('{fonts_url}');" if fonts_url else ""
 
     html = f"""<!DOCTYPE html>
-<html lang="en">
+<html lang="{html_lang}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">

@@ -182,4 +182,5 @@ List generated files with paths. Suggest how to use each deliverable:
 - Exports read from entity files directly, not from `output/README.md` — they are independently generated
 - All exports go to subdirectories within `output/`
 - Re-running an export overwrites previous output for that deliverable
+- **Content Language**: Read `portfolio.json` in the project root. If a `language` field is present, generate all user-facing text content (proposals, briefs, summaries) in that language. JSON field names and slugs remain in English. If no `language` field is present, default to English.
 - Running `synthesize` first is recommended but not strictly required

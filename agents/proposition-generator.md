@@ -38,6 +38,8 @@ Read these files to build a complete picture before drafting:
 3. **Market JSON** at the path provided in the task -- segmentation and pain points drive DOES/MEANS
 4. **portfolio.json** -- company context and strategic direction
 
+5. Check `portfolio.json` for a `language` field. If present, generate all user-facing text content (IS/DOES/MEANS statements, evidence descriptions) in that language. JSON field names and slugs remain in English. If no `language` field is present, default to English.
+
 Then analyze the intersection: what problems does this market segment face that this feature addresses?
 
 ## IS/DOES/MEANS Framework

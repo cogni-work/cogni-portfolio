@@ -155,4 +155,5 @@ When proposing markets, prioritize segments where:
 - The same segment in different regions = different markets (different sizing, messaging, competitors)
 - TAM/SAM/SOM values are always estimates -- label sources clearly and use the region's default currency
 - Valid region codes are defined in `$CLAUDE_PLUGIN_ROOT/skills/setup/references/regions.json`
+- **Content Language**: Read `portfolio.json` in the project root. If a `language` field is present, generate all user-facing text content (market descriptions, segmentation labels, rationale) in that language. JSON field names and slugs remain in English. If no `language` field is present, default to English.
 - Refer to `$CLAUDE_PLUGIN_ROOT/skills/setup/references/data-model.md` for complete entity schemas

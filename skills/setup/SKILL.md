@@ -32,6 +32,8 @@ Collect four required fields:
 
 If the user has provided some context already, extract what is available and ask only for missing fields.
 
+**Language detection**: After collecting the four fields above, check if a `.workspace-config.json` file exists in the workspace root directory. If it contains a `language` field, lowercase the value and use it as the portfolio language (e.g., `"DE"` becomes `"de"`). If no workspace config exists or it has no `language` field, ask the user which language to use for generated content (default: `"en"`).
+
 **Web research (optional)**: When the user provides a company URL or website, delegate to a subagent (Agent tool) to extract company description, industry, and product offerings from the company's public pages. This is especially useful when the user knows the company but hasn't articulated structured context yet. Present findings to the user for confirmation — never auto-populate without review.
 
 ### 2. Review with User
@@ -45,6 +47,7 @@ Present the gathered context as a summary for confirmation before creating anyth
 | Industry | Cloud Infrastructure |
 | Products | Cloud Platform, Monitoring Suite |
 | Proposed slug | `acme-cloud` |
+| Language | `de` (from workspace config) |
 
 The slug is derived from the company name in kebab-case — keep it short and recognizable (e.g., "Acme Cloud Services" -> `acme-cloud`).
 
@@ -80,7 +83,7 @@ cogni-portfolio/<project-slug>/
 
 ### 4. Write portfolio.json
 
-After the script creates directories, write `portfolio.json` in the project root with the confirmed company context. Follow the schema in `$CLAUDE_PLUGIN_ROOT/skills/setup/references/data-model.md`.
+After the script creates directories, write `portfolio.json` in the project root with the confirmed company context, including the `language` field. Follow the schema in `$CLAUDE_PLUGIN_ROOT/skills/setup/references/data-model.md`.
 
 ### 5. Confirm and Guide Next Steps
 

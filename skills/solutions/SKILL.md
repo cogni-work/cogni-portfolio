@@ -210,4 +210,5 @@ A solution can be deleted freely -- it has no downstream dependents. Confirm wit
 - Implementation phases should map to the proposition's DOES statement
 - The `solution-planner` agent handles individual solution generation in batch mode
 - Competitor data feeds pricing calibration -- run `compete` first for better-grounded prices
+- **Content Language**: Read `portfolio.json` in the project root. If a `language` field is present, generate all user-facing text content (phase descriptions, scope text, rationale) in that language. JSON field names and slugs remain in English. If no `language` field is present, default to English.
 - Refer to `$CLAUDE_PLUGIN_ROOT/skills/setup/references/data-model.md` for complete entity schemas
