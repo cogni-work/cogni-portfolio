@@ -339,6 +339,8 @@ def generate_html(data, status, project_dir, theme):
 <style>
 {fonts_import}
 :root {{
+  --primary: {c['primary']};
+  --secondary: {c['secondary']};
   --bg: {c['background']};
   --surface: {c['surface']};
   --surface2: {surface2};
@@ -574,6 +576,7 @@ body::after {{
   font-family: var(--font-mono);
   line-height: 1.1;
   letter-spacing: -0.02em;
+  color: var(--secondary);
 }}
 .card .sub {{ font-size: 12px; color: var(--text2); margin-top: 4px; }}
 .card .bar {{
@@ -599,7 +602,7 @@ body::after {{
   border-bottom: 1px solid var(--border);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--text);
+  color: var(--primary);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -717,7 +720,7 @@ body::after {{
   transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
 }}
 .market-card:hover::after {{ transform: scaleX(1); }}
-.market-card h4 {{ font-size: 16px; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.01em; }}
+.market-card h4 {{ font-size: 16px; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.01em; color: var(--primary); }}
 .market-card .region-badge {{
   display: inline-block;
   background: var(--surface-dark);
@@ -928,7 +931,7 @@ body::after {{
   color: var(--text);
   border-color: var(--accent-muted);
 }}
-.panel h3 {{ font-size: 20px; margin-bottom: 4px; letter-spacing: -0.02em; }}
+.panel h3 {{ font-size: 20px; margin-bottom: 4px; letter-spacing: -0.02em; color: var(--primary); }}
 .panel .panel-sub {{ color: var(--text2); font-size: 12px; margin-bottom: 20px; font-family: var(--font-mono); letter-spacing: 0.01em; }}
 .panel .section-label {{
   font-size: 10px;
