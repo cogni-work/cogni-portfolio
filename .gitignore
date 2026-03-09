@@ -6,5 +6,6 @@ excalidraw.log
 .test-results/
 __pycache__/
 
-# Local workspace data
-solutions-workspace/
+# Local workspace data (skill eval artifacts)
+*-workspace/
+skills/*/evals/
