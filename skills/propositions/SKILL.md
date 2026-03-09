@@ -122,7 +122,13 @@ Use `$CLAUDE_PLUGIN_ROOT/scripts/project-status.sh` to generate an overview of c
 
 ### Editing Propositions
 
-Read the existing proposition JSON, apply the user's changes, and write back. Changing a feature or market slug requires renaming the file to match the `{feature-slug}--{market-slug}.json` convention and updating the internal slug fields.
+Read the existing proposition JSON, apply the user's changes, and write back. Changing a proposition slug (because a feature or market slug changed) requires renaming the file to match the `{feature-slug}--{market-slug}.json` convention and updating internal slug fields. After renaming, cascade to dependent entities:
+
+```bash
+$CLAUDE_PLUGIN_ROOT/scripts/cascade-rename.sh <project-dir> proposition <old-slug> <new-slug>
+```
+
+This updates solutions and competitors that reference the old proposition slug.
 
 ### Listing Propositions
 

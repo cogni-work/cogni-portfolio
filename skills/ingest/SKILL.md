@@ -95,7 +95,17 @@ For features, ensure `product_slug` references a valid product. If a referenced 
 
 After all confirmed entities are written, move processed files to `uploads/processed/`. Create the directory if it doesn't exist. Only move files that were successfully processed. If a file yielded no usable entities (user skipped everything), still move it to avoid re-processing on the next run.
 
-### 8. Present Summary and Next Steps
+### 8. Sync portfolio.json
+
+If any products were created during ingestion, run the centralized sync script:
+
+```bash
+$CLAUDE_PLUGIN_ROOT/scripts/sync-portfolio.sh <project-dir>
+```
+
+Skip this step if no products were created.
+
+### 9. Present Summary and Next Steps
 
 Show a summary of what was created:
 

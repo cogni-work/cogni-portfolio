@@ -145,7 +145,17 @@ Then deliver your strategic recommendation — not as a list of observations but
 
 Do not just ask "does this look right?" — present a position and let the user push back. "I would merge Analytics Platform and Embedded BI into a single product with two deployment models, because they share core technology and maintaining them as separate products doubles your feature management burden" is better than "there may be some overlap between these two products worth considering."
 
-## Phase 4: Validate Against Portfolio
+## Phase 4: Sync portfolio.json
+
+After creating, editing, or deleting products, run the centralized sync script to keep the portfolio consistent:
+
+```bash
+$CLAUDE_PLUGIN_ROOT/scripts/sync-portfolio.sh <project-dir>
+```
+
+This reads all files in `products/`, updates `company.products` and the `updated` timestamp in `portfolio.json`. It also handles legacy formats (e.g., `company` as a string). Run it after Phase 3 and after any edit or delete operation. It is silent — no need to announce it to the user.
+
+## Phase 5: Validate Against Portfolio
 
 Cross-reference products with existing portfolio entities:
 
@@ -168,11 +178,11 @@ To show the feature count, scan `features/` for files where `product_slug` match
 
 ### Editing Products
 
-Read the existing product JSON, apply the user's changes, and write back. Changing a product slug requires renaming the file and updating the `product_slug` field in all dependent features.
+Read the existing product JSON, apply the user's changes, and write back. Changing a product slug requires renaming the file and updating the `product_slug` field in all dependent features. After editing, run `$CLAUDE_PLUGIN_ROOT/scripts/sync-portfolio.sh <project-dir>`.
 
 ### Deleting Products
 
-A product can only be deleted if it has no features. If features exist, instruct the user to reassign or delete them first.
+A product can only be deleted if it has no features. If features exist, instruct the user to reassign or delete them first. After deleting, run `$CLAUDE_PLUGIN_ROOT/scripts/sync-portfolio.sh <project-dir>`.
 
 ### Viewing Product Details
 

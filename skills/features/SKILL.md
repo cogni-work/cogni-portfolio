@@ -142,7 +142,16 @@ Read all JSON files in the project's `features/` directory. Present grouped by p
 
 ### Editing Features
 
-Read the existing feature JSON, apply the user's changes, and write back. Changing a feature slug requires renaming the file and updating any dependent propositions. Changing `product_slug` reassigns the feature to a different product.
+Read the existing feature JSON, apply the user's changes, and write back. Changing `product_slug` reassigns the feature to a different product.
+
+Changing a feature slug requires a cascading rename — this is not optional, as orphaned references break downstream skills:
+
+1. Rename the feature file from `features/{old-slug}.json` to `features/{new-slug}.json` and update `slug` inside
+2. Run the cascade script to update all dependent entities (propositions, solutions, competitors):
+   ```bash
+   $CLAUDE_PLUGIN_ROOT/scripts/cascade-rename.sh <project-dir> feature <old-slug> <new-slug>
+   ```
+3. Report the script's output (changed files) to the user
 
 When a user asks to edit a feature, don't just make the change mechanically — consider whether the edit reveals a deeper issue. If they're renaming a feature to something much broader, maybe it should split. If they're narrowing a description, maybe a new feature should capture what was removed.
 

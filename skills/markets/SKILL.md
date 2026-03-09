@@ -128,7 +128,14 @@ These checks catch gaps early: a market with zero relevant features suggests a m
 
 ### Editing Markets
 
-Read the existing market JSON, apply the user's changes, and write back. Changing a market slug requires renaming the file and updating any dependent entities (propositions in `propositions/`, customers in `customers/`, competitors in `competitors/`).
+Read the existing market JSON, apply the user's changes, and write back. Changing a market slug requires a cascading rename — this is not optional, as orphaned references break downstream skills:
+
+1. Rename the market file from `markets/{old-slug}.json` to `markets/{new-slug}.json` and update `slug` inside
+2. Run the cascade script to update all dependent entities (propositions, solutions, competitors, customers):
+   ```bash
+   $CLAUDE_PLUGIN_ROOT/scripts/cascade-rename.sh <project-dir> market <old-slug> <new-slug>
+   ```
+3. Report the script's output (changed files) to the user
 
 ### Listing Markets
 

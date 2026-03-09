@@ -33,6 +33,40 @@ if [ ! -f "$PROJECT_DIR/portfolio.json" ]; then
   add_error "portfolio" "portfolio.json" "Missing portfolio.json"
 fi
 
+# Check portfolio.json company.products matches actual products/ directory
+if [ -f "$PROJECT_DIR/portfolio.json" ] && [ -d "$PROJECT_DIR/products" ]; then
+  python3 -c "
+import json, os, sys
+pf = json.load(open('$PROJECT_DIR/portfolio.json'))
+company = pf.get('company', pf)
+listed = sorted(company.get('products', [])) if isinstance(company, dict) else []
+actual = sorted(f[:-5] for f in os.listdir('$PROJECT_DIR/products') if f.endswith('.json'))
+if listed != actual:
+    missing_in_pf = [s for s in actual if s not in listed]
+    extra_in_pf = [s for s in listed if s not in actual]
+    msgs = []
+    if missing_in_pf: msgs.append('products/ has ' + ', '.join(missing_in_pf) + ' not listed in portfolio.json')
+    if extra_in_pf: msgs.append('portfolio.json lists ' + ', '.join(extra_in_pf) + ' not found in products/')
+    print('; '.join(msgs))
+    sys.exit(1)
+" 2>/dev/null || {
+    sync_msg=$(python3 -c "
+import json, os
+pf = json.load(open('$PROJECT_DIR/portfolio.json'))
+company = pf.get('company', pf)
+listed = sorted(company.get('products', [])) if isinstance(company, dict) else []
+actual = sorted(f[:-5] for f in os.listdir('$PROJECT_DIR/products') if f.endswith('.json'))
+missing = [s for s in actual if s not in listed]
+extra = [s for s in listed if s not in actual]
+msgs = []
+if missing: msgs.append('products/ has ' + ', '.join(missing) + ' not in portfolio.json')
+if extra: msgs.append('portfolio.json lists ' + ', '.join(extra) + ' not in products/')
+print('; '.join(msgs))
+" 2>/dev/null)
+    add_error "portfolio" "portfolio.json" "Product list out of sync: $sync_msg. Run sync-portfolio.sh to fix."
+  }
+fi
+
 # Validate products have required fields (slug, name, description)
 if [ -d "$PROJECT_DIR/products" ]; then
   for p in "$PROJECT_DIR/products"/*.json; do
