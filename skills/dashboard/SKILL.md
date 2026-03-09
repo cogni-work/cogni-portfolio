@@ -70,3 +70,4 @@ The generated HTML includes these sections, all in a single-page app with drill-
 - The HTML file is fully self-contained (inline CSS + JS, no external dependencies)
 - Re-running the script overwrites the previous dashboard
 - The dashboard lives at `output/dashboard.html` alongside the synthesis README
+- **Communication Language**: Read `portfolio.json` in the project root. If a `language` field is present, communicate with the user in that language (status messages, instructions, recommendations, questions). Technical terms, skill names, and CLI commands remain in English. If no `language` field is present, default to English.

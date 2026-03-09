@@ -137,4 +137,5 @@ The user may want to iterate — go back and add missing entities, then re-synth
 - The messaging repository is the primary input for the `export` skill
 - Incomplete portfolios produce incomplete synthesis — gaps are noted in the output
 - **Content Language**: Read `portfolio.json` in the project root. If a `language` field is present, generate all user-facing text content (README narrative, summaries, market descriptions) in that language. JSON field names and slugs remain in English. If no `language` field is present, default to English.
+- **Communication Language**: If `portfolio.json` has a `language` field, communicate with the user in that language (status messages, instructions, recommendations, questions). Technical terms, skill names, and CLI commands remain in English. Default to English if no `language` field is present.
 - Claims marked `[unverified]` signal the source has not been checked — readers should treat these with appropriate caution

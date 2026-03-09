@@ -114,4 +114,6 @@ When the user provides a product description, website content, or document:
 - Changing a feature slug after propositions exist requires renaming proposition files (`{feature}--{market}.json`)
 - Aim for 5-15 features per product; too many signals insufficient abstraction
 - Each feature should be testable: "Does this product have this capability? Yes/No."
+- **Content Language**: Read `portfolio.json` in the project root. If a `language` field is present, generate all user-facing text content (feature names, descriptions) in that language. JSON field names and slugs remain in English. If no `language` field is present, default to English.
+- **Communication Language**: If `portfolio.json` has a `language` field, communicate with the user in that language (status messages, instructions, recommendations, questions). Technical terms, skill names, and CLI commands remain in English. Default to English if no `language` field is present.
 - Refer to `$CLAUDE_PLUGIN_ROOT/skills/setup/references/data-model.md` for complete entity schemas

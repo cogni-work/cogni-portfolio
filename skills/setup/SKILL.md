@@ -123,3 +123,4 @@ For complete entity schemas and naming conventions, consult `$CLAUDE_PLUGIN_ROOT
 - Multiple projects are supported (one per company or product line)
 - If a project already exists, the init script returns `"status": "exists"` without overwriting
 - The `updated` field in portfolio.json should be refreshed whenever entities change
+- **Communication Language**: Read `portfolio.json` in the project root (or use the language determined during setup). If a `language` field is present, communicate with the user in that language (status messages, instructions, recommendations, questions). Technical terms, skill names, and CLI commands remain in English. If no `language` field is present, default to English.

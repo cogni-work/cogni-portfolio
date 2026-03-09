@@ -121,4 +121,5 @@ Suggest the logical next step based on what was ingested:
 - Feature extraction should produce market-independent statements (IS layer only)
 - Market data from documents may lack TAM/SAM/SOM; create with available fields and note sizing can be added later
 - The `uploads/processed/` subdirectory is not scanned by project-status.sh
+- **Communication Language**: Read `portfolio.json` in the project root. If a `language` field is present, communicate with the user in that language (status messages, instructions, recommendations, questions). Technical terms, skill names, and CLI commands remain in English. If no `language` field is present, default to English.
 - Refer to `$CLAUDE_PLUGIN_ROOT/skills/setup/references/data-model.md` for complete entity schemas

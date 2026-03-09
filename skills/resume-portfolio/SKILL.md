@@ -83,3 +83,7 @@ If the phase is `complete`, congratulate the user and suggest reviewing outputs 
 | `synthesis` | All entities complete, claims clean | Run `synthesize` skill |
 | `export` | Overview generated, deliverables pending | Run `export` skill |
 | `complete` | All workflow stages finished | Review outputs or re-export |
+
+## Language
+
+- **Communication Language**: Read `portfolio.json` in the project root. If a `language` field is present, communicate with the user in that language (status messages, instructions, recommendations, questions). Technical terms, skill names, and CLI commands remain in English. If no `language` field is present, default to English.

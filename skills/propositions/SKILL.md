@@ -144,4 +144,5 @@ A proposition can be deleted freely -- it has no downstream dependents. Confirm 
 - Evidence is optional but strengthens downstream proposals and enables claim verification
 - Changing a feature or market slug after propositions exist requires renaming proposition files
 - **Content Language**: Read `portfolio.json` in the project root. If a `language` field is present, generate all user-facing text content (IS/DOES/MEANS statements, evidence descriptions) in that language. JSON field names and slugs remain in English. If no `language` field is present, default to English.
+- **Communication Language**: If `portfolio.json` has a `language` field, communicate with the user in that language (status messages, instructions, recommendations, questions). Technical terms, skill names, and CLI commands remain in English. Default to English if no `language` field is present.
 - Refer to `$CLAUDE_PLUGIN_ROOT/skills/setup/references/data-model.md` for complete entity schemas
