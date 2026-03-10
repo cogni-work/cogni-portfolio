@@ -1,7 +1,7 @@
 ---
 name: competitor-researcher
 description: |
-  Use this agent to research competitors for a specific proposition using web search. Delegated by the compete skill when the user requests research-backed competitive intelligence.
+  Research competitors for a specific proposition using web search — produces competitive intelligence. DO NOT USE DIRECTLY — invoked by the compete skill.
 
   <example>
   Context: User wants to research competitors for a specific proposition

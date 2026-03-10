@@ -1,7 +1,7 @@
 ---
 name: market-researcher
 description: |
-  Use this agent to research and size a target market using web search. Delegated by the markets skill when the user requests research-backed TAM/SAM/SOM data.
+  Research and size a target market using web search — produces TAM/SAM/SOM data. DO NOT USE DIRECTLY — invoked by the markets skill.
 
   <example>
   Context: User wants research-backed market sizing for a target market
