@@ -50,7 +50,9 @@ Design a phased implementation plan that delivers the proposition's DOES stateme
 - **duration_weeks**: Ballpark duration in weeks
 - **description**: Activities, deliverables, and milestones for this phase
 
-Keep it lean -- 2-5 phases. The plan gives the buyer enough structure to understand commitment and timeline, not a full project charter.
+Keep it lean -- 2-5 phases. The plan gives the buyer enough structure to understand commitment and timeline, not a full project charter. Adapt phase names and structure to the specific capability -- do not use generic "Discovery / Implementation / Handover" unless the engagement genuinely fits that pattern.
+
+**Important**: Distinguish proposition claims from project timelines. A DOES statement like "reduces time-to-market from 12 months to 6 weeks" describes the buyer's ongoing outcome, not the implementation timeline. Be explicit about this distinction.
 
 Common phase patterns by engagement type:
 
@@ -129,16 +131,21 @@ Write the solution to the path specified in the task:
 Required: `slug`, `proposition_slug`, `implementation` (array, at least one phase), `pricing` (all four tiers with `price`, `currency`, `scope`)
 Optional: `created`
 
-## Quality Checklist
+## Quality Gates
 
-Before writing the file, verify:
+Before writing the file, verify all five gates pass:
 
-- Implementation phases deliver the proposition's DOES statement end-to-end
-- Phase durations are realistic for the market segment (mid-market moves faster than enterprise)
-- Currency matches the market's region
-- Proof-of-value tier is compelling as a low-risk entry point
-- Each pricing tier represents a meaningful scope increase, not just a price bump
-- Pricing feels credible for this market segment -- a mid-market buyer would not balk, an enterprise buyer would not laugh
+1. **DOES delivery test**: Can you trace a clear line from the implementation phases to the proposition's DOES statement? If the DOES promises a measurable outcome (e.g., "reduces MTTR by 60%"), the phases must include baselining and measurement -- not just deployment.
+
+2. **PoV credibility test**: Does the proof-of-value tier have defined success criteria and a go/no-go moment? "2-week pilot" is not a PoV. "2-week pilot targeting X outcome with before/after report" is. The PoV must give the buyer a concrete "did this work?" decision point.
+
+3. **Tier differentiation test**: Remove the prices and read only the scope descriptions. If tiers differ only by quantity (more nodes, more teams, more users), they lack qualitative differentiation. Each tier should describe a fundamentally different engagement model.
+
+4. **Price-effort coherence test**: Do the tier price jumps correlate with the effort/value implied by the scope? Avoid mechanical doubling patterns (50K/100K/200K/400K). Each price should trace to effort, value, or competitive positioning.
+
+5. **Market fit test**: Would a buyer in this specific market find these prices plausible? Mid-market SaaS won't sign 500K deals. Enterprise fintech won't take 5K PoVs seriously.
+
+**Feature readiness adjustment**: Check the feature's `readiness` field. For beta features, make the PoV address both "does this solve my problem?" and "is this production-ready?" Price early tiers conservatively and note that pricing should be revisited at GA.
 
 ## Output
 
