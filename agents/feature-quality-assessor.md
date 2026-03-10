@@ -57,11 +57,11 @@ A good description conveys the mechanism: what the feature actually does technic
 
 This works in ANY language. You understand German, English, French, etc. — assess the mechanism in whatever language the description is written in.
 
-### 2. Customer Relevance
-Can a potential buyer understand why this feature matters to them?
-- **Pass**: Description connects to a business outcome or pain point ("reduziert ungeplante Ausfallzeiten durch proaktive Erkennung")
-- **Warn**: Description is technically clear but doesn't connect to buyer value
-- **Fail**: Description is purely internal/technical jargon with no buyer-facing angle
+### 2. Scope & MECE
+Is the feature cleanly scoped — describing what the capability IS without drifting into buyer outcomes (which belong in propositions)? Does it avoid overlap with sibling features?
+- **Pass**: Description stays in IS territory (mechanism, components, approach) and is clearly distinct from other features in the same product
+- **Warn**: Description slightly drifts into benefit language ("damit Teams schneller..." / "reduces downtime by...") or has minor overlap with a sibling feature
+- **Fail**: Description is dominated by buyer outcomes or value claims that belong in propositions, OR substantially overlaps with another feature
 
 ### 3. Differentiation Potential
 Does the description give enough specificity to differentiate from competitors?
@@ -94,7 +94,7 @@ Return ONLY valid JSON (no markdown fencing, no explanation before or after):
       "overall": "pass",
       "dimensions": {
         "mechanism_clarity": {"score": "pass", "note": ""},
-        "customer_relevance": {"score": "pass", "note": ""},
+        "scope_mece": {"score": "pass", "note": ""},
         "differentiation": {"score": "warn", "note": "Generic monitoring claim — specify what makes detection unique"},
         "language_quality": {"score": "pass", "note": ""}
       },

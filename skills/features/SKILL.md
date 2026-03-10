@@ -77,6 +77,10 @@ Based on discovery (or the user's capability dump), propose a feature set. This 
 
 **Write descriptions that pass the demo test.** Each description should answer: "If I asked you to show me this working, what would I see?" One to three sentences, factual, no superlatives.
 
+**Keep buyer outcomes out of feature descriptions.** Feature descriptions describe the mechanism — what it IS and HOW it works. Language about who benefits or what changes for the buyer ("reduces downtime", "enables teams to...", "damit Geschäftsführung...") belongs exclusively in propositions, where it gets tailored per market. If you catch yourself writing "helps", "reduces", "enables", "ensures", or "damit" followed by a beneficiary — stop. Move that sentence to your proposition notes and keep the feature description purely mechanical. This separation is what makes the IS/DOES/MEANS framework work: features stay factual and reusable; propositions add the buyer lens per market.
+
+**Apply the proposition leak test.** After writing a feature description, scan it for language that answers "who benefits?" or "what changes for the buyer?" If any sentence passes that test, it has leaked from proposition territory into the feature. Extract it — it will be valuable later when crafting propositions, but it dilutes the feature description now.
+
 ### Building Your Recommendation
 
 After analyzing the product, present your proposed feature set with a consulting perspective:
@@ -86,7 +90,7 @@ After analyzing the product, present your proposed feature set with a consulting
 - **Granularity check** — any features that are too broad (should split) or too narrow (should merge)?
 - **Differentiation signal** — which features are unique to this product vs. table stakes in the category?
 - **Cross-product check** — scan sibling products' features for overlaps or natural bridges
-- **Proposition readiness** — will this feature set produce sharp propositions? Flag features whose descriptions are too vague to power a compelling "DOES/MEANS" statement downstream. Recommend which 2-3 features to build propositions for first, and why.
+- **Mechanism clarity** — does each feature description explain what the capability IS and HOW it works? Flag features whose descriptions are too vague to clearly convey the mechanism. A feature that reads like a label ("Data Analytics") or drifts into buyer outcomes ("reduces downtime by...") needs rewriting — the former lacks substance, the latter belongs in propositions.
 
 **State what you excluded and why.** Saying "I chose NOT to include a separate Alerting feature because alerts always co-occur with monitoring in propositions" is as valuable as explaining what you included. It shows the user you considered the full space, not just the features that made the cut.
 
@@ -149,8 +153,8 @@ Assess feature quality for the project at <project-dir>
 
 The agent evaluates four dimensions per feature:
 1. **Mechanism clarity**: Does the description explain HOW the feature works, not just what it is?
-2. **Customer relevance**: Can a buyer understand why this feature matters to them?
-3. **Differentiation potential**: Is the description specific enough to stand out from competitors?
+2. **Scope & MECE**: Is the feature cleanly scoped — no overlap with siblings, no gaps in the product's capability space? Does it describe what the capability IS without drifting into buyer outcomes (which belong in propositions)?
+3. **Differentiation potential**: Is the description specific enough to stand out from competitors through mechanism detail, not through benefit claims?
 4. **Language quality**: Is the prose clean and professional in its language? (Technical English terms in German text like API, Cloud, Monitoring are normal — only genuine readability issues are flagged.)
 
 The agent returns structured JSON with pass/warn/fail per dimension and improvement suggestions. Features with overall "fail" are not ready for proposition generation.
