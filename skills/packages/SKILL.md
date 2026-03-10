@@ -91,6 +91,16 @@ Propose 2-4 tiers. Each tier should represent a meaningfully different capabilit
 | Professional | research + reporting | 249 EUR | 2,490 EUR | Full research + automated reporting |
 | Enterprise | all features | Custom | Custom | Full platform, SSO, SLA, dedicated CSM |
 
+**Hybrid package tiers** (subscription base + optional project add-ons):
+
+| Tier | Included Solutions | Monthly | Annual | Project Add-on | Scope |
+|---|---|---|---|---|---|
+| Starter | monitoring | 199 EUR | 1,990 EUR | — | Core platform, self-service setup |
+| Professional | monitoring + alerting | 499 EUR | 4,990 EUR | Setup workshop: 5,000 EUR | Full platform, guided onboarding |
+| Enterprise | all features | Custom | Custom | Implementation project: 25,000+ EUR | Full platform, custom integration, SLA |
+
+Hybrid tiers follow subscription structure for recurring revenue, but each tier can include an optional one-time project service (onboarding, implementation, migration). The project add-on is optional — the subscription stands alone.
+
 **Tier design principles:**
 - **Entry tier** includes the feature that solves the most acute pain point — the one that gets the buyer in the door
 - **Mid tier** adds the feature that creates the most operational value — the one that makes the buyer's life measurably easier
@@ -237,6 +247,10 @@ For multiple product×market pairs, generate packages sequentially (package desi
 2. Group by product — packages for the same product across different markets should be consistent in tier names and structure
 3. Present the plan and get confirmation
 4. Generate packages, maintaining tier consistency within each product
+
+## Editing Packages
+
+Read the existing package JSON, apply the user's changes, and write back. But don't just make the change mechanically — consider whether the edit signals a structural issue. If the user is collapsing tiers, maybe the underlying solutions aren't differentiated enough. If adding solutions to a top tier, check the price still reflects the added value. If changing prices, verify `bundle_savings_pct` stays meaningful (at least 10%). If renaming tiers, check whether the same product's packages in other markets should use consistent tier names.
 
 ## Listing Packages
 

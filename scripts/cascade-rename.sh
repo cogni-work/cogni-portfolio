@@ -1,7 +1,7 @@
 #!/bin/bash
 # Cascade a slug rename across all dependent entity files.
 # Usage: cascade-rename.sh <project-dir> <entity-type> <old-slug> <new-slug>
-#   entity-type: feature | market | proposition
+#   entity-type: feature | market | product | proposition
 # Exit codes: 0 = done, 2 = usage error
 set -euo pipefail
 
@@ -192,6 +192,23 @@ elif entity_type == 'market':
                     os.remove(old_path)
                 changes.append({'file': os.path.basename(new_path), 'action': 'renamed'})
 
+elif entity_type == 'product':
+    # Packages: {product}--{market}.json -> rename files where product matches
+    if os.path.isdir(packages_dir):
+        for fname in list(os.listdir(packages_dir)):
+            if not fname.endswith('.json'):
+                continue
+            pkg_slug = fname[:-5]
+            if pkg_slug.startswith(old_slug + '--'):
+                market_part = pkg_slug[len(old_slug) + 2:]
+                new_pkg_slug = f'{new_slug}--{market_part}'
+                old_path = os.path.join(packages_dir, fname)
+                new_path = os.path.join(packages_dir, f'{new_pkg_slug}.json')
+                rename_file(old_path, new_path, {
+                    'slug': new_pkg_slug,
+                    'product_slug': new_slug
+                })
+
 elif entity_type == 'proposition':
     # Solutions and competitors reference proposition_slug
     old_sol = os.path.join(solutions_dir, f'{old_slug}.json')
@@ -208,7 +225,7 @@ elif entity_type == 'proposition':
     })
 
 else:
-    print(json.dumps({'error': f'Unknown entity type: {entity_type}. Use: feature, market, proposition'}))
+    print(json.dumps({'error': f'Unknown entity type: {entity_type}. Use: feature, market, product, proposition'}))
     sys.exit(2)
 
 print(json.dumps({'entity_type': entity_type, 'old_slug': old_slug, 'new_slug': new_slug, 'changes': changes}))
