@@ -92,7 +92,8 @@ if [ -d "$PROJECT_DIR/features" ]; then
     [ -f "$f" ] || continue
     slug=$(basename "$f" .json)
     # Check file is valid JSON and has required fields
-    if ! python3 -c "
+    exit_code=0
+    python3 -c "
 import json, sys
 with open('$f') as fh:
     d = json.load(fh)
@@ -100,7 +101,11 @@ with open('$f') as fh:
     if 'description' not in d: sys.exit(1)
     if 'slug' in d and d['slug'] != '$slug': sys.exit(2)
     if 'product_slug' not in d: sys.exit(3)
-" 2>/dev/null; then
+    if 'readiness' in d and d['readiness'] not in ['ga', 'beta', 'planned']: sys.exit(4)
+" 2>/dev/null || exit_code=$?
+    if [ "$exit_code" -eq 4 ]; then
+      add_error "feature" "$slug" "Invalid readiness value -- must be one of: ga, beta, planned"
+    elif [ "$exit_code" -ne 0 ]; then
       add_error "feature" "$slug" "Invalid JSON, missing required field (name, description), or missing product_slug"
     else
       # Check referenced product exists
@@ -112,6 +117,27 @@ with open('$f') as fh:
   done
 fi
 
+# Warn on singleton categories (possible typos)
+if [ -d "$PROJECT_DIR/features" ]; then
+  while IFS='|' read -r slug msg; do
+    add_warning "feature" "$slug" "$msg"
+  done < <(python3 -c "
+import json, os, glob
+cats = {}
+for f in glob.glob('$PROJECT_DIR/features/*.json'):
+    try:
+        d = json.load(open(f))
+        c = d.get('category')
+        if c:
+            cats.setdefault(c, []).append(os.path.basename(f)[:-5])
+    except Exception:
+        pass
+for cat, slugs in cats.items():
+    if len(slugs) == 1:
+        print(f'{slugs[0]}|Category {cat} is used by only one feature -- possible typo')
+" 2>/dev/null)
+fi
+
 # Valid region codes from the taxonomy
 VALID_REGIONS="de dach eu uk nordics us na cn apac jp latam mea global"
 
@@ -120,7 +146,8 @@ if [ -d "$PROJECT_DIR/markets" ]; then
   for m in "$PROJECT_DIR/markets"/*.json; do
     [ -f "$m" ] || continue
     slug=$(basename "$m" .json)
-    if ! python3 -c "
+    exit_code=0
+    python3 -c "
 import json, sys
 with open('$m') as fh:
     d = json.load(fh)
@@ -128,7 +155,11 @@ with open('$m') as fh:
     if 'description' not in d: sys.exit(1)
     if 'slug' in d and d['slug'] != '$slug': sys.exit(2)
     if 'region' not in d: sys.exit(3)
-" 2>/dev/null; then
+    if 'priority' in d and d['priority'] not in ['beachhead', 'expansion', 'aspirational']: sys.exit(4)
+" 2>/dev/null || exit_code=$?
+    if [ "$exit_code" -eq 4 ]; then
+      add_error "market" "$slug" "Invalid priority value -- must be one of: beachhead, expansion, aspirational"
+    elif [ "$exit_code" -ne 0 ]; then
       add_error "market" "$slug" "Invalid JSON or missing required field (name, description, region)"
     else
       # Validate region code against taxonomy

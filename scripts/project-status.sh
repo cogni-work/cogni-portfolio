@@ -95,6 +95,58 @@ print(json.dumps(counts, sort_keys=True))
 " 2>/dev/null || echo "{}")
 fi
 
+# Build readiness summary: {"ga": 3, "beta": 1, "planned": 2, "unset": 1}
+readiness_summary="{}"
+features_without_readiness=0
+if [ -d "$PROJECT_DIR/features" ]; then
+  eval "$(python3 -c "
+import json, os, glob
+counts = {}
+unset = 0
+for f in glob.glob('$PROJECT_DIR/features/*.json'):
+    try:
+        d = json.load(open(f))
+        r = d.get('readiness')
+        if r:
+            counts[r] = counts.get(r, 0) + 1
+        else:
+            unset += 1
+    except Exception:
+        pass
+if unset > 0:
+    counts['unset'] = unset
+import json as j
+print(f'readiness_summary={chr(39)}{j.dumps(counts, sort_keys=True)}{chr(39)}')
+print(f'features_without_readiness={unset}')
+" 2>/dev/null)"
+fi
+
+# Build priority summary: {"beachhead": 1, "expansion": 2, "aspirational": 1, "unset": 0}
+priority_summary="{}"
+markets_without_priority=0
+if [ -d "$PROJECT_DIR/markets" ]; then
+  eval "$(python3 -c "
+import json, os, glob
+counts = {}
+unset = 0
+for f in glob.glob('$PROJECT_DIR/markets/*.json'):
+    try:
+        d = json.load(open(f))
+        p = d.get('priority')
+        if p:
+            counts[p] = counts.get(p, 0) + 1
+        else:
+            unset += 1
+    except Exception:
+        pass
+if unset > 0:
+    counts['unset'] = unset
+import json as j
+print(f'priority_summary={chr(39)}{j.dumps(counts, sort_keys=True)}{chr(39)}')
+print(f'markets_without_priority={unset}')
+" 2>/dev/null)"
+fi
+
 # Find missing propositions (Feature x Market pairs without a proposition file)
 missing_arr="["
 missing_sol_arr="["
@@ -278,8 +330,12 @@ cat << EOF
     "solutions": $SOLUTIONS,
     "competitors": $COMPETITORS,
     "customers": $CUSTOMERS,
-    "uploads": $UPLOADS
+    "uploads": $UPLOADS,
+    "features_without_readiness": $features_without_readiness,
+    "markets_without_priority": $markets_without_priority
   },
+  "readiness_summary": $readiness_summary,
+  "priority_summary": $priority_summary,
   "claims": {
     "total": $CLAIMS_TOTAL,
     "unverified": $CLAIMS_UNVERIFIED,

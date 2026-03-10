@@ -63,7 +63,11 @@ A feature is market-independent. It describes what the product/service IS. Each 
 ```
 
 Required fields: `slug`, `product_slug`, `name`, `description`
-Optional fields: `category`, `source_file`, `created`
+Optional fields: `category`, `readiness`, `source_file`, `created`, `updated`
+
+Valid `readiness` values: `ga` (generally available), `beta` (limited availability / pilot), `planned` (roadmap only, not yet built)
+
+The `category` field is a free-form label for grouping features (e.g., `"observability"`, `"integration"`, `"security"`). Categories are not constrained to a fixed vocabulary — validation will warn on categories used by only one feature to catch typos.
 
 ### markets/{slug}.json
 
@@ -103,13 +107,17 @@ A target market defined by region, segmentation criteria, and sized by TAM/SAM/S
 ```
 
 Required fields: `slug`, `name`, `region`, `description`
-Optional fields: `segmentation`, `tam`, `sam`, `som`, `source_file`, `created`
+Optional fields: `segmentation`, `tam`, `sam`, `som`, `priority`, `source_file`, `created`, `updated`
+
+Valid `priority` values: `beachhead` (primary go-to-market target), `expansion` (secondary growth market), `aspirational` (long-term opportunity, not yet pursued)
 
 The `region` field must be a valid region code from the standard taxonomy in `$CLAUDE_PLUGIN_ROOT/skills/setup/references/regions.json`. Valid codes: `de`, `dach`, `eu`, `uk`, `nordics`, `us`, `na`, `cn`, `apac`, `jp`, `latam`, `mea`, `global`.
 
 The `segmentation` object captures non-geographic criteria (company size, revenue, vertical, etc.). Geographic scope is expressed solely through `region` -- do not duplicate it in `segmentation.geography`.
 
 `source_file` (optional, all entity types): Filename of the document in `uploads/` from which this entity was extracted during ingestion.
+
+`updated` (optional, all entity types): ISO 8601 date (`YYYY-MM-DD`) of the last meaningful content change. Used for staleness tracking — downstream entities (propositions, solutions) can be flagged as stale when their upstream entities (features, markets) have a newer `updated` date. Skills should set `updated` whenever they modify entity content.
 
 ### propositions/{feature-slug}--{market-slug}.json
 
@@ -302,6 +310,7 @@ erDiagram
         string name
         string description
         string category
+        string readiness
     }
     Region {
         string code PK
@@ -319,6 +328,7 @@ erDiagram
         object tam
         object sam
         object som
+        string priority
     }
     Proposition {
         string slug PK "feature--market"
