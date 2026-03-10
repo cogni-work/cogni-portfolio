@@ -1,11 +1,17 @@
 #!/bin/bash
 # Show cogni-portfolio project status with entity counts and gap analysis.
-# Usage: project-status.sh <project-dir>
+# Usage: project-status.sh <project-dir> [--health-check]
 # Outputs JSON with counts, feature/market slugs, missing propositions, and completion ratios.
+# With --health-check: also includes stale_entities array (downstream entities
+# whose upstream updated date or mtime is newer).
 # Exit codes: 0 = success, 1 = error
 set -euo pipefail
 
 PROJECT_DIR="${1:-}"
+HEALTH_CHECK=false
+if [ "${2:-}" = "--health-check" ]; then
+  HEALTH_CHECK=true
+fi
 
 if [ -z "$PROJECT_DIR" ] || [ ! -d "$PROJECT_DIR" ]; then
   echo '{"error": "Valid project directory required. Usage: project-status.sh <project-dir>"}' >&2
@@ -363,6 +369,119 @@ case "$PHASE" in
 esac
 next_actions="$next_actions]"
 
+# Health check: detect stale downstream entities
+stale_entities="[]"
+if $HEALTH_CHECK && [ -d "$PROJECT_DIR/propositions" ]; then
+  stale_entities=$(python3 -c "
+import json, os, glob
+from datetime import datetime
+
+def get_updated(filepath):
+    \"\"\"Get updated date from JSON field or fall back to file mtime.\"\"\"
+    try:
+        d = json.load(open(filepath))
+        u = d.get('updated')
+        if u:
+            return u, 'field'
+    except Exception:
+        pass
+    try:
+        mtime = os.path.getmtime(filepath)
+        return datetime.fromtimestamp(mtime).strftime('%Y-%m-%d'), 'mtime'
+    except Exception:
+        return None, None
+
+stale = []
+proj = '$PROJECT_DIR'
+
+# Check propositions against their upstream feature and market
+for pf in glob.glob(os.path.join(proj, 'propositions', '*.json')):
+    slug = os.path.basename(pf)[:-5]
+    if '--' not in slug:
+        continue
+    f_slug = slug.split('--')[0]
+    m_slug = '--'.join(slug.split('--')[1:])
+    prop_date, prop_src = get_updated(pf)
+    if not prop_date:
+        continue
+
+    reasons = []
+    # Check feature
+    feat_path = os.path.join(proj, 'features', f_slug + '.json')
+    if os.path.exists(feat_path):
+        feat_date, feat_src = get_updated(feat_path)
+        if feat_date and feat_date > prop_date:
+            reasons.append(f'feature {f_slug} updated {feat_date} ({feat_src}) > proposition {prop_date}')
+
+    # Check market
+    mkt_path = os.path.join(proj, 'markets', m_slug + '.json')
+    if os.path.exists(mkt_path):
+        mkt_date, mkt_src = get_updated(mkt_path)
+        if mkt_date and mkt_date > prop_date:
+            reasons.append(f'market {m_slug} updated {mkt_date} ({mkt_src}) > proposition {prop_date}')
+
+    if reasons:
+        stale.append({'entity': 'proposition', 'slug': slug, 'reasons': reasons})
+
+# Check solutions against their upstream proposition
+for sf in glob.glob(os.path.join(proj, 'solutions', '*.json')):
+    slug = os.path.basename(sf)[:-5]
+    sol_date, sol_src = get_updated(sf)
+    if not sol_date:
+        continue
+    prop_path = os.path.join(proj, 'propositions', slug + '.json')
+    if os.path.exists(prop_path):
+        prop_date, prop_src = get_updated(prop_path)
+        if prop_date and prop_date > sol_date:
+            stale.append({'entity': 'solution', 'slug': slug, 'reasons': [f'proposition {slug} updated {prop_date} ({prop_src}) > solution {sol_date}']})
+
+# Check propositions whose features have quality warnings
+import re
+MECHANISM_VERBS = {'monitors','analyzes','aggregates','transforms','routes','encrypts',
+    'validates','orchestrates','correlates','indexes','provisions','automates',
+    'detects','classifies','normalizes','synchronizes','deploys','compiles',
+    'processes','integrates','schedules','optimizes','caches','replicates',
+    'streams','parses','generates','scans','filters','connects','extracts',
+    'loads','maps','converts','distributes','manages','tracks','audits',
+    'authenticates','authorizes','balances','batches','bridges','buffers',
+    'captures','chains','chunks','clusters','compresses','computes','configures'}
+
+warned_features = set()
+for ff in glob.glob(os.path.join(proj, 'features', '*.json')):
+    try:
+        d = json.load(open(ff))
+        desc = d.get('description', '')
+        words = desc.split()
+        has_warning = len(words) < 15
+        name_w = set(w.lower().strip('.,;:') for w in d.get('name', '').split() if len(w) > 2)
+        desc_w = set(w.lower().strip('.,;:') for w in words if len(w) > 2)
+        if name_w and desc_w and len(name_w & desc_w) / len(name_w) > 0.5:
+            has_warning = True
+        if not set(w.lower().strip('.,;:()') for w in words) & MECHANISM_VERBS:
+            has_warning = True
+        if has_warning:
+            warned_features.add(os.path.basename(ff)[:-5])
+    except Exception:
+        pass
+
+for pf in glob.glob(os.path.join(proj, 'propositions', '*.json')):
+    slug = os.path.basename(pf)[:-5]
+    if '--' not in slug:
+        continue
+    f_slug = slug.split('--')[0]
+    if f_slug in warned_features:
+        # Check if already in stale list
+        existing = [s for s in stale if s['slug'] == slug and s['entity'] == 'proposition']
+        reason = f'feature {f_slug} has quality warnings -- proposition may need rework'
+        if existing:
+            existing[0]['reasons'].append(reason)
+        else:
+            stale.append({'entity': 'proposition', 'slug': slug, 'reasons': [reason]})
+
+print(json.dumps(stale))
+" 2>/dev/null || echo "[]")
+fi
+
 cat << EOF
 {
   "counts": {
@@ -403,6 +522,7 @@ cat << EOF
     "solutions_pct": $SOLUTIONS_PCT,
     "competitors_pct": $COMPETITORS_PCT,
     "customers_pct": $CUSTOMERS_PCT
-  }
+  },
+  "stale_entities": $stale_entities
 }
 EOF

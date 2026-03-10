@@ -212,7 +212,11 @@ Read all JSON files in the project's `markets/` directory. Present as a table gr
 
 ### Editing Markets
 
-Read the existing market JSON, apply the user's changes, and write back. Changing a market slug requires a cascading rename — this is not optional, as orphaned references break downstream skills:
+Read the existing market JSON, apply the user's changes, and write back. **After any content change** (name, description, segmentation, sizing, priority), set the `updated` field to today's date (ISO format `YYYY-MM-DD`). This enables downstream staleness tracking — propositions targeting this market will be flagged as potentially stale.
+
+After saving, check for dependent propositions in `propositions/` that reference this market. If any exist, remind the user: "This market has N downstream propositions that may need updating to reflect these changes. Run the `propositions` skill to review them." This is informational, not blocking.
+
+Changing a market slug requires a cascading rename — this is not optional, as orphaned references break downstream skills:
 
 1. Rename the market file from `markets/{old-slug}.json` to `markets/{new-slug}.json` and update `slug` inside
 2. Run the cascade script to update all dependent entities (propositions, solutions, competitors, customers):

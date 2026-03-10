@@ -33,13 +33,13 @@ Each match represents a project (extract the slug from the directory name). If n
 - One project found — use it automatically.
 - Multiple projects — present them and ask which one to continue.
 
-### 3. Run Project Status
+### 3. Run Project Status with Health Check
 
 ```bash
-bash $CLAUDE_PLUGIN_ROOT/scripts/project-status.sh "<project-dir>"
+bash $CLAUDE_PLUGIN_ROOT/scripts/project-status.sh "<project-dir>" --health-check
 ```
 
-The script returns JSON with `counts`, `phase`, `next_actions`, `completion`, and `claims`. These drive everything in the next steps.
+The script returns JSON with `counts`, `phase`, `next_actions`, `completion`, `claims`, and `stale_entities`. The `--health-check` flag enables staleness detection — it compares upstream `updated` dates (or file mtimes as fallback) against downstream entities and flags propositions/solutions that may need refresh.
 
 ### 4. Present Status Summary
 
@@ -59,6 +59,7 @@ Show a concise, scannable dashboard. Lead with the company name and project slug
 
 After the table:
 - **Phase** — translate the `phase` value into plain language (see reference below)
+- **Stale entities** — if `stale_entities` is non-empty, show them as priority actions before the regular next steps. Group by reason type: "N propositions need refresh because their upstream features were updated" is more useful than listing each one. If a stale entity also has quality warnings, lead with the quality issue (fix the root cause first, then refresh the proposition).
 - **Uploads notice** — if `counts.uploads > 0`, always mention pending files regardless of phase
 - **Gaps** — if `missing_propositions` is non-empty, list the first few missing pairs; note incomplete solutions/competitors/customers
 

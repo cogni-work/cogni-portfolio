@@ -162,7 +162,11 @@ Read all JSON files in the project's `features/` directory. Present grouped by p
 
 ### Editing Features
 
-Read the existing feature JSON, apply the user's changes, and write back. Changing `product_slug` reassigns the feature to a different product.
+Read the existing feature JSON, apply the user's changes, and write back. **After any content change** (name, description, category, readiness), set the `updated` field to today's date (ISO format `YYYY-MM-DD`). This enables downstream staleness tracking — propositions built on this feature will be flagged as potentially stale.
+
+After saving, check for dependent propositions in `propositions/` that reference this feature. If any exist, remind the user: "This feature has N downstream propositions that may need updating to reflect these changes. Run the `propositions` skill to review them." This is informational, not blocking — the user decides whether to act now or later.
+
+Changing `product_slug` reassigns the feature to a different product.
 
 Changing a feature slug requires a cascading rename — this is not optional, as orphaned references break downstream skills:
 
