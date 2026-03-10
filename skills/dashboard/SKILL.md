@@ -72,3 +72,13 @@ The generated HTML includes these sections, all in a single-page app with drill-
 - Re-running the script overwrites the previous dashboard
 - The dashboard lives at `output/dashboard.html` alongside the synthesis README
 - **Communication Language**: Read `portfolio.json` in the project root. If a `language` field is present, communicate with the user in that language (status messages, instructions, recommendations, questions). Technical terms, skill names, and CLI commands remain in English. If no `language` field is present, default to English.
+
+## Session Management
+
+Dashboard generation is a capstone operation — it gives the user a complete visual overview and typically signals a natural pause point. After generating the dashboard, always recommend starting a fresh session for next steps:
+
+> "Dashboard ready at `output/dashboard.html`. For next steps like [recommend from next_actions], I'd recommend starting a fresh session with `/resume-portfolio`. That picks up the current state cleanly and gives you full context for the next phase."
+
+If the dashboard was generated after other heavy skills in the same session (batch propositions, feature reviews, etc.), be especially proactive — summarize what was accomplished in this session and frame the fresh start as the best way to maintain quality.
+
+Use the portfolio's communication language (read `portfolio.json` for the `language` field). Frame it as helpful advice, not a limitation.

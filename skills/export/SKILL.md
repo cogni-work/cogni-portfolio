@@ -199,3 +199,13 @@ List generated files with paths. Suggest how to use each deliverable:
 - **Content Language**: Read `portfolio.json` in the project root. If a `language` field is present, generate all user-facing text content (proposals, briefs, summaries) in that language. JSON field names and slugs remain in English. If no `language` field is present, default to English.
 - **Communication Language**: If `portfolio.json` has a `language` field, communicate with the user in that language (status messages, instructions, recommendations, questions). Technical terms, skill names, and CLI commands remain in English. Default to English if no `language` field is present.
 - Running `synthesize` first is recommended but not strictly required
+
+## Session Management
+
+Export is a capstone operation — it produces the final deliverables and typically marks the end of a work phase. After completing exports, always recommend starting a fresh session if the user wants to continue with other portfolio work:
+
+> "Exports complete — [list files generated]. If you want to continue with other portfolio work (refining propositions, adding competitors, etc.), I'd recommend starting a fresh session with `/resume-portfolio`. That picks up the current state cleanly and gives you full context for the next phase."
+
+If export runs after other heavy skills in the same session, be especially proactive about this recommendation — output quality benefits from fresh context.
+
+Use the portfolio's communication language (read `portfolio.json` for the `language` field). Frame it as helpful advice, not a limitation.

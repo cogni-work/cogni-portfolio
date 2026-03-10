@@ -143,3 +143,13 @@ The user may want to iterate — go back and add missing entities, then re-synth
 - **Content Language**: Read `portfolio.json` in the project root. If a `language` field is present, generate all user-facing text content (README narrative, summaries, market descriptions) in that language. JSON field names and slugs remain in English. If no `language` field is present, default to English.
 - **Communication Language**: If `portfolio.json` has a `language` field, communicate with the user in that language (status messages, instructions, recommendations, questions). Technical terms, skill names, and CLI commands remain in English. Default to English if no `language` field is present.
 - Claims marked `[unverified]` signal the source has not been checked — readers should treat these with appropriate caution
+
+## Session Management
+
+Synthesis is a capstone operation — it typically signals the end of a productive work phase. After completing synthesis, always recommend starting a fresh session for next steps:
+
+> "Synthesis complete — the messaging repository is ready at `output/README.md`. For next steps like [export/verify/compete], I'd recommend starting a fresh session with `/resume-portfolio`. That picks up the current state cleanly and gives you full context for the next phase."
+
+If synthesis runs after other heavy skills in the same session (batch propositions, dashboard, etc.), be especially proactive about this recommendation — output quality benefits from fresh context.
+
+Use the portfolio's communication language (read `portfolio.json` for the `language` field). Frame it as helpful advice, not a limitation.

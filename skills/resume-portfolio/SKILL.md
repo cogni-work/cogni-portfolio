@@ -88,6 +88,12 @@ If the phase is `complete`, congratulate the user and suggest reviewing outputs 
 | `export` | Overview generated, deliverables pending | Run `export` skill |
 | `complete` | All workflow stages finished | Review outputs or re-export |
 
+## Multi-Session Design
+
+This skill is the recommended re-entry point after heavy sessions. Portfolio work naturally spans multiple sessions — batch proposition generation, competitive analysis, solution design, and dashboard generation each consume significant context. Other portfolio skills proactively recommend `/resume-portfolio` when they detect a heavy session (multiple batch operations, 3+ skills invoked, or capstone operations like dashboard/synthesize/export completed).
+
+When presenting the status summary, acknowledge what the user accomplished in previous sessions if recent entity timestamps suggest a productive recent session. This continuity helps users feel their work persists and builds confidence in the multi-session workflow.
+
 ## Language
 
 - **Communication Language**: Read `portfolio.json` in the project root. If a `language` field is present, communicate with the user in that language (status messages, instructions, recommendations, questions). Technical terms, skill names, and CLI commands remain in English. If no `language` field is present, default to English.

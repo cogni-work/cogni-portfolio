@@ -289,3 +289,17 @@ Present your assessment as a consulting memo — lead with "here's what I'd chan
 - **Content Language**: Read `portfolio.json` in the project root. If a `language` field is present, generate all user-facing text content (IS/DOES/MEANS statements, evidence descriptions) in that language. JSON field names and slugs remain in English. If no `language` field is present, default to English.
 - **Communication Language**: If `portfolio.json` has a `language` field, communicate with the user in that language (status messages, instructions, recommendations, questions). Technical terms, skill names, and CLI commands remain in English. Default to English if no `language` field is present.
 - Refer to `$CLAUDE_PLUGIN_ROOT/skills/setup/references/data-model.md` for complete entity schemas
+
+## Session Management
+
+After completing batch proposition generation (10+ propositions) or when this skill runs after other heavy skills already consumed context in the same session, proactively check in with the user about starting fresh. Signs that a new session would improve quality:
+
+- Batch generation of 10+ propositions just completed
+- Three or more different portfolio skills were already invoked this session
+- The user asks "how much context do you have left" or similar
+
+When you notice these signals, summarize what was accomplished, then recommend a fresh session:
+
+> "We got a lot done: [brief summary of accomplishments]. For the next steps like [recommend next skills], I'd suggest starting a fresh session — just use `/resume-portfolio` to pick up where we left off. That loads the current state cleanly without carrying the weight of this session."
+
+Use the portfolio's communication language (read `portfolio.json` for the `language` field). Frame it as helpful advice for better output quality, not as a limitation. The key message: `/resume-portfolio` exists exactly for this — seamless multi-session workflows.
