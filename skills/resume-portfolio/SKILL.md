@@ -58,7 +58,9 @@ Show a concise, scannable dashboard. Lead with the company name and project slug
 | Uploads | N | pending ingestion (if > 0) |
 
 If `margin_health` is present in the status output and has `solutions_with_cost_model > 0`, add a margin health line after the table:
-- **Margin health** — N solutions with cost models, avg margin X%, N tiers below target (target: Y%), N negative-margin tiers. Flag negative margins as urgent. This surfaces pricing issues early — a solution with thin margins needs attention before it becomes a signed deal.
+- **Margin health** — N solutions with cost models, N tiers below target (target: Y%), N negative-margin tiers. Show margins split by type: project avg margin X%, subscription avg gross margin X%. These are different metrics (effort-based vs. unit economics) so present them separately. Flag negative project margins and subscription LTV/CAC < 3 as urgent.
+
+If `solutions_by_type` is present, show the type breakdown: "N project, N subscription, N partnership".
 
 After the table:
 - **Phase** — translate the `phase` value into plain language (see reference below)

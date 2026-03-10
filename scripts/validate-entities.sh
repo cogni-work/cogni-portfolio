@@ -297,21 +297,46 @@ import json, sys
 with open('$s') as fh:
     d = json.load(fh)
     if 'proposition_slug' not in d: sys.exit(1)
-    impl = d.get('implementation')
-    if not isinstance(impl, list) or len(impl) == 0: sys.exit(2)
-    for phase in impl:
-        if 'phase' not in phase or 'duration_weeks' not in phase: sys.exit(3)
-        dw = phase.get('duration_weeks')
-        if not isinstance(dw, (int, float)) and not (isinstance(dw, str) and dw.isdigit()):
-            sys.exit(6)
-    pricing = d.get('pricing')
-    if not isinstance(pricing, dict): sys.exit(4)
-    for tier in ['proof_of_value', 'small', 'medium', 'large']:
-        t = pricing.get(tier)
-        if not isinstance(t, dict) or 'price' not in t or 'currency' not in t: sys.exit(5)
+    sol_type = d.get('solution_type', 'project')
+
+    if sol_type in ('project', ''):
+        # Project solutions require implementation + pricing
+        impl = d.get('implementation')
+        if not isinstance(impl, list) or len(impl) == 0: sys.exit(2)
+        for phase in impl:
+            if 'phase' not in phase or 'duration_weeks' not in phase: sys.exit(3)
+            dw = phase.get('duration_weeks')
+            if not isinstance(dw, (int, float)) and not (isinstance(dw, str) and dw.isdigit()):
+                sys.exit(6)
+        pricing = d.get('pricing')
+        if not isinstance(pricing, dict): sys.exit(4)
+        for tier in ['proof_of_value', 'small', 'medium', 'large']:
+            t = pricing.get(tier)
+            if not isinstance(t, dict) or 'price' not in t or 'currency' not in t: sys.exit(5)
+
+    elif sol_type in ('subscription', 'hybrid'):
+        # Subscription/hybrid solutions require subscription object
+        sub = d.get('subscription')
+        if not isinstance(sub, dict): sys.exit(7)
+        if 'tiers' not in sub or 'currency' not in sub: sys.exit(8)
+
+    elif sol_type == 'partnership':
+        # Partnership solutions require program object
+        prog = d.get('program')
+        if not isinstance(prog, dict): sys.exit(9)
+        if 'stages' not in prog or 'revenue_share' not in prog: sys.exit(10)
+
+    else:
+        sys.exit(11)
 " 2>/dev/null || exit_code=$?
     if [ "$exit_code" -eq 6 ]; then
       add_warning "solution" "$slug" "Non-numeric duration_weeks value (e.g. 'ongoing') — accepted but may affect duration totals"
+    elif [ "$exit_code" -eq 7 ] || [ "$exit_code" -eq 8 ]; then
+      add_error "solution" "$slug" "Subscription/hybrid solution missing required subscription object (needs tiers, currency)"
+    elif [ "$exit_code" -eq 9 ] || [ "$exit_code" -eq 10 ]; then
+      add_error "solution" "$slug" "Partnership solution missing required program object (needs stages, revenue_share)"
+    elif [ "$exit_code" -eq 11 ]; then
+      add_error "solution" "$slug" "Invalid solution_type — must be project, subscription, partnership, or hybrid"
     elif [ "$exit_code" -ne 0 ]; then
       add_error "solution" "$slug" "Missing required fields or invalid structure (needs proposition_slug, implementation phases, pricing tiers)"
     fi

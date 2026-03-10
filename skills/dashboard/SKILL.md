@@ -59,8 +59,8 @@ The generated HTML includes these sections, all in a single-page app with drill-
 4. **Feature x Market Matrix** — Interactive grid. Each cell is color-coded (green = proposition + solution, yellow = proposition only, red = missing). Click a cell to expand IS/DOES/MEANS, pricing tiers, and competitor summary
 5. **Markets Overview** — Cards per market with TAM/SAM/SOM bars, region badge, segmentation criteria. Click to see customer profiles and all propositions targeting that market
 6. **Products & Features** — Grouped by product, showing feature descriptions and which markets each feature targets
-7. **Solutions & Pricing** — Table of all solutions with implementation timeline and pricing tiers (PoV/S/M/L)
-8. **Margin Health** (if any solutions have `cost_model`) — Summary showing solutions with cost models, average margin, tiers below target, and negative-margin flags. Color-coded: green for healthy margins, yellow for below-target, red for negative. This section is marked INTERNAL/CONFIDENTIAL.
+7. **Solutions & Pricing** — Solutions grouped by type. Project solutions show implementation timeline and pricing tiers (PoV/S/M/L). Subscription solutions show onboarding, subscription tiers (Free/Pro/Enterprise), and professional services. Partnership solutions show program stages and revenue-share terms.
+8. **Margin Health** (if any solutions have `cost_model`) — Separated by solution type. Project solutions show effort-based margins per tier. Subscription solutions show unit economics (LTV/CAC, gross margin, churn). Color-coded: green for healthy, yellow for below-target, red for negative/failing. This section is marked INTERNAL/CONFIDENTIAL.
 9. **Competitive Landscape** — Per-proposition competitor cards with strengths/weaknesses
 10. **Claims Status** — Verification summary (verified, unverified, deviated, resolved) with progress bar
 11. **Next Actions** — Recommended next skills from project-status

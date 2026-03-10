@@ -81,11 +81,16 @@ Write `output/README.md` as the main messaging repository. The structure is desi
 [Table: Feature x Market with IS/DOES/MEANS for each cell, grouped by product]
 
 ## Solution Overview
-[For each solution: proposition, implementation phases summary, pricing tiers table (PoV/S/M/L)]
-[If any solutions have cost_model: add a Margin Health Summary table showing
-each solution's margin_pct per tier, flagging any below target_margin_pct.
-Mark this section as INTERNAL / CONFIDENTIAL — it should not appear in
-customer-facing exports.]
+[Group solutions by solution_type (project, subscription, partnership, hybrid):
+
+**Project solutions**: proposition, implementation phases summary, pricing tiers table (PoV/S/M/L)
+**Subscription solutions**: proposition, onboarding summary, subscription tiers table (Free/Pro/Enterprise monthly/annual), professional services
+**Partnership solutions**: proposition, program stages, revenue-share terms
+**Hybrid solutions**: subscription tiers + optional project services
+
+If any solutions have cost_model: add a Margin Health Summary table grouped by type.
+Project margins show margin_pct per tier. Subscription margins show unit economics
+(LTV/CAC ratio, gross margin %, churn %). Mark as INTERNAL / CONFIDENTIAL.]
 
 ## Market Deep Dives
 [For each market:]
@@ -95,7 +100,8 @@ customer-facing exports.]
 #### Propositions by Product
 [All propositions targeting this market, grouped by product, with full IS/DOES/MEANS]
 #### Solution Plans
-[Implementation phases and pricing tiers for each proposition in this market, if solution exists]
+[For each proposition in this market (if solution exists), adapt to solution_type:
+project → phases + pricing tiers, subscription → onboarding + tiers, partnership → program stages]
 #### Competitive Landscape
 [Competitor analysis for each proposition in this market]
 

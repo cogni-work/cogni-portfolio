@@ -1272,40 +1272,58 @@ body::after {{
 
     # --- Solutions & Pricing ---
     if data["solutions"]:
+        # Separate solutions by type
+        project_solutions = {}
+        subscription_solutions = {}
+        partnership_solutions = {}
+        for ss, s_ent in sorted(data["solutions"].items()):
+            sol_type = s_ent.get("solution_type", "project")
+            if sol_type in ("subscription", "hybrid"):
+                subscription_solutions[ss] = s_ent
+            elif sol_type == "partnership":
+                partnership_solutions[ss] = s_ent
+            else:
+                project_solutions[ss] = s_ent
+
         html += """
 <!-- Solutions & Pricing -->
 <div class="section reveal">
   <div class="section-title">Solutions & Pricing</div>
-  <div style="overflow-x:auto">
+"""
+
+        # Project solutions table
+        if project_solutions:
+            html += """  <div style="overflow-x:auto;margin-bottom:20px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:var(--text2)">Project Solutions</div>
     <table class="solutions-table">
       <thead><tr><th>Proposition</th><th>Phases</th><th>Duration</th><th>PoV</th><th>Small</th><th>Medium</th><th>Large</th></tr></thead>
       <tbody>
 """
-        for ss, s_ent in sorted(data["solutions"].items()):
-            impl = s_ent.get("implementation", [])
-            pricing = s_ent.get("pricing", {})
-            def safe_weeks(val):
-                try:
-                    return int(val)
-                except (TypeError, ValueError):
-                    return 0
+            for ss, s_ent in sorted(project_solutions.items()):
+                impl = s_ent.get("implementation", [])
+                pricing = s_ent.get("pricing", {})
+                def safe_weeks(val):
+                    try:
+                        return int(val)
+                    except (TypeError, ValueError):
+                        return 0
 
-            has_non_numeric = any(
-                not isinstance(ph.get("duration_weeks", 0), (int, float))
-                and not str(ph.get("duration_weeks", "0")).isdigit()
-                for ph in impl
-            )
-            total_weeks = sum(safe_weeks(ph.get("duration_weeks", 0)) for ph in impl)
-            duration_display = f"{total_weeks}w+" if has_non_numeric else f"{total_weeks}w"
-            phase_names = " → ".join(ph.get("phase", "?") for ph in impl)
+                has_non_numeric = any(
+                    not isinstance(ph.get("duration_weeks", 0), (int, float))
+                    and not str(ph.get("duration_weeks", "0")).isdigit()
+                    for ph in impl
+                )
+                total_weeks = sum(safe_weeks(ph.get("duration_weeks", 0)) for ph in impl)
+                duration_display = f"{total_weeks}w+" if has_non_numeric else f"{total_weeks}w"
+                phase_names = " → ".join(ph.get("phase", "?") for ph in impl)
 
-            def tier_str(tier_key, pr=pricing):
-                t = pr.get(tier_key, {})
-                if not t:
-                    return "—"
-                return format_currency(t.get("price"), t.get("currency", "EUR"))
+                def tier_str(tier_key, pr=pricing):
+                    t = pr.get(tier_key, {})
+                    if not t:
+                        return "—"
+                    return format_currency(t.get("price"), t.get("currency", "EUR"))
 
-            html += f"""        <tr style="cursor:pointer" onclick="openProposition('{escape_js_string(ss)}')">
+                html += f"""        <tr style="cursor:pointer" onclick="openProposition('{escape_js_string(ss)}')">
           <td style="font-weight:500">{escape_html(ss)}</td>
           <td style="font-size:12px;color:var(--text2)">{escape_html(phase_names)}</td>
           <td class="mono">{duration_display}</td>
@@ -1315,7 +1333,77 @@ body::after {{
           <td class="price">{tier_str("large")}</td>
         </tr>
 """
-        html += "      </tbody>\n    </table>\n  </div>\n</div>\n"
+            html += "      </tbody>\n    </table>\n  </div>\n"
+
+        # Subscription / hybrid solutions table
+        if subscription_solutions:
+            html += """  <div style="overflow-x:auto;margin-bottom:20px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:var(--text2)">Subscription Solutions</div>
+    <table class="solutions-table">
+      <thead><tr><th>Proposition</th><th>Type</th><th>Onboarding</th><th>Free</th><th>Pro</th><th>Enterprise</th></tr></thead>
+      <tbody>
+"""
+            for ss, s_ent in sorted(subscription_solutions.items()):
+                sol_type = s_ent.get("solution_type", "subscription")
+                sub = s_ent.get("subscription", {})
+                tiers = sub.get("tiers", {})
+                currency = sub.get("currency", "EUR")
+                onb = s_ent.get("onboarding", {})
+                onb_phases = onb.get("phases", [])
+                onb_display = f"{len(onb_phases)} phase{'s' if len(onb_phases) != 1 else ''}" if onb_phases else "—"
+                if onb.get("pricing", {}).get("included"):
+                    onb_display += " (incl.)"
+
+                def sub_tier_str(tier_key):
+                    t = tiers.get(tier_key, {})
+                    if not t:
+                        return "—"
+                    pm = t.get("price_monthly")
+                    if pm is None:
+                        return t.get("note", "Custom")
+                    if pm == 0:
+                        return "Free"
+                    return format_currency(pm, currency) + "/mo"
+
+                type_badge = f'<span style="font-size:10px;padding:2px 6px;border-radius:4px;background:var(--accent);color:var(--bg)">{escape_html(sol_type)}</span>'
+
+                html += f"""        <tr style="cursor:pointer" onclick="openProposition('{escape_js_string(ss)}')">
+          <td style="font-weight:500">{escape_html(ss)}</td>
+          <td>{type_badge}</td>
+          <td class="mono">{onb_display}</td>
+          <td class="price">{sub_tier_str("free")}</td>
+          <td class="price">{sub_tier_str("pro")}</td>
+          <td class="price">{sub_tier_str("enterprise")}</td>
+        </tr>
+"""
+            html += "      </tbody>\n    </table>\n  </div>\n"
+
+        # Partnership solutions table
+        if partnership_solutions:
+            html += """  <div style="overflow-x:auto;margin-bottom:20px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:var(--text2)">Partnership Solutions</div>
+    <table class="solutions-table">
+      <thead><tr><th>Proposition</th><th>Stages</th><th>Revenue Share</th><th>Model</th></tr></thead>
+      <tbody>
+"""
+            for ss, s_ent in sorted(partnership_solutions.items()):
+                prog = s_ent.get("program", {})
+                stages = prog.get("stages", [])
+                stage_names = " → ".join(st.get("stage", "?") for st in stages)
+                rev_share = prog.get("revenue_share", {})
+                pct = rev_share.get("partner_pct", "?")
+                model = rev_share.get("model", "?")
+
+                html += f"""        <tr style="cursor:pointer" onclick="openProposition('{escape_js_string(ss)}')">
+          <td style="font-weight:500">{escape_html(ss)}</td>
+          <td style="font-size:12px;color:var(--text2)">{escape_html(stage_names)}</td>
+          <td class="price">{escape_html(str(pct))}%</td>
+          <td>{escape_html(str(model))}</td>
+        </tr>
+"""
+            html += "      </tbody>\n    </table>\n  </div>\n"
+
+        html += "</div>\n"
 
     # --- Margin Health ---
     # Check if any solutions have cost_model data
@@ -1328,54 +1416,102 @@ body::after {{
         except Exception:
             pass
 
+        # Split by solution type for margin health
+        project_cm = {ss: s for ss, s in solutions_with_cm.items() if s.get("solution_type", "project") in ("project", "")}
+        subscription_cm = {ss: s for ss, s in solutions_with_cm.items() if s.get("solution_type") in ("subscription", "hybrid")}
+        partnership_cm = {ss: s for ss, s in solutions_with_cm.items() if s.get("solution_type") == "partnership"}
+
         html += f"""
 <!-- Margin Health (INTERNAL) -->
 <div class="section reveal">
   <div class="section-title" style="display:flex;align-items:center;gap:10px">Margin Health
     <span style="font-size:10px;padding:3px 10px;border-radius:8px;background:var(--red);color:#fff;text-transform:uppercase;letter-spacing:0.06em;font-weight:700">Internal / Confidential</span>
   </div>
-  <div style="overflow-x:auto">
+"""
+
+        # Project margins (effort-based)
+        if project_cm:
+            html += f"""  <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:var(--text2)">Project Margins (effort-based)</div>
+  <div style="overflow-x:auto;margin-bottom:20px">
     <table class="margin-table">
       <thead><tr><th>Solution</th><th>PoV</th><th>Small</th><th>Medium</th><th>Large</th><th>Avg</th></tr></thead>
       <tbody>
 """
-        for ss, s_ent in sorted(solutions_with_cm.items()):
-            cm = s_ent["cost_model"]
-            ebt = cm.get("effort_by_tier", {})
-            margins = []
+            for ss, s_ent in sorted(project_cm.items()):
+                cm = s_ent["cost_model"]
+                ebt = cm.get("effort_by_tier", {})
+                margins = []
 
-            def margin_cell(tier_key, is_pov=False):
-                tier = ebt.get(tier_key, {})
-                m = tier.get("margin_pct")
-                if m is None:
-                    return '<td>—</td>'
-                margins.append(m)
-                threshold = 10 if is_pov else target_margin
-                if m < 0:
-                    css = "margin-bad"
-                elif m < threshold:
-                    css = "margin-warn"
-                else:
-                    css = "margin-ok"
-                return f'<td><span class="margin-badge {css}">{m:.1f}%</span></td>'
+                def margin_cell(tier_key, is_pov=False):
+                    tier = ebt.get(tier_key, {})
+                    m = tier.get("margin_pct")
+                    if m is None:
+                        return '<td>—</td>'
+                    margins.append(m)
+                    threshold = 10 if is_pov else target_margin
+                    if m < 0:
+                        css = "margin-bad"
+                    elif m < threshold:
+                        css = "margin-warn"
+                    else:
+                        css = "margin-ok"
+                    return f'<td><span class="margin-badge {css}">{m:.1f}%</span></td>'
 
-            pov_cell = margin_cell("proof_of_value", is_pov=True)
-            sm_cell = margin_cell("small")
-            md_cell = margin_cell("medium")
-            lg_cell = margin_cell("large")
-            avg = sum(margins) / len(margins) if margins else 0
-            avg_css = "margin-ok" if avg >= target_margin else ("margin-warn" if avg >= 0 else "margin-bad")
+                pov_cell = margin_cell("proof_of_value", is_pov=True)
+                sm_cell = margin_cell("small")
+                md_cell = margin_cell("medium")
+                lg_cell = margin_cell("large")
+                avg = sum(margins) / len(margins) if margins else 0
+                avg_css = "margin-ok" if avg >= target_margin else ("margin-warn" if avg >= 0 else "margin-bad")
 
-            html += f"""        <tr>
+                html += f"""        <tr>
           <td style="font-weight:500">{escape_html(ss)}</td>
           {pov_cell}{sm_cell}{md_cell}{lg_cell}
           <td><span class="margin-badge {avg_css}">{avg:.1f}%</span></td>
         </tr>
 """
-        html += f"""      </tbody>
-    </table>
-  </div>
-  <div style="font-size:12px;color:var(--text2);margin-top:10px">Target margin: {target_margin}% (PoV: 10-20% acceptable). <span class="margin-ok">Green</span> = on target, <span class="margin-warn">Yellow</span> = below target, <span class="margin-bad">Red</span> = negative.</div>
+            html += "      </tbody>\n    </table>\n  </div>\n"
+
+        # Subscription margins (unit economics)
+        if subscription_cm:
+            html += """  <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:var(--text2)">Subscription Margins (unit economics)</div>
+  <div style="overflow-x:auto;margin-bottom:20px">
+    <table class="margin-table">
+      <thead><tr><th>Solution</th><th>Gross Margin</th><th>LTV/CAC</th><th>Churn/mo</th><th>CAC</th><th>LTV</th></tr></thead>
+      <tbody>
+"""
+            for ss, s_ent in sorted(subscription_cm.items()):
+                cm = s_ent["cost_model"]
+                ue = cm.get("unit_economics", {})
+                gm = ue.get("gross_margin_pct")
+                ltv_cac = ue.get("ltv_cac_ratio")
+                churn = ue.get("churn_monthly_pct")
+                cac = ue.get("cac")
+                ltv = ue.get("ltv")
+
+                def ue_cell(val, good_threshold, bad_threshold, fmt="{:.1f}%", reverse=False):
+                    if val is None:
+                        return '<td>—</td>'
+                    if reverse:
+                        css = "margin-ok" if val <= good_threshold else ("margin-warn" if val <= bad_threshold else "margin-bad")
+                    else:
+                        css = "margin-ok" if val >= good_threshold else ("margin-warn" if val >= bad_threshold else "margin-bad")
+                    return f'<td><span class="margin-badge {css}">{fmt.format(val)}</span></td>'
+
+                gm_cell = ue_cell(gm, 70, 50)
+                ltv_cac_cell = ue_cell(ltv_cac, 3, 1, "{:.1f}x")
+                churn_cell = ue_cell(churn, 3, 5, "{:.1f}%", reverse=True)
+                cac_cell = f'<td class="price">{format_currency(cac, "EUR")}</td>' if cac is not None else '<td>—</td>'
+                ltv_cell = f'<td class="price">{format_currency(ltv, "EUR")}</td>' if ltv is not None else '<td>—</td>'
+
+                html += f"""        <tr>
+          <td style="font-weight:500">{escape_html(ss)}</td>
+          {gm_cell}{ltv_cac_cell}{churn_cell}{cac_cell}{ltv_cell}
+        </tr>
+"""
+            html += "      </tbody>\n    </table>\n  </div>\n"
+
+        html += f"""  <div style="font-size:12px;color:var(--text2);margin-top:10px">Project target margin: {target_margin}% (PoV: 10-20% acceptable). Subscription targets: gross margin &gt;70%, LTV/CAC &gt;3, churn &lt;5%/mo. <span class="margin-ok">Green</span> = on target, <span class="margin-warn">Yellow</span> = below target, <span class="margin-bad">Red</span> = negative/failing.</div>
 </div>
 """
 
