@@ -409,7 +409,24 @@ case "$PHASE" in
 esac
 next_actions="$next_actions]"
 
-# Margin health: analyze cost_model data across solutions
+# Solutions by type: count solution_type values
+solutions_by_type="{}"
+if [ -d "$PROJECT_DIR/solutions" ]; then
+  solutions_by_type=$(python3 -c "
+import json, os, glob
+counts = {}
+for f in glob.glob('$PROJECT_DIR/solutions/*.json'):
+    try:
+        d = json.load(open(f))
+        t = d.get('solution_type', 'project')
+        counts[t] = counts.get(t, 0) + 1
+    except Exception:
+        pass
+print(json.dumps(counts, sort_keys=True))
+" 2>/dev/null || echo "{}")
+fi
+
+# Margin health: analyze cost_model data across solutions, separated by type
 margin_health="{}"
 solutions_with_cost_model=0
 solutions_below_target=0
@@ -430,7 +447,8 @@ except Exception:
 with_cm = 0
 below_target = 0
 negative = 0
-margins = []
+project_margins = []
+subscription_margins = []
 
 for sf in glob.glob('$PROJECT_DIR/solutions/*.json'):
     try:
@@ -439,26 +457,45 @@ for sf in glob.glob('$PROJECT_DIR/solutions/*.json'):
         if not cm:
             continue
         with_cm += 1
-        ebt = cm.get('effort_by_tier', {})
-        for tier_name in ['proof_of_value', 'small', 'medium', 'large']:
-            tier = ebt.get(tier_name, {})
-            m = tier.get('margin_pct')
-            if m is not None:
-                margins.append(m)
-                if m < 0:
-                    negative += 1
-                # PoV gets lower threshold (10%), standard tiers use target
-                threshold = 10 if tier_name == 'proof_of_value' else target
-                if m < threshold:
+        sol_type = d.get('solution_type', 'project')
+
+        if sol_type in ('subscription', 'hybrid'):
+            # Subscription: check unit_economics
+            ue = cm.get('unit_economics', {})
+            gm = ue.get('gross_margin_pct')
+            if gm is not None:
+                subscription_margins.append(gm)
+                if gm < 70:
                     below_target += 1
+            ltv_cac = ue.get('ltv_cac_ratio')
+            if ltv_cac is not None and ltv_cac < 3:
+                below_target += 1
+            churn = ue.get('churn_monthly_pct')
+            if churn is not None and churn > 5:
+                below_target += 1
+        else:
+            # Project: check effort_by_tier margins
+            ebt = cm.get('effort_by_tier', {})
+            for tier_name in ['proof_of_value', 'small', 'medium', 'large']:
+                tier = ebt.get(tier_name, {})
+                m = tier.get('margin_pct')
+                if m is not None:
+                    project_margins.append(m)
+                    if m < 0:
+                        negative += 1
+                    # PoV gets lower threshold (10%), standard tiers use target
+                    threshold = 10 if tier_name == 'proof_of_value' else target
+                    if m < threshold:
+                        below_target += 1
     except Exception:
         pass
 
-avg_margin = round(sum(margins) / len(margins), 1) if margins else 0
+avg_project = round(sum(project_margins) / len(project_margins), 1) if project_margins else 0
+avg_subscription = round(sum(subscription_margins) / len(subscription_margins), 1) if subscription_margins else 0
 print(f'solutions_with_cost_model={with_cm}')
 print(f'solutions_below_target={below_target}')
 print(f'negative_margin_tiers={negative}')
-print(f'margin_health={chr(39)}{{\"target_margin_pct\": {target}, \"solutions_with_cost_model\": {with_cm}, \"below_target_tiers\": {below_target}, \"negative_margin_tiers\": {negative}, \"avg_margin_pct\": {avg_margin}}}{chr(39)}')
+print(f'margin_health={chr(39)}{{\"target_margin_pct\": {target}, \"solutions_with_cost_model\": {with_cm}, \"below_target_tiers\": {below_target}, \"negative_margin_tiers\": {negative}, \"avg_project_margin_pct\": {avg_project}, \"avg_subscription_margin_pct\": {avg_subscription}}}{chr(39)}')
 " 2>/dev/null || echo "margin_health='{}'")"
 fi
 
@@ -591,6 +628,7 @@ cat << EOF
   "regions": $region_summary,
   "missing_propositions": $missing_arr,
   "missing_solutions": $missing_sol_arr,
+  "solutions_by_type": $solutions_by_type,
   "relevance_matrix": $relevance_matrix,
   "phase": "$PHASE",
   "next_actions": $next_actions,

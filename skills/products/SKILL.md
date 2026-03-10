@@ -37,7 +37,7 @@ Before defining any products, understand the business. Read `portfolio.json` for
 **Business model clarity:**
 - What problems does your company solve? For whom?
 - How do customers buy from you — single product, mix-and-match, platform + modules?
-- What's the revenue model — subscription, project-based, licensing, hybrid?
+- What's the revenue model for each product — subscription (SaaS), project-based (consulting), partnership (revenue-share), or hybrid? This determines how solutions are structured downstream, so getting it right here avoids rework later.
 
 **Product landscape:**
 - Walk me through what you sell today. What do customers actually pay for?
@@ -113,6 +113,7 @@ Once you and the user agree on the product set, structure each product:
   "description": "Unified cloud infrastructure management platform for mid-market SaaS companies.",
   "positioning": "The most developer-friendly cloud management solution.",
   "pricing_tier": "Enterprise",
+  "revenue_model": "subscription",
   "maturity": "growth",
   "launch_date": "2024-03-01",
   "version": "2.1",
@@ -120,9 +121,11 @@ Once you and the user agree on the product set, structure each product:
 }
 ```
 
-Required: `slug`, `name`, `description`. Optional: `positioning`, `pricing_tier`, `maturity`, `launch_date`, `version`, `created`.
+Required: `slug`, `name`, `description`. Optional: `positioning`, `pricing_tier`, `revenue_model`, `maturity`, `launch_date`, `version`, `created`.
 
 Valid maturity values: `concept`, `development`, `launch`, `growth`, `mature`, `decline`.
+
+Valid `revenue_model` values: `subscription` (SaaS, recurring), `project` (consulting, implementation), `partnership` (revenue-share, co-investment), `hybrid` (subscription + consulting). Defaults to `project` if absent. This field determines how downstream solutions are structured — subscription products get onboarding + subscription tiers instead of project phases + day-rate pricing.
 
 Write each product as a JSON file to `products/{slug}.json`.
 
@@ -130,9 +133,9 @@ Write each product as a JSON file to `products/{slug}.json`.
 
 Present the proposed portfolio as a table with your consulting commentary:
 
-| Slug | Name | Maturity | Positioning |
-|---|---|---|---|
-| cloud-platform | Cloud Platform | growth | The most developer-friendly cloud management solution |
+| Slug | Name | Revenue Model | Maturity | Positioning |
+|---|---|---|---|---|
+| cloud-platform | Cloud Platform | subscription | growth | The most developer-friendly cloud management solution |
 
 Then deliver your strategic recommendation — not as a list of observations but as a coherent point of view:
 
@@ -170,9 +173,9 @@ Cross-reference products with existing portfolio entities:
 
 Read all JSON files in the project's `products/` directory. Present as a table:
 
-| Slug | Name | Maturity | Features |
-|---|---|---|---|
-| cloud-platform | Cloud Platform | growth | 5 |
+| Slug | Name | Revenue Model | Maturity | Features |
+|---|---|---|---|---|
+| cloud-platform | Cloud Platform | subscription | growth | 5 |
 
 To show the feature count, scan `features/` for files where `product_slug` matches the product slug.
 

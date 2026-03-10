@@ -66,9 +66,15 @@ A product is a named offering that bundles related features. Every feature belon
 ```
 
 Required fields: `slug`, `name`, `description`
-Optional fields: `positioning`, `pricing_tier`, `maturity`, `launch_date`, `version`, `source_file`, `created`
+Optional fields: `positioning`, `pricing_tier`, `revenue_model`, `maturity`, `launch_date`, `version`, `source_file`, `created`
 
 Valid `maturity` values: `concept`, `development`, `launch`, `growth`, `mature`, `decline`
+
+Valid `revenue_model` values:
+- `subscription` — Recurring revenue (SaaS, license). Solutions use onboarding + subscription tiers + optional professional services. Cost model uses unit economics (CAC, LTV, churn, gross margin).
+- `project` — One-time engagements (consulting, implementation). Solutions use implementation phases + project pricing tiers (PoV/Small/Medium/Large). Cost model uses effort × rate + margin. **This is the default when `revenue_model` is absent.**
+- `partnership` — Revenue-share or co-investment models. Solutions use program stages + revenue-share terms.
+- `hybrid` — Combination (e.g., subscription base + consulting add-ons). Solutions combine subscription tiers with optional project-scoped services.
 
 ### features/{slug}.json
 
@@ -191,12 +197,17 @@ Each evidence entry can be a structured object with `statement` (string, require
 
 ### solutions/{feature-slug}--{market-slug}.json
 
-A solution attaches an implementation plan, pricing tiers, and internal cost model to a proposition (same slug). It provides the commercial grounding for customer business cases. The `cost_model` captures the internal economics — effort estimates, role rates, bill of materials, and assumptions — that justify the external pricing and enable margin analysis.
+A solution attaches commercial terms to a proposition (same slug). The structure depends on the parent product's `revenue_model`. Solutions exist in two structural variants: **project** (effort-based) and **subscription** (recurring revenue). The `solution_type` field determines which variant applies. When absent, defaults to `"project"` for backward compatibility.
+
+#### Project Solutions (`solution_type: "project"` or absent)
+
+Traditional implementation-based solutions with phased delivery and project pricing tiers. Used for consulting, implementation, and advisory engagements.
 
 ```json
 {
   "slug": "cloud-monitoring--mid-market-saas",
   "proposition_slug": "cloud-monitoring--mid-market-saas",
+  "solution_type": "project",
   "implementation": [
     {
       "phase": "Discovery & Setup",
@@ -303,8 +314,155 @@ A solution attaches an implementation plan, pricing tiers, and internal cost mod
 }
 ```
 
-Required fields: `slug`, `proposition_slug`, `implementation` (array with at least one phase entry), `pricing` (object with `proof_of_value`, `small`, `medium`, `large` tiers)
-Optional fields: `cost_model`, `created`
+#### Subscription Solutions (`solution_type: "subscription"`)
+
+Recurring-revenue solutions with onboarding, subscription tiers, and optional professional services. Used for SaaS, platform, and license-based products.
+
+```json
+{
+  "slug": "deep-research--beratung-kmu-dach",
+  "proposition_slug": "deep-research--beratung-kmu-dach",
+  "solution_type": "subscription",
+  "onboarding": {
+    "description": "Initiales Setup und Enablement",
+    "phases": [
+      {
+        "phase": "Kickoff & Workspace-Setup",
+        "duration_weeks": 1,
+        "description": "Account-Erstellung, Workspace-Konfiguration, initiale Datenanbindung"
+      }
+    ],
+    "pricing": {
+      "included": true,
+      "price": 0,
+      "note": "Im ersten Subscription-Monat enthalten"
+    }
+  },
+  "subscription": {
+    "model": "tiered",
+    "tiers": {
+      "free": {
+        "price_monthly": 0,
+        "price_annual": 0,
+        "scope": "Community-Plugins, Basis-Funktionalität, Community-Support",
+        "limits": "3 Research-Projekte/Monat, keine Premium-Plugins"
+      },
+      "pro": {
+        "price_monthly": 149,
+        "price_annual": 1490,
+        "scope": "Alle Plugins, Priority-Support, erweiterte Agenten-Kapazität",
+        "limits": "Unbegrenzte Projekte, alle Premium-Features"
+      },
+      "enterprise": {
+        "price_monthly": null,
+        "price_annual": null,
+        "scope": "Custom Pricing, SSO, dedizierter Success Manager, SLA",
+        "note": "Preis auf Anfrage, ab 10 Seats"
+      }
+    },
+    "currency": "EUR",
+    "billing_cycle": "monthly | annual",
+    "discount_annual_pct": 17
+  },
+  "professional_services": {
+    "available": true,
+    "description": "Optionale Beratungsleistungen für beschleunigte Adoption",
+    "options": [
+      {
+        "name": "Onboarding-Workshop",
+        "price": 3000,
+        "currency": "EUR",
+        "scope": "Halbtägiger Workshop: Use-Case-Mapping, Workflow-Konfiguration, Team-Training"
+      },
+      {
+        "name": "Adoption-Paket",
+        "price": 7500,
+        "currency": "EUR",
+        "scope": "4-Wochen-Begleitung: Wöchentliche Check-ins, Use-Case-Optimierung, Best-Practice-Transfer"
+      }
+    ]
+  },
+  "cost_model": {
+    "assumptions": [
+      "Hosting-Kosten pro Seat: 15 EUR/Monat",
+      "Support-Kosten pro Pro-Seat: 10 EUR/Monat",
+      "Onboarding-Workshop: 1 Berater × 0.5 Tage = 900 EUR intern"
+    ],
+    "unit_economics": {
+      "cac": 500,
+      "ltv": 8940,
+      "ltv_cac_ratio": 17.9,
+      "gross_margin_pct": 85,
+      "churn_monthly_pct": 3
+    }
+  },
+  "created": "2026-03-10"
+}
+```
+
+#### Partnership Solutions (`solution_type: "partnership"`)
+
+Revenue-share or co-investment programs with staged partner engagement.
+
+```json
+{
+  "slug": "plugin-plattform--agentur-dach",
+  "proposition_slug": "plugin-plattform--agentur-dach",
+  "solution_type": "partnership",
+  "program": {
+    "stages": [
+      {
+        "stage": "Pilot-Partnerschaft",
+        "duration_months": 3,
+        "description": "Gemeinsame Entwicklung eines Referenz-Use-Cases",
+        "commitment": "1 dedizierter Entwickler, wöchentliche Syncs"
+      },
+      {
+        "stage": "Zertifizierte Partnerschaft",
+        "duration_months": 12,
+        "description": "Co-Marketing, Lead-Sharing, gemeinsame Kundenansprache",
+        "commitment": "Zertifizierung von 2+ Beratern, quartalsweise Reviews"
+      }
+    ],
+    "revenue_share": {
+      "model": "referral",
+      "partner_pct": 20,
+      "description": "20% Revenue-Share auf geworbene Subscription-Kunden im ersten Jahr"
+    }
+  },
+  "cost_model": {
+    "assumptions": [
+      "Partner-Management: 0.2 FTE pro aktiver Partnerschaft",
+      "Zertifizierungsprogramm: 2.000 EUR einmalig pro Partner"
+    ]
+  },
+  "created": "2026-03-10"
+}
+```
+
+#### Schema Reference by Solution Type
+
+| Field | project | subscription | partnership | hybrid |
+|---|---|---|---|---|
+| `solution_type` | `"project"` or absent | `"subscription"` | `"partnership"` | `"hybrid"` |
+| `implementation` | required | — | — | — |
+| `pricing` (PoV/S/M/L) | required | — | — | — |
+| `onboarding` | — | optional | — | optional |
+| `subscription` | — | required | — | required |
+| `professional_services` | — | optional | — | optional |
+| `program` | — | — | required | — |
+| `cost_model` | optional (effort-based) | optional (unit economics) | optional | optional |
+
+**Hybrid solutions** combine `subscription` (required) with optional `onboarding`, `professional_services`, and/or a reduced `implementation` block for initial setup projects.
+
+#### Common Fields (all solution types)
+
+Required fields: `slug`, `proposition_slug`
+Optional fields: `solution_type`, `cost_model`, `created`
+
+#### Project Solution Fields
+
+Required: `implementation` (array with at least one phase entry), `pricing` (object with `proof_of_value`, `small`, `medium`, `large` tiers)
 
 Each implementation phase has `phase` (string, required), `duration_weeks` (number, required), and `description` (string, required). Each pricing tier has `price` (number, required), `currency` (string, required), and `scope` (string, required).
 
@@ -320,6 +478,32 @@ The `cost_model` object is optional but recommended for rigorous business cases:
   - `breakdown` (array): Per-role allocation with `role` (string) and `days` (number)
   - `internal_cost` (number): Computed cost (sum of role days * rates + tooling + infrastructure)
   - `margin_pct` (number): `(price - internal_cost) / price * 100`
+
+#### Subscription Solution Fields
+
+Required: `subscription` (object with `model`, `tiers`, `currency`)
+
+- **`subscription.model`**: `"tiered"` (Free/Pro/Enterprise), `"usage"` (pay-per-use), or `"flat"` (single price)
+- **`subscription.tiers`**: Object with tier names as keys. Each tier has `price_monthly` (number or null), `price_annual` (number or null), `scope` (string). Optional: `limits` (string), `note` (string).
+- **`subscription.currency`**: ISO currency code
+- **`subscription.billing_cycle`**: `"monthly | annual"` or `"annual"`
+- **`subscription.discount_annual_pct`**: Annual discount percentage (optional)
+
+Optional: `onboarding` (object with `description`, `phases`, `pricing`), `professional_services` (object with `available`, `description`, `options` array)
+
+The `cost_model` for subscription solutions uses `unit_economics` instead of `effort_by_tier`:
+- **`unit_economics.cac`**: Customer acquisition cost
+- **`unit_economics.ltv`**: Customer lifetime value
+- **`unit_economics.ltv_cac_ratio`**: LTV/CAC ratio (target > 3)
+- **`unit_economics.gross_margin_pct`**: Gross margin percentage (target > 70%)
+- **`unit_economics.churn_monthly_pct`**: Monthly churn rate (target < 5%)
+
+#### Partnership Solution Fields
+
+Required: `program` (object with `stages` array and `revenue_share`)
+
+- **`program.stages`**: Array of engagement stages with `stage` (string), `duration_months` (number), `description` (string), `commitment` (string)
+- **`program.revenue_share`**: Object with `model` (string), `partner_pct` (number), `description` (string)
 
 **Naming convention**: Solution file names use the same double-dash (`--`) convention as propositions: `{feature-slug}--{market-slug}.json`
 
@@ -413,6 +597,7 @@ erDiagram
         string name
         string description
         string positioning
+        string revenue_model "project|subscription|partnership|hybrid"
         string maturity
     }
     Feature {
@@ -453,8 +638,13 @@ erDiagram
     Solution {
         string slug PK "feature--market"
         string proposition_slug FK
-        array implementation
-        object pricing
+        string solution_type "project|subscription|partnership|hybrid"
+        array implementation "project only"
+        object pricing "project only"
+        object subscription "subscription/hybrid"
+        object onboarding "subscription/hybrid optional"
+        object professional_services "subscription/hybrid optional"
+        object program "partnership only"
         object cost_model "optional"
     }
     Competitor {
