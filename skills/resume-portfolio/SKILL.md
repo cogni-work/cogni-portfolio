@@ -57,6 +57,9 @@ Show a concise, scannable dashboard. Lead with the company name and project slug
 | Claims | N total | V verified, D deviated, U unverified |
 | Uploads | N | pending ingestion (if > 0) |
 
+If `margin_health` is present in the status output and has `solutions_with_cost_model > 0`, add a margin health line after the table:
+- **Margin health** — N solutions with cost models, avg margin X%, N tiers below target (target: Y%), N negative-margin tiers. Flag negative margins as urgent. This surfaces pricing issues early — a solution with thin margins needs attention before it becomes a signed deal.
+
 After the table:
 - **Phase** — translate the `phase` value into plain language (see reference below)
 - **Stale entities** — if `stale_entities` is non-empty, show them as priority actions before the regular next steps. Group by reason type: "N propositions need refresh because their upstream features were updated" is more useful than listing each one. If a stale entity also has quality warnings, lead with the quality issue (fix the root cause first, then refresh the proposition).

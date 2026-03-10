@@ -829,6 +829,22 @@ body::after {{
 .solutions-table tr:hover td {{ background: var(--surface); }}
 .price {{ font-weight: 600; font-family: var(--font-mono); letter-spacing: -0.01em; }}
 
+/* Margin Health */
+.margin-table {{ width: 100%; border-collapse: collapse; font-size: 13px; }}
+.margin-table th {{
+  text-align: left; padding: 10px 14px; background: var(--surface);
+  color: var(--text2); font-size: 10px; text-transform: uppercase;
+  letter-spacing: 0.06em; font-weight: 700; border-bottom: 2px solid var(--border);
+}}
+.margin-table td {{ padding: 10px 14px; border-bottom: 1px solid var(--border); }}
+.margin-ok {{ color: var(--green); font-weight: 600; }}
+.margin-warn {{ color: var(--yellow); font-weight: 600; }}
+.margin-bad {{ color: var(--red); font-weight: 600; }}
+.margin-badge {{
+  display: inline-block; padding: 2px 8px; border-radius: 8px;
+  font-size: 11px; font-weight: 600; font-family: var(--font-mono);
+}}
+
 /* Claims */
 .claims-summary {{ display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }}
 .claims-chip {{
@@ -1300,6 +1316,68 @@ body::after {{
         </tr>
 """
         html += "      </tbody>\n    </table>\n  </div>\n</div>\n"
+
+    # --- Margin Health ---
+    # Check if any solutions have cost_model data
+    solutions_with_cm = {ss: s_ent for ss, s_ent in data["solutions"].items() if s_ent.get("cost_model")}
+    if solutions_with_cm:
+        target_margin = 30
+        try:
+            pf = data.get("portfolio", {})
+            target_margin = pf.get("delivery_defaults", {}).get("target_margin_pct", 30)
+        except Exception:
+            pass
+
+        html += f"""
+<!-- Margin Health (INTERNAL) -->
+<div class="section reveal">
+  <div class="section-title" style="display:flex;align-items:center;gap:10px">Margin Health
+    <span style="font-size:10px;padding:3px 10px;border-radius:8px;background:var(--red);color:#fff;text-transform:uppercase;letter-spacing:0.06em;font-weight:700">Internal / Confidential</span>
+  </div>
+  <div style="overflow-x:auto">
+    <table class="margin-table">
+      <thead><tr><th>Solution</th><th>PoV</th><th>Small</th><th>Medium</th><th>Large</th><th>Avg</th></tr></thead>
+      <tbody>
+"""
+        for ss, s_ent in sorted(solutions_with_cm.items()):
+            cm = s_ent["cost_model"]
+            ebt = cm.get("effort_by_tier", {})
+            margins = []
+
+            def margin_cell(tier_key, is_pov=False):
+                tier = ebt.get(tier_key, {})
+                m = tier.get("margin_pct")
+                if m is None:
+                    return '<td>—</td>'
+                margins.append(m)
+                threshold = 10 if is_pov else target_margin
+                if m < 0:
+                    css = "margin-bad"
+                elif m < threshold:
+                    css = "margin-warn"
+                else:
+                    css = "margin-ok"
+                return f'<td><span class="margin-badge {css}">{m:.1f}%</span></td>'
+
+            pov_cell = margin_cell("proof_of_value", is_pov=True)
+            sm_cell = margin_cell("small")
+            md_cell = margin_cell("medium")
+            lg_cell = margin_cell("large")
+            avg = sum(margins) / len(margins) if margins else 0
+            avg_css = "margin-ok" if avg >= target_margin else ("margin-warn" if avg >= 0 else "margin-bad")
+
+            html += f"""        <tr>
+          <td style="font-weight:500">{escape_html(ss)}</td>
+          {pov_cell}{sm_cell}{md_cell}{lg_cell}
+          <td><span class="margin-badge {avg_css}">{avg:.1f}%</span></td>
+        </tr>
+"""
+        html += f"""      </tbody>
+    </table>
+  </div>
+  <div style="font-size:12px;color:var(--text2);margin-top:10px">Target margin: {target_margin}% (PoV: 10-20% acceptable). <span class="margin-ok">Green</span> = on target, <span class="margin-warn">Yellow</span> = below target, <span class="margin-bad">Red</span> = negative.</div>
+</div>
+"""
 
     # --- Claims Status ---
     claims_total = claims_status.get("total", 0)

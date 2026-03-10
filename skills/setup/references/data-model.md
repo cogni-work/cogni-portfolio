@@ -278,14 +278,14 @@ A solution attaches an implementation plan, pricing tiers, and internal cost mod
         "margin_pct": 28.8
       },
       "medium": {
-        "total_days": 80,
+        "total_days": 60,
         "breakdown": [
-          { "role": "Solution Architect", "days": 18 },
-          { "role": "Implementation Engineer", "days": 45 },
-          { "role": "Project Manager", "days": 17 }
+          { "role": "Solution Architect", "days": 14 },
+          { "role": "Implementation Engineer", "days": 35 },
+          { "role": "Project Manager", "days": 11 }
         ],
-        "internal_cost": 110200,
-        "margin_pct": 8.2
+        "internal_cost": 82600,
+        "margin_pct": 31.2
       },
       "large": {
         "total_days": 130,
