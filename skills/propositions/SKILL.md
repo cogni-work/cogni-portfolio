@@ -107,22 +107,27 @@ Do not just ask "does this look right?" — present a point of view. "I'd priori
 
 ## Feature Quality Pre-check
 
-Before generating any proposition, run the validation script to check for feature quality warnings:
+Before generating propositions, run two checks:
 
+1. **Structural validation** — catch missing fields and very short descriptions:
 ```bash
 $CLAUDE_PLUGIN_ROOT/scripts/validate-entities.sh <project-dir>
 ```
 
-If the referenced feature has quality warnings (short description, tautology, no mechanism verb), **refuse to generate the proposition**. Instead:
+2. **Description quality assessment** — spawn the `feature-quality-assessor` agent to evaluate mechanism clarity, customer relevance, differentiation, and language quality. This agent works in any language (German, English, mixed).
 
-1. Show the specific warnings for the feature
+If a feature has structural errors or an overall "fail" from the quality assessor, **refuse to generate its proposition**. Instead:
+
+1. Show the specific issues (structural warnings and/or quality assessment results)
 2. Explain why a proposition built on a weak feature will itself be weak — vague features produce vague IS statements, which cascade into generic DOES/MEANS messaging
 3. Direct the user to fix the feature first using the `features` skill
-4. Offer to continue with other Feature x Market pairs that have no warnings
+4. Offer to continue with other Feature x Market pairs that pass quality checks
 
-This pre-check applies to both single-proposition and batch generation paths. In batch mode, exclude features with warnings from the generation set and report them separately: "3 features have quality warnings and were skipped — fix these with the features skill before generating their propositions."
+Features with "warn" from the assessor can proceed, but flag the warnings so the user is aware.
 
-The `project-status.sh` script also reports `feature_quality_warnings` count and `feature_quality_warning_slugs` — use these for a quick overview without running full validation.
+This pre-check applies to both single-proposition and batch generation paths. In batch mode, exclude failing features from the generation set and report them separately.
+
+The `project-status.sh` script reports `feature_quality_warnings` count for structural issues — use for a quick overview. For deep assessment, always use the agent.
 
 ## From Consulting to Capture
 

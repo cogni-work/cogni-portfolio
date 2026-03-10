@@ -153,46 +153,29 @@ print(f'markets_without_priority={unset}')
 " 2>/dev/null)"
 fi
 
-# Count feature quality warnings (short desc, tautology, no mechanism verb)
+# Count feature structural warnings (short descriptions only).
+# Deep quality assessment (mechanism, customer relevance, language) is handled
+# by the feature-quality-assessor agent, which works in any language.
 feature_quality_warnings=0
 feature_quality_slugs="["
 fq_first=true
 if [ -d "$PROJECT_DIR/features" ]; then
   eval "$(python3 -c "
 import json, os, glob
-MECHANISM_VERBS = {'monitors','analyzes','aggregates','transforms','routes','encrypts',
-    'validates','orchestrates','correlates','indexes','provisions','automates',
-    'detects','classifies','normalizes','synchronizes','deploys','compiles',
-    'processes','integrates','schedules','optimizes','caches','replicates',
-    'streams','parses','generates','scans','filters','connects','extracts',
-    'loads','maps','converts','distributes','manages','tracks','audits',
-    'authenticates','authorizes','balances','batches','bridges','buffers',
-    'captures','chains','chunks','clusters','compresses','computes','configures'}
 warned = []
 for f in glob.glob('$PROJECT_DIR/features/*.json'):
     try:
         d = json.load(open(f))
         slug = os.path.basename(f)[:-5]
-        name = d.get('name', '')
         desc = d.get('description', '')
         words = desc.split()
-        has_warning = False
         if len(words) < 15:
-            has_warning = True
-        name_words = set(w.lower().strip('.,;:') for w in name.split() if len(w) > 2)
-        desc_words = set(w.lower().strip('.,;:') for w in words if len(w) > 2)
-        if name_words and desc_words and len(name_words & desc_words) / len(name_words) > 0.5:
-            has_warning = True
-        desc_lower = set(w.lower().strip('.,;:()') for w in words)
-        if not desc_lower & MECHANISM_VERBS:
-            has_warning = True
-        if has_warning:
             warned.append(slug)
     except Exception:
         pass
 import json as j
 print(f'feature_quality_warnings={len(warned)}')
-slugs = ', '.join(f'\"w\"' if False else f'\"' + s + '\"' for s in warned)
+slugs = ', '.join(f'\"' + s + '\"' for s in warned)
 print(f'feature_quality_slugs={chr(39)}[{slugs}]{chr(39)}')
 " 2>/dev/null)"
 fi
@@ -492,31 +475,15 @@ for sf in glob.glob(os.path.join(proj, 'solutions', '*.json')):
         if prop_date and prop_date > sol_date:
             stale.append({'entity': 'solution', 'slug': slug, 'reasons': [f'proposition {slug} updated {prop_date} ({prop_src}) > solution {sol_date}']})
 
-# Check propositions whose features have quality warnings
-import re
-MECHANISM_VERBS = {'monitors','analyzes','aggregates','transforms','routes','encrypts',
-    'validates','orchestrates','correlates','indexes','provisions','automates',
-    'detects','classifies','normalizes','synchronizes','deploys','compiles',
-    'processes','integrates','schedules','optimizes','caches','replicates',
-    'streams','parses','generates','scans','filters','connects','extracts',
-    'loads','maps','converts','distributes','manages','tracks','audits',
-    'authenticates','authorizes','balances','batches','bridges','buffers',
-    'captures','chains','chunks','clusters','compresses','computes','configures'}
-
+# Check propositions whose features have structural warnings (short description)
+# Deep quality assessment is handled by the feature-quality-assessor agent.
 warned_features = set()
 for ff in glob.glob(os.path.join(proj, 'features', '*.json')):
     try:
         d = json.load(open(ff))
         desc = d.get('description', '')
         words = desc.split()
-        has_warning = len(words) < 15
-        name_w = set(w.lower().strip('.,;:') for w in d.get('name', '').split() if len(w) > 2)
-        desc_w = set(w.lower().strip('.,;:') for w in words if len(w) > 2)
-        if name_w and desc_w and len(name_w & desc_w) / len(name_w) > 0.5:
-            has_warning = True
-        if not set(w.lower().strip('.,;:()') for w in words) & MECHANISM_VERBS:
-            has_warning = True
-        if has_warning:
+        if len(words) < 15:
             warned_features.add(os.path.basename(ff)[:-5])
     except Exception:
         pass
@@ -527,9 +494,8 @@ for pf in glob.glob(os.path.join(proj, 'propositions', '*.json')):
         continue
     f_slug = slug.split('--')[0]
     if f_slug in warned_features:
-        # Check if already in stale list
         existing = [s for s in stale if s['slug'] == slug and s['entity'] == 'proposition']
-        reason = f'feature {f_slug} has quality warnings -- proposition may need rework'
+        reason = f'feature {f_slug} has structural quality warnings -- proposition may need rework'
         if existing:
             existing[0]['reasons'].append(reason)
         else:

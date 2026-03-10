@@ -138,41 +138,22 @@ for cat, slugs in cats.items():
 " 2>/dev/null)
 fi
 
-# Feature description quality warnings: short desc, tautology, no mechanism verb
+# Feature description structural warning: very short descriptions
+# Deep quality assessment (mechanism clarity, customer relevance, language quality)
+# is handled by the feature-quality-assessor agent, which works in any language.
 if [ -d "$PROJECT_DIR/features" ]; then
   while IFS='|' read -r slug msg; do
     add_warning "feature" "$slug" "$msg"
   done < <(python3 -c "
-import json, os, glob, re
-MECHANISM_VERBS = {'monitors','analyzes','aggregates','transforms','routes','encrypts',
-    'validates','orchestrates','correlates','indexes','provisions','automates',
-    'detects','classifies','normalizes','synchronizes','deploys','compiles',
-    'processes','integrates','schedules','optimizes','caches','replicates',
-    'streams','parses','generates','scans','filters','connects','extracts',
-    'loads','maps','converts','distributes','manages','tracks','audits',
-    'authenticates','authorizes','balances','batches','bridges','buffers',
-    'captures','chains','chunks','clusters','compresses','computes','configures'}
+import json, os, glob
 for f in glob.glob('$PROJECT_DIR/features/*.json'):
     try:
         d = json.load(open(f))
         slug = os.path.basename(f)[:-5]
-        name = d.get('name', '')
         desc = d.get('description', '')
         words = desc.split()
-        # Check 1: description too short (<15 words)
         if len(words) < 15:
             print(f'{slug}|Description has only {len(words)} words (minimum 15 recommended)')
-        # Check 2: tautology (>50% word overlap between name and description)
-        name_words = set(w.lower().strip('.,;:') for w in name.split() if len(w) > 2)
-        desc_words = set(w.lower().strip('.,;:') for w in words if len(w) > 2)
-        if name_words and desc_words:
-            overlap = len(name_words & desc_words) / len(name_words)
-            if overlap > 0.5:
-                print(f'{slug}|Description may be tautological (>{int(overlap*100)}% word overlap with name)')
-        # Check 3: no mechanism verb in description
-        desc_lower_words = set(w.lower().strip('.,;:()') for w in words)
-        if not desc_lower_words & MECHANISM_VERBS:
-            print(f'{slug}|Description lacks a mechanism verb -- describe HOW the feature works')
     except Exception:
         pass
 " 2>/dev/null)

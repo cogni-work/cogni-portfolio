@@ -127,21 +127,37 @@ Then deliver your assessment — not as a checklist but as a coherent perspectiv
 
 ## Quality Gate
 
-After creating or editing features, run the validation script to check for description quality warnings:
+Quality assessment uses two layers:
+
+### 1. Structural Validation (fast, automated)
+
+Run the validation script to check for structural issues (missing fields, referential integrity, very short descriptions):
 
 ```bash
 $CLAUDE_PLUGIN_ROOT/scripts/validate-entities.sh <project-dir>
 ```
 
-The validator checks three quality signals for every feature description:
+This catches descriptions under 15 words and data model errors. It runs fast and works standalone.
 
-1. **Short description** (<15 words): Descriptions this brief can't convey what a feature does or how. They produce weak propositions downstream.
-2. **Tautology** (>50% word overlap with feature name): "Data Transformation — Transforms data" tells the reader nothing new. The description should explain the mechanism, not restate the name.
-3. **No mechanism verb**: Descriptions should use at least one verb that explains HOW the feature works (monitors, transforms, orchestrates, correlates, etc.). A description without a mechanism verb reads like a label, not a capability.
+### 2. Description Quality Assessment (LLM-powered, multilingual)
 
-**When listing or reviewing features**, always run validation first and surface any quality warnings prominently. Features with warnings are not ready for proposition generation — the propositions skill will refuse to generate for them. Flag warnings in your listing table and recommend specific fixes before moving to propositions.
+After structural validation passes, spawn the `feature-quality-assessor` agent to assess description quality in depth. This agent uses Haiku and works in any language — German, English, or mixed:
 
-**When editing features**, re-run validation after the edit to confirm the warning is resolved. If it's not, work with the user to strengthen the description before moving on.
+```
+Assess feature quality for the project at <project-dir>
+```
+
+The agent evaluates four dimensions per feature:
+1. **Mechanism clarity**: Does the description explain HOW the feature works, not just what it is?
+2. **Customer relevance**: Can a buyer understand why this feature matters to them?
+3. **Differentiation potential**: Is the description specific enough to stand out from competitors?
+4. **Language quality**: Is the prose clean and professional in its language? (Technical English terms in German text like API, Cloud, Monitoring are normal — only genuine readability issues are flagged.)
+
+The agent returns structured JSON with pass/warn/fail per dimension and improvement suggestions. Features with overall "fail" are not ready for proposition generation.
+
+**When listing or reviewing features**, run both checks. Surface structural warnings and agent assessment results in your listing table. Recommend specific fixes before moving to propositions.
+
+**When editing features**, re-run the assessor after edits to confirm quality improved.
 
 ## Validate Against Portfolio
 
