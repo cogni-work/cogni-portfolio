@@ -59,7 +59,13 @@ or data points. Mark any [unverified] claims clearly.]
 Only include if a solution exists for this proposition.]
 
 ## Investment
-[From the solution — adapt to solution type:
+[**Prefer packages when available.** Check if a package exists for this
+proposition's product x market (`packages/{product}--{market}.json`).
+If a package exists, present the package tiers (which bundle this
+feature with related capabilities) instead of individual solution pricing.
+This shows the buyer the full product offering, not isolated feature pricing.
+
+If no package exists, fall back to individual solution pricing:
 - Project solutions: pricing tiers table (PoV, Small, Medium, Large)
   with price, currency, and scope. Framed as investment levels.
 - Subscription solutions: subscription tiers table (Free, Pro, Enterprise)
@@ -68,7 +74,7 @@ Only include if a solution exists for this proposition.]
 - Partnership solutions: program stages with commitment levels and
   revenue-share terms.
 - Hybrid: subscription tiers + optional project services.
-Only include if a solution exists.]
+Only include if a solution or package exists.]
 
 ## Next Steps
 [Concrete call to action appropriate for B2B context:
@@ -123,6 +129,7 @@ Structured spreadsheet with all portfolio data for analysis and sharing.
 - **Features**: All features with descriptions, categories, and parent product
 - **Markets**: All markets with segmentation and TAM/SAM/SOM
 - **Proposition Matrix**: Feature x Market grid with IS/DOES/MEANS, grouped by product
+- **Packages**: All packages with product, market, tier names, included solutions per tier, pricing, and bundle savings
 - **Solutions**: Grouped by solution type. Project solutions show implementation phases and pricing tiers (PoV/S/M/L). Subscription solutions show onboarding, subscription tiers (Free/Pro/Enterprise), and professional services. Partnership solutions show program stages and revenue-share terms.
 - **Cost Analysis** (internal): For solutions with `cost_model` — project solutions show effort days per tier, internal cost, price, margin %, and role breakdown. Subscription solutions show unit economics (CAC, LTV, LTV/CAC ratio, gross margin, churn). This sheet is for internal use only and should be flagged as confidential. Include assumptions as a notes section at the bottom.
 - **Competitors**: Competitive analysis per proposition
@@ -178,7 +185,7 @@ Run `$CLAUDE_PLUGIN_ROOT/scripts/project-status.sh <project-dir>` to get the `re
 - **Full export**: Generate high-tier proposals first. When listing generated files, group by tier so the user sees what matters most.
 
 ### 3b. Read Source Data
-- **Proposals** need: the proposition, its feature, its product, the market, the customer profile, the competitor analysis, and the solution (if available). **Important**: Never include `cost_model` data in customer-facing proposals — internal costs, margins, role rates, and unit economics are confidential. Only the external pricing (project tiers, subscription tiers, or partnership terms) and delivery approach (implementation phases or onboarding) appear in proposals.
+- **Proposals** need: the proposition, its feature, its product, the market, the customer profile, the competitor analysis, the solution (if available), and the package (if available — `packages/{product}--{market}.json`). **Prefer package pricing over individual solution pricing** when a package exists. **Important**: Never include `cost_model` data in customer-facing proposals — internal costs, margins, role rates, and unit economics are confidential. Only the external pricing (package tiers, project tiers, subscription tiers, or partnership terms) and delivery approach (implementation phases or onboarding) appear in proposals.
 - **Briefs** need: the market, all propositions targeting it, customer profile, and all competitor analyses for those propositions
 - **Workbook** needs: everything
 

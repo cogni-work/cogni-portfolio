@@ -48,6 +48,7 @@ Read all entity files from the project directory:
 - `portfolio.json` for company context
 - All `products/*.json`, `features/*.json`, `markets/*.json`, `propositions/*.json`
 - All `solutions/*.json` (if available — implementation plans and pricing)
+- All `packages/*.json` (if available — product bundles per market)
 - All `competitors/*.json` and `customers/*.json` (if available)
 
 If `cogni-claims/claims.json` exists, build a lookup of claim status by statement text for marking claims in the output:
@@ -79,6 +80,12 @@ Write `output/README.md` as the main messaging repository. The structure is desi
 
 ## Proposition Messaging Matrix
 [Table: Feature x Market with IS/DOES/MEANS for each cell, grouped by product]
+
+## Packages
+[If packages/ exists: show each package grouped by product.
+For each package: name, positioning, market, tier count, bundle savings.
+Show tier table with tier name, included solutions, price (or monthly/annual), scope.
+If no packages exist, skip this section.]
 
 ## Solution Overview
 [Group solutions by solution_type (project, subscription, partnership, hybrid):

@@ -40,6 +40,7 @@ FEATURES=$(count_json "features")
 MARKETS=$(count_json "markets")
 PROPOSITIONS=$(count_json "propositions")
 SOLUTIONS=$(count_json "solutions")
+PACKAGES=$(count_json "packages")
 COMPETITORS=$(count_json "competitors")
 CUSTOMERS=$(count_json "customers")
 EXPECTED_PROPOSITIONS=$((FEATURES * MARKETS))
@@ -211,6 +212,63 @@ fi
 missing_arr="$missing_arr]"
 missing_sol_arr="$missing_sol_arr]"
 
+# Find missing packages and packageable pairs (product x market with 2+ solutions)
+missing_pkg_arr="["
+packageable_arr="["
+pkg_first=true
+pkgable_first=true
+if [ "$PRODUCTS" -gt 0 ] && [ "$MARKETS" -gt 0 ] && [ -d "$PROJECT_DIR/features" ]; then
+  eval "$(python3 -c "
+import json, os, glob
+
+proj = '$PROJECT_DIR'
+
+# Build product -> features map
+product_features = {}
+for f in glob.glob(os.path.join(proj, 'features', '*.json')):
+    try:
+        d = json.load(open(f))
+        p_slug = d.get('product_slug', '')
+        f_slug = os.path.basename(f)[:-5]
+        product_features.setdefault(p_slug, []).append(f_slug)
+    except Exception:
+        pass
+
+missing = []
+packageable = []
+
+for pf in glob.glob(os.path.join(proj, 'products', '*.json')):
+    p_slug = os.path.basename(pf)[:-5]
+    features = product_features.get(p_slug, [])
+    if not features:
+        continue
+
+    for mf in glob.glob(os.path.join(proj, 'markets', '*.json')):
+        m_slug = os.path.basename(mf)[:-5]
+        # Count solutions for this product x market
+        sol_count = 0
+        for f_slug in features:
+            sol_path = os.path.join(proj, 'solutions', f'{f_slug}--{m_slug}.json')
+            if os.path.exists(sol_path):
+                sol_count += 1
+
+        if sol_count < 2:
+            continue
+
+        pair = f'{p_slug}--{m_slug}'
+        packageable.append(pair)
+        pkg_path = os.path.join(proj, 'packages', f'{pair}.json')
+        if not os.path.exists(pkg_path):
+            missing.append(pair)
+
+m_str = ', '.join(f'\"' + s + '\"' for s in missing)
+p_str = ', '.join(f'\"' + s + '\"' for s in packageable)
+print(f'missing_pkg_arr={chr(39)}[{m_str}]{chr(39)}')
+print(f'packageable_arr={chr(39)}[{p_str}]{chr(39)}')
+" 2>/dev/null || echo "missing_pkg_arr='[]'
+packageable_arr='[]'")"
+fi
+
 # Compute relevance matrix: tier each Feature x Market pair
 relevance_matrix="[]"
 if [ "$FEATURES" -gt 0 ] && [ "$MARKETS" -gt 0 ]; then
@@ -282,6 +340,13 @@ if [ "$PROPOSITIONS" -gt 0 ]; then
 else
   SOLUTIONS_PCT=0
   COMPETITORS_PCT=0
+fi
+# Package completion: packages / packageable pairs
+PACKAGEABLE_COUNT=$(python3 -c "import json; print(len(json.loads('$packageable_arr')))" 2>/dev/null || echo "0")
+if [ "$PACKAGEABLE_COUNT" -gt 0 ]; then
+  PACKAGES_PCT=$(( PACKAGES * 100 / PACKAGEABLE_COUNT ))
+else
+  PACKAGES_PCT=0
 fi
 if [ "$MARKETS" -gt 0 ]; then
   CUSTOMERS_PCT=$(( CUSTOMERS * 100 / MARKETS ))
@@ -385,6 +450,10 @@ case "$PHASE" in
     if [ "$SOLUTIONS_PCT" -lt 100 ]; then
       missing_sol=$((PROPOSITIONS - SOLUTIONS))
       add_action "solutions" "$missing_sol proposition(s) lack solution plans"
+    fi
+    if [ "$PACKAGES_PCT" -lt 100 ] && [ "$PACKAGEABLE_COUNT" -gt 0 ]; then
+      missing_pkg=$((PACKAGEABLE_COUNT - PACKAGES))
+      add_action "packages" "$missing_pkg product x market pair(s) ready for packaging"
     fi
     if [ "$COMPETITORS_PCT" -lt 100 ]; then
       missing_comp=$((PROPOSITIONS - COMPETITORS))
@@ -604,6 +673,7 @@ cat << EOF
     "propositions": $PROPOSITIONS,
     "expected_propositions": $EXPECTED_PROPOSITIONS,
     "solutions": $SOLUTIONS,
+    "packages": $PACKAGES,
     "competitors": $COMPETITORS,
     "customers": $CUSTOMERS,
     "uploads": $UPLOADS,
@@ -628,6 +698,8 @@ cat << EOF
   "regions": $region_summary,
   "missing_propositions": $missing_arr,
   "missing_solutions": $missing_sol_arr,
+  "missing_packages": $missing_pkg_arr,
+  "packageable_pairs": $packageable_arr,
   "solutions_by_type": $solutions_by_type,
   "relevance_matrix": $relevance_matrix,
   "phase": "$PHASE",
@@ -635,6 +707,7 @@ cat << EOF
   "completion": {
     "propositions_pct": $PROPOSITIONS_PCT,
     "solutions_pct": $SOLUTIONS_PCT,
+    "packages_pct": $PACKAGES_PCT,
     "competitors_pct": $COMPETITORS_PCT,
     "customers_pct": $CUSTOMERS_PCT
   },

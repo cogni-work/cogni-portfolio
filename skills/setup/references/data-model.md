@@ -507,6 +507,132 @@ Required: `program` (object with `stages` array and `revenue_share`)
 
 **Naming convention**: Solution file names use the same double-dash (`--`) convention as propositions: `{feature-slug}--{market-slug}.json`
 
+### packages/{product-slug}--{market-slug}.json
+
+A package bundles solutions from one product into sellable tiers for a specific market. It represents what the customer actually buys — a cohesive offering assembled from individual feature-level solutions.
+
+The `package_type` field mirrors the parent product's `revenue_model` and determines the tier structure.
+
+#### Project Packages (`package_type: "project"`)
+
+```json
+{
+  "slug": "cloud-platform--mid-market-saas-dach",
+  "product_slug": "cloud-platform",
+  "market_slug": "mid-market-saas-dach",
+  "package_type": "project",
+  "name": "Cloud Platform Implementation",
+  "positioning": "Complete cloud observability in one engagement",
+  "tiers": [
+    {
+      "tier": "foundation",
+      "name": "Foundation",
+      "included_solutions": ["cloud-monitoring--mid-market-saas-dach"],
+      "price": 45000,
+      "currency": "EUR",
+      "scope": "Core monitoring for one environment"
+    },
+    {
+      "tier": "professional",
+      "name": "Professional",
+      "included_solutions": [
+        "cloud-monitoring--mid-market-saas-dach",
+        "real-time-alerting--mid-market-saas-dach"
+      ],
+      "price": 85000,
+      "currency": "EUR",
+      "scope": "Full observability with intelligent alerting"
+    },
+    {
+      "tier": "enterprise",
+      "name": "Enterprise",
+      "included_solutions": [
+        "cloud-monitoring--mid-market-saas-dach",
+        "real-time-alerting--mid-market-saas-dach",
+        "analytics-dashboard--mid-market-saas-dach"
+      ],
+      "price": 150000,
+      "currency": "EUR",
+      "scope": "Complete platform with executive dashboards"
+    }
+  ],
+  "bundle_savings_pct": 15,
+  "created": "2026-03-11"
+}
+```
+
+#### Subscription Packages (`package_type: "subscription"`)
+
+```json
+{
+  "slug": "cogni-works--beratung-kmu-dach",
+  "product_slug": "cogni-works",
+  "market_slug": "beratung-kmu-dach",
+  "package_type": "subscription",
+  "name": "cogni-works Beratungsplattform",
+  "positioning": "AI-powered consulting toolkit in one subscription",
+  "tiers": [
+    {
+      "tier": "starter",
+      "name": "Starter",
+      "included_solutions": ["deep-research--beratung-kmu-dach"],
+      "price_monthly": 99,
+      "price_annual": 990,
+      "currency": "EUR",
+      "scope": "Core research capability"
+    },
+    {
+      "tier": "professional",
+      "name": "Professional",
+      "included_solutions": [
+        "deep-research--beratung-kmu-dach",
+        "report-generator--beratung-kmu-dach"
+      ],
+      "price_monthly": 249,
+      "price_annual": 2490,
+      "currency": "EUR",
+      "scope": "Full research + automated reporting"
+    },
+    {
+      "tier": "enterprise",
+      "name": "Enterprise",
+      "included_solutions": [
+        "deep-research--beratung-kmu-dach",
+        "report-generator--beratung-kmu-dach",
+        "portfolio-analyzer--beratung-kmu-dach"
+      ],
+      "price_monthly": null,
+      "price_annual": null,
+      "currency": "EUR",
+      "scope": "Full platform, SSO, SLA, dedicated CSM"
+    }
+  ],
+  "bundle_savings_pct": 20,
+  "created": "2026-03-11"
+}
+```
+
+#### Schema Reference by Package Type
+
+| Field | project | subscription | hybrid |
+|---|---|---|---|
+| `package_type` | `"project"` | `"subscription"` | `"hybrid"` |
+| Tier: `price` | required | — | — |
+| Tier: `price_monthly` | — | required (or null) | required (or null) |
+| Tier: `price_annual` | — | required (or null) | required (or null) |
+| Tier: `included_solutions` | required | required | required |
+| Tier: `scope` | required | required | required |
+| Tier: `currency` | required | required | required |
+
+#### Common Fields (all package types)
+
+Required fields: `slug`, `product_slug`, `market_slug`, `package_type`, `name`, `tiers` (array with at least one tier)
+Optional fields: `positioning`, `bundle_savings_pct`, `created`
+
+Each tier requires: `tier` (kebab-case identifier), `name`, `included_solutions` (array of solution slugs), `scope` (string), `currency` (string)
+
+**Naming convention**: Package file names use double-dash (`--`) to join product and market slugs: `{product-slug}--{market-slug}.json`
+
 ### competitors/{feature-slug}--{market-slug}.json
 
 Competitive landscape for a specific proposition (same slug as the proposition it analyzes).
@@ -577,6 +703,7 @@ Optional fields: `created`
 | Market slug | `{segment}-{region}` | `mid-market-saas-dach` |
 | Proposition slug | `{feature}--{market}` | `cloud-monitoring--mid-market-saas-dach` |
 | Solution slug | Same as proposition slug | `cloud-monitoring--mid-market-saas-dach` |
+| Package slug | `{product}--{market}` | `cloud-platform--mid-market-saas-dach` |
 | Competitor slug | Same as proposition slug | `cloud-monitoring--mid-market-saas-dach` |
 | Customer slug | Same as market slug | `mid-market-saas-dach` |
 
@@ -585,12 +712,15 @@ Optional fields: `created`
 ```mermaid
 erDiagram
     Product ||--|{ Feature : contains
+    Product ||--o{ Package : "bundled into"
     Feature ||--|{ Proposition : "maps to"
     Market ||--|{ Proposition : "targets"
+    Market ||--o{ Package : "targeted by"
     Region ||--|{ Market : "scopes"
     Proposition ||--o| Solution : "costed by"
     Proposition ||--|| Competitor : "analyzed by"
     Market ||--|| Customer : "profiled by"
+    Package }o--|{ Solution : "assembles"
 
     Product {
         string slug PK
@@ -647,6 +777,16 @@ erDiagram
         object program "partnership only"
         object cost_model "optional"
     }
+    Package {
+        string slug PK "product--market"
+        string product_slug FK
+        string market_slug FK
+        string package_type "project|subscription|hybrid"
+        string name
+        string positioning
+        array tiers "each references included_solutions"
+        number bundle_savings_pct
+    }
     Competitor {
         string slug PK "feature--market"
         string proposition_slug FK
@@ -660,13 +800,15 @@ erDiagram
 ```
 
 - One product contains many features (1:N exclusive)
+- One product can have many packages, one per target market (1:N)
 - One region scopes many markets (1:N)
 - One feature can map to many markets (producing many propositions)
 - One market can receive many features (producing many propositions)
 - Each proposition has at most one solution (implementation plan + pricing)
 - Each proposition has exactly one competitor analysis
 - Each market has exactly one customer profile
+- Each package assembles N solutions from one product for one market (N:1 with product, N:1 with market, references N solutions via tiers)
 - Region is defined in the taxonomy (`regions.json`), not as a project entity
 - Features reference their parent product by `product_slug`
 - Markets reference their region by `region` code
-- Propositions, solutions, competitors, and customers reference their parents by slug
+- Propositions, solutions, competitors, customers, and packages reference their parents by slug

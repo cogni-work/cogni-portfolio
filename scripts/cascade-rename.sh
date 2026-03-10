@@ -68,6 +68,7 @@ def update_field_in_dir(directory, field, old_val, new_val, extra_updates=None):
 
 props_dir = os.path.join(project_dir, 'propositions')
 solutions_dir = os.path.join(project_dir, 'solutions')
+packages_dir = os.path.join(project_dir, 'packages')
 competitors_dir = os.path.join(project_dir, 'competitors')
 customers_dir = os.path.join(project_dir, 'customers')
 
@@ -101,6 +102,28 @@ if entity_type == 'feature':
                     'proposition_slug': new_prop_slug,
                     'feature_slug': new_slug
                 })
+
+    # Packages: update included_solutions references that contain the old feature slug
+    if os.path.isdir(packages_dir):
+        for fname in os.listdir(packages_dir):
+            if not fname.endswith('.json'):
+                continue
+            fpath = os.path.join(packages_dir, fname)
+            data = read_json(fpath)
+            modified = False
+            for tier in data.get('tiers', []):
+                new_included = []
+                for sol_slug in tier.get('included_solutions', []):
+                    if sol_slug.startswith(old_slug + '--'):
+                        market_part = sol_slug[len(old_slug) + 2:]
+                        new_included.append(f'{new_slug}--{market_part}')
+                        modified = True
+                    else:
+                        new_included.append(sol_slug)
+                tier['included_solutions'] = new_included
+            if modified:
+                write_json(fpath, data)
+                changes.append({'file': fname, 'action': 'updated', 'field': 'included_solutions'})
 
 elif entity_type == 'market':
     # Propositions: {feature}--{market}.json -> rename files where market matches
@@ -139,6 +162,35 @@ elif entity_type == 'market':
         'slug': new_slug,
         'market_slug': new_slug
     })
+
+    # Packages: {product}--{market}.json -> rename files where market matches
+    if os.path.isdir(packages_dir):
+        for fname in list(os.listdir(packages_dir)):
+            if not fname.endswith('.json'):
+                continue
+            pkg_slug = fname[:-5]
+            if pkg_slug.endswith('--' + old_slug):
+                product_part = pkg_slug[:-(len(old_slug) + 2)]
+                new_pkg_slug = f'{product_part}--{new_slug}'
+                old_path = os.path.join(packages_dir, fname)
+                new_path = os.path.join(packages_dir, f'{new_pkg_slug}.json')
+                # Also update included_solutions references
+                data = read_json(old_path)
+                data['slug'] = new_pkg_slug
+                data['market_slug'] = new_slug
+                for tier in data.get('tiers', []):
+                    new_included = []
+                    for sol_slug in tier.get('included_solutions', []):
+                        if sol_slug.endswith('--' + old_slug):
+                            feature_part = sol_slug[:-(len(old_slug) + 2)]
+                            new_included.append(f'{feature_part}--{new_slug}')
+                        else:
+                            new_included.append(sol_slug)
+                    tier['included_solutions'] = new_included
+                write_json(new_path, data)
+                if old_path != new_path:
+                    os.remove(old_path)
+                changes.append({'file': os.path.basename(new_path), 'action': 'renamed'})
 
 elif entity_type == 'proposition':
     # Solutions and competitors reference proposition_slug

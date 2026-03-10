@@ -52,6 +52,7 @@ Show a concise, scannable dashboard. Lead with the company name and project slug
 | Markets | N | |
 | Propositions | N / expected | pct% |
 | Solutions | N / propositions | pct% |
+| Packages | N / packageable | pct% |
 | Competitors | N / propositions | pct% |
 | Customers | N / markets | pct% |
 | Claims | N total | V verified, D deviated, U unverified |

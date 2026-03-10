@@ -60,10 +60,11 @@ The generated HTML includes these sections, all in a single-page app with drill-
 5. **Markets Overview** — Cards per market with TAM/SAM/SOM bars, region badge, segmentation criteria. Click to see customer profiles and all propositions targeting that market
 6. **Products & Features** — Grouped by product, showing feature descriptions and which markets each feature targets
 7. **Solutions & Pricing** — Solutions grouped by type. Project solutions show implementation timeline and pricing tiers (PoV/S/M/L). Subscription solutions show onboarding, subscription tiers (Free/Pro/Enterprise), and professional services. Partnership solutions show program stages and revenue-share terms.
-8. **Margin Health** (if any solutions have `cost_model`) — Separated by solution type. Project solutions show effort-based margins per tier. Subscription solutions show unit economics (LTV/CAC, gross margin, churn). Color-coded: green for healthy, yellow for below-target, red for negative/failing. This section is marked INTERNAL/CONFIDENTIAL.
-9. **Competitive Landscape** — Per-proposition competitor cards with strengths/weaknesses
-10. **Claims Status** — Verification summary (verified, unverified, deviated, resolved) with progress bar
-11. **Next Actions** — Recommended next skills from project-status
+8. **Packages** — Product bundles grouped by product. Each package shows market, tier names, included solutions per tier, pricing (project or subscription), and bundle savings. Highlight coverage: how many solutions are bundled vs available.
+9. **Margin Health** (if any solutions have `cost_model`) — Separated by solution type. Project solutions show effort-based margins per tier. Subscription solutions show unit economics (LTV/CAC, gross margin, churn). Color-coded: green for healthy, yellow for below-target, red for negative/failing. This section is marked INTERNAL/CONFIDENTIAL.
+10. **Competitive Landscape** — Per-proposition competitor cards with strengths/weaknesses
+11. **Claims Status** — Verification summary (verified, unverified, deviated, resolved) with progress bar
+12. **Next Actions** — Recommended next skills from project-status
 
 ## Important Notes
 

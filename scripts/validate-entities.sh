@@ -343,6 +343,79 @@ with open('$s') as fh:
   done
 fi
 
+# Validate packages reference valid products, markets, and solutions
+if [ -d "$PROJECT_DIR/packages" ]; then
+  for p in "$PROJECT_DIR/packages"/*.json; do
+    [ -f "$p" ] || continue
+    slug=$(basename "$p" .json)
+    # Check naming convention: product-slug--market-slug
+    if [[ "$slug" != *"--"* ]]; then
+      add_error "package" "$slug" "Invalid naming: expected product-slug--market-slug"
+      continue
+    fi
+    exit_code=0
+    python3 -c "
+import json, sys, os
+
+with open('$p') as fh:
+    d = json.load(fh)
+
+# Required fields
+for field in ['product_slug', 'market_slug', 'package_type', 'name', 'tiers']:
+    if field not in d:
+        sys.exit(1)
+
+# Validate package_type
+if d['package_type'] not in ('project', 'subscription', 'hybrid'):
+    sys.exit(7)
+
+# Validate product exists
+if not os.path.exists(os.path.join('$PROJECT_DIR', 'products', d['product_slug'] + '.json')):
+    sys.exit(2)
+
+# Validate market exists
+if not os.path.exists(os.path.join('$PROJECT_DIR', 'markets', d['market_slug'] + '.json')):
+    sys.exit(3)
+
+# Validate tiers
+tiers = d.get('tiers', [])
+if not isinstance(tiers, list) or len(tiers) == 0:
+    sys.exit(4)
+
+for tier in tiers:
+    if 'tier' not in tier or 'name' not in tier or 'included_solutions' not in tier or 'scope' not in tier or 'currency' not in tier:
+        sys.exit(5)
+    # Check all included solutions exist
+    for sol_slug in tier.get('included_solutions', []):
+        if not os.path.exists(os.path.join('$PROJECT_DIR', 'solutions', sol_slug + '.json')):
+            sys.exit(6)
+
+# Validate package_type matches product revenue_model
+try:
+    with open(os.path.join('$PROJECT_DIR', 'products', d['product_slug'] + '.json')) as pf:
+        product = json.load(pf)
+    revenue_model = product.get('revenue_model', 'project')
+    pkg_type = d['package_type']
+    if revenue_model == 'partnership':
+        sys.exit(8)  # partnerships don't typically use packages
+    if revenue_model != pkg_type and not (revenue_model == '' and pkg_type == 'project'):
+        sys.exit(8)
+except (FileNotFoundError, json.JSONDecodeError):
+    pass
+" 2>/dev/null || exit_code=$?
+    case "$exit_code" in
+      1) add_error "package" "$slug" "Missing required fields (product_slug, market_slug, package_type, name, tiers)" ;;
+      2) add_error "package" "$slug" "References missing product: $(python3 -c "import json; print(json.load(open('$p')).get('product_slug',''))" 2>/dev/null)" ;;
+      3) add_error "package" "$slug" "References missing market: $(python3 -c "import json; print(json.load(open('$p')).get('market_slug',''))" 2>/dev/null)" ;;
+      4) add_error "package" "$slug" "Tiers must be a non-empty array" ;;
+      5) add_error "package" "$slug" "Tier missing required fields (tier, name, included_solutions, scope, currency)" ;;
+      6) add_error "package" "$slug" "References missing solution in included_solutions" ;;
+      7) add_error "package" "$slug" "Invalid package_type — must be project, subscription, or hybrid" ;;
+      8) add_warning "package" "$slug" "package_type does not match product revenue_model" ;;
+    esac
+  done
+fi
+
 # Validate competitors reference valid propositions
 if [ -d "$PROJECT_DIR/competitors" ]; then
   for c in "$PROJECT_DIR/competitors"/*.json; do

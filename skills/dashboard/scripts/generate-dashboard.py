@@ -228,11 +228,12 @@ def load_all_entities(project_dir):
         "markets": {},
         "propositions": {},
         "solutions": {},
+        "packages": {},
         "competitors": {},
         "customers": {},
         "claims": None,
     }
-    for entity_type in ["products", "features", "markets", "propositions", "solutions", "competitors", "customers"]:
+    for entity_type in ["products", "features", "markets", "propositions", "solutions", "packages", "competitors", "customers"]:
         entity_dir = os.path.join(project_dir, entity_type)
         if os.path.isdir(entity_dir):
             for fp in sorted(glob.glob(os.path.join(entity_dir, "*.json"))):
@@ -319,6 +320,7 @@ def generate_html(data, status, project_dir, theme):
         "markets": data["markets"],
         "propositions": data["propositions"],
         "solutions": data["solutions"],
+        "packages": data["packages"],
         "competitors": data["competitors"],
         "customers": data["customers"],
     }, default=str)
@@ -1138,6 +1140,7 @@ body::after {{
         ("Markets", counts.get("markets", 0), None, None),
         ("Propositions", counts.get("propositions", 0), counts.get("expected_propositions", 0), completion.get("propositions_pct", 0)),
         ("Solutions", counts.get("solutions", 0), counts.get("propositions", 0), completion.get("solutions_pct", 0)),
+        ("Packages", counts.get("packages", 0), len(status.get("packageable_pairs", [])) or None, completion.get("packages_pct", 0) if status.get("packageable_pairs") else None),
         ("Competitors", counts.get("competitors", 0), counts.get("propositions", 0), completion.get("competitors_pct", 0)),
         ("Customers", counts.get("customers", 0), counts.get("markets", 0), completion.get("customers_pct", 0)),
     ]
