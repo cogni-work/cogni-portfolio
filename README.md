@@ -90,6 +90,41 @@ This plugin works standalone for core messaging workflows. Optional integrations
 
 > **Note:** Without these plugins, you can still build the full portfolio through synthesis. Verification and XLSX export will be unavailable.
 
+## Architecture
+
+```
+cogni-portfolio/
+├── .claude-plugin/plugin.json    Plugin manifest
+├── skills/                       14 portfolio skills
+│   ├── setup/
+│   ├── products/
+│   ├── features/
+│   ├── ingest/
+│   ├── markets/
+│   ├── propositions/
+│   ├── solutions/
+│   ├── compete/
+│   ├── customers/
+│   ├── verify/
+│   ├── synthesize/
+│   ├── export/
+│   ├── dashboard/
+│   └── resume-portfolio/
+├── agents/                       5 delegation agents
+│   ├── market-researcher.md
+│   ├── competitor-researcher.md
+│   ├── proposition-generator.md
+│   ├── solution-planner.md
+│   └── feature-quality-assessor.md
+└── scripts/                      6 utility scripts
+    ├── append-claim.sh
+    ├── cascade-rename.sh
+    ├── project-init.sh
+    ├── project-status.sh
+    ├── sync-portfolio.sh
+    └── validate-entities.sh
+```
+
 ## License
 
-Dual-licensed under [CC BY-NC-SA 4.0](LICENSE) for non-commercial use. Commercial licenses available — contact stephan@cogni-work.ai.
+[AGPL-3.0](LICENSE)
