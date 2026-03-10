@@ -6,6 +6,6 @@
     "name": "Stephan de Haas",
     "email": "stephan@cogni-work.ai"
   },
-  "license": "AGPL-3.0",
+  "license": "AGPL-3.0-only",
   "keywords": ["portfolio", "messaging", "b2b", "fab", "sme"]
 }
