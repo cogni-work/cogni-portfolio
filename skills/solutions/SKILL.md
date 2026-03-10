@@ -104,7 +104,56 @@ Then probe with consultative questions:
 - Are the durations realistic for how your team operates?
 - Is there a dependency or prerequisite on the buyer's side that needs a phase?
 
-Iterate until the phases feel right before moving to pricing.
+Iterate until the phases feel right before moving to cost modeling.
+
+### 3b. Build Cost Model
+
+Before pricing, ground the solution in delivery economics. This step prevents the most common pricing failure: numbers pulled from thin air.
+
+**Load delivery defaults**: Read `portfolio.json` for `delivery_defaults` (roles, rates, target margin, company-wide assumptions). If no defaults exist, ask the user for their standard delivery roles and day rates — this is essential context. Offer to save them to `portfolio.json` for reuse across solutions.
+
+**Map roles to phases**: For each implementation phase, estimate which roles are involved and how many person-days each. Present as a staffing table:
+
+| Phase | Duration | Solution Architect | Impl. Engineer | Project Manager | Total Days |
+|---|---|---|---|---|---|
+| Discovery & Setup | 2w | 4d | 2d | 2d | 8d |
+| Core Deployment | 4w | 4d | 16d | 4d | 24d |
+| Tuning & Handover | 2w | 2d | 4d | 2d | 8d |
+| **Total** | **8w** | **10d** | **22d** | **8d** | **40d** |
+
+**Compute internal cost**: Multiply days by role rates and add any tooling or infrastructure costs. Present the cost basis clearly — this is what justifies the external price.
+
+**Document assumptions**: Capture every assumption that shapes the estimate. Good assumptions are specific and auditable:
+- Rate basis: "Blended delivery rate: 1,400 EUR/day based on 60/40 senior/junior mix"
+- Client prerequisites: "Customer provides staging environment access within 5 business days"
+- Scope boundaries: "No custom integrations beyond standard API connectors"
+- Market context: "Based on DACH mid-market deal benchmarks from market research"
+
+Bad assumptions are vague: "Standard delivery model" or "Typical engagement".
+
+**Bill of materials**: Identify non-labor costs:
+- **Tooling**: Software licenses, platform access, development tools consumed during delivery
+- **Infrastructure**: Cloud resources, hosting, environments needed for the engagement
+- Mark items that are included in the product price vs. billed separately
+
+**Scale effort across tiers**: Each tier is a different engagement, not just more days. The PoV might involve 12 person-days (lean, focused proving), while Large might need 130 (broad rollout, dedicated CSM, change management). Present the effort table per tier:
+
+| Tier | Total Days | Internal Cost | Target Price | Margin |
+|---|---|---|---|---|
+| Proof of Value | 12 | 16,000 EUR | ~18,000 EUR | ~12% |
+| Small | 40 | 35,600 EUR | ~50,000 EUR | ~29% |
+| Medium | 80 | 82,400 EUR | ~120,000 EUR | ~31% |
+| Large | 130 | 150,200 EUR | ~215,000 EUR | ~30% |
+
+This table becomes the input for pricing. The user can see exactly what margin each tier produces and adjust either side — effort estimates or prices. The PoV tier typically runs at lower margin (land-and-expand strategy); standard tiers should hit the company's target margin.
+
+Probe with consultative questions:
+- Do these effort estimates match how your team actually delivers?
+- Are the role rates current? Any roles missing (e.g., data engineer, UX designer)?
+- Any tooling or infrastructure costs I should include?
+- Is a lower PoV margin acceptable as a land-and-expand strategy?
+
+Iterate until the cost model feels right, then move to pricing with a solid foundation.
 
 ### 4. Co-develop Pricing Tiers
 
@@ -153,13 +202,15 @@ Before writing the solution, run these checks. They are non-negotiable:
 
 3. **Tier differentiation test**: Remove the prices and read only the scope descriptions. Can you tell the tiers apart? If Small and Medium both say "implementation with configuration" at different scales, the differentiation is weak. Each tier should describe a qualitatively different engagement.
 
-4. **Price-effort coherence test**: Do the prices roughly correlate with the effort implied by the scope? A 4x price jump should reflect roughly 3-4x more delivery effort, broader scope, or significantly more value. If pricing is disconnected from effort, either the price or the scope needs adjustment.
+4. **Price-effort coherence test**: When a `cost_model` exists, this gate is mechanically verified — check that margins are positive for all tiers and that standard tiers (small/medium/large) meet the company's `target_margin_pct` from `portfolio.json` `delivery_defaults` (default: 30%). The PoV tier may run at lower margin (10-20%) as a deliberate land-and-expand strategy. Flag any tier where margin is negative or where a 4x price jump doesn't reflect roughly 3-4x more delivery effort. Without a `cost_model`, fall back to the qualitative check: do the prices roughly correlate with the effort implied by the scope?
 
 5. **Market fit test**: Would a buyer in this specific market find these prices plausible? A mid-market SaaS company won't sign a 500K EUR deal for monitoring. An enterprise bank won't take a 5K EUR PoV seriously. The pricing must fit the market's budget expectations.
 
+6. **Assumption completeness test** (when cost_model exists): Are the assumptions specific enough to audit? "Standard delivery" is not an assumption — "Blended rate 1,400 EUR/day, 60/40 senior/junior mix, remote delivery" is. Every rate, prerequisite, and scope boundary should be stated. Check that role rates match `delivery_defaults` or have an explicit override reason.
+
 ### 6. Write Solution Entity
 
-Once both phases and pricing are agreed and pass quality gates, write the solution to `solutions/{feature-slug}--{market-slug}.json`:
+Once phases, cost model, and pricing are agreed and pass quality gates, write the solution to `solutions/{feature-slug}--{market-slug}.json`:
 
 ```json
 {
@@ -182,12 +233,42 @@ Once both phases and pricing are agreed and pass quality gates, write the soluti
     "medium": { "price": 120000, "currency": "EUR", "scope": "..." },
     "large": { "price": 250000, "currency": "EUR", "scope": "..." }
   },
+  "cost_model": {
+    "assumptions": [
+      "Blended delivery rate: 1,400 EUR/day based on 60/40 senior/junior mix",
+      "Customer provides staging environment access within 5 business days"
+    ],
+    "bill_of_materials": {
+      "roles": [
+        { "role": "Solution Architect", "rate_day": 1800, "currency": "EUR" },
+        { "role": "Implementation Engineer", "rate_day": 1200, "currency": "EUR" },
+        { "role": "Project Manager", "rate_day": 1400, "currency": "EUR" }
+      ],
+      "tooling": [],
+      "infrastructure": []
+    },
+    "effort_by_tier": {
+      "proof_of_value": {
+        "total_days": 12,
+        "breakdown": [
+          { "role": "Solution Architect", "days": 4 },
+          { "role": "Implementation Engineer", "days": 6 },
+          { "role": "Project Manager", "days": 2 }
+        ],
+        "internal_cost": 16000,
+        "margin_pct": 6.25
+      },
+      "small": { "total_days": 40, "breakdown": [], "internal_cost": 35600, "margin_pct": 28.8 },
+      "medium": { "total_days": 80, "breakdown": [], "internal_cost": 82400, "margin_pct": 31.3 },
+      "large": { "total_days": 130, "breakdown": [], "internal_cost": 150200, "margin_pct": 39.9 }
+    }
+  },
   "created": "2026-03-05"
 }
 ```
 
 Required: `slug`, `proposition_slug`, `implementation` (array with at least one phase), `pricing` (object with all four tiers)
-Optional: `created`
+Optional: `cost_model`, `created`
 
 ### 7. Validate Against Portfolio
 
@@ -210,7 +291,9 @@ When the user asks to review or improve existing solutions (or when you notice i
 4. **Template detection**: Do multiple solutions share copy-paste phase structures? Each solution should reflect the unique nature of delivering that specific capability to that specific market.
 5. **PoV quality sweep**: Read all PoV tiers together. Do they all say "2-week pilot"? A good portfolio has PoV tiers tailored to each proposition -- what "proves value" for monitoring is different from what proves value for analytics.
 6. **Tier jump analysis**: For each solution, are the jumps between tiers justified? Plot PoV → Small → Medium → Large and check that each step represents a meaningful scope increase, not just a price bump.
-7. **Upstream diagnosis**: Trace weak solutions back to their source. If an implementation plan is vague, is it because the proposition's DOES statement is too generic to plan against? If pricing feels arbitrary, is it because the market definition lacks segmentation data? Flag upstream fixes.
+7. **Margin health** (solutions with cost_model): Aggregate margins across the portfolio. Flag solutions with negative margins, margins below `delivery_defaults.target_margin_pct`, or erratic margin profiles (e.g., PoV at 35% but Medium at 8%). Present a margin summary table across the portfolio.
+8. **Assumption audit** (solutions with cost_model): Are assumptions consistent across solutions? If one solution assumes 1,800 EUR/day for a Solution Architect and another assumes 1,500 EUR/day, one of them is wrong. Cross-check role rates against `delivery_defaults` and flag drift.
+9. **Upstream diagnosis**: Trace weak solutions back to their source. If an implementation plan is vague, is it because the proposition's DOES statement is too generic to plan against? If pricing feels arbitrary, is it because the market definition lacks segmentation data? If margins are thin, is it because effort was underestimated or pricing undercut the market? Flag upstream fixes.
 
 Present your assessment as a consulting memo -- lead with "here's what I'd change and why" backed by specific analysis. Offer concrete rewrites, not just observations.
 

@@ -409,6 +409,59 @@ case "$PHASE" in
 esac
 next_actions="$next_actions]"
 
+# Margin health: analyze cost_model data across solutions
+margin_health="{}"
+solutions_with_cost_model=0
+solutions_below_target=0
+negative_margin_tiers=0
+if [ -d "$PROJECT_DIR/solutions" ]; then
+  eval "$(python3 -c "
+import json, os, glob
+
+# Read target margin from portfolio.json delivery_defaults
+target = 30
+try:
+    with open('$PROJECT_DIR/portfolio.json') as f:
+        pf = json.load(f)
+    target = pf.get('delivery_defaults', {}).get('target_margin_pct', 30)
+except Exception:
+    pass
+
+with_cm = 0
+below_target = 0
+negative = 0
+margins = []
+
+for sf in glob.glob('$PROJECT_DIR/solutions/*.json'):
+    try:
+        d = json.load(open(sf))
+        cm = d.get('cost_model')
+        if not cm:
+            continue
+        with_cm += 1
+        ebt = cm.get('effort_by_tier', {})
+        for tier_name in ['proof_of_value', 'small', 'medium', 'large']:
+            tier = ebt.get(tier_name, {})
+            m = tier.get('margin_pct')
+            if m is not None:
+                margins.append(m)
+                if m < 0:
+                    negative += 1
+                # PoV gets lower threshold (10%), standard tiers use target
+                threshold = 10 if tier_name == 'proof_of_value' else target
+                if m < threshold:
+                    below_target += 1
+    except Exception:
+        pass
+
+avg_margin = round(sum(margins) / len(margins), 1) if margins else 0
+print(f'solutions_with_cost_model={with_cm}')
+print(f'solutions_below_target={below_target}')
+print(f'negative_margin_tiers={negative}')
+print(f'margin_health={chr(39)}{{\"target_margin_pct\": {target}, \"solutions_with_cost_model\": {with_cm}, \"below_target_tiers\": {below_target}, \"negative_margin_tiers\": {negative}, \"avg_margin_pct\": {avg_margin}}}{chr(39)}')
+" 2>/dev/null || echo "margin_health='{}'")"
+fi
+
 # Health check: detect stale downstream entities
 stale_entities="[]"
 if $HEALTH_CHECK && [ -d "$PROJECT_DIR/propositions" ]; then
@@ -547,6 +600,7 @@ cat << EOF
     "competitors_pct": $COMPETITORS_PCT,
     "customers_pct": $CUSTOMERS_PCT
   },
+  "margin_health": $margin_health,
   "stale_entities": $stale_entities
 }
 EOF

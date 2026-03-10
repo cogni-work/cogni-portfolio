@@ -114,9 +114,10 @@ Structured spreadsheet with all portfolio data for analysis and sharing.
 - **Markets**: All markets with segmentation and TAM/SAM/SOM
 - **Proposition Matrix**: Feature x Market grid with IS/DOES/MEANS, grouped by product
 - **Solutions**: Implementation phases and pricing tiers per proposition
+- **Cost Analysis** (internal): For solutions with `cost_model` — effort days per tier, internal cost, price, margin %, and role breakdown. This sheet is for internal use only and should be flagged as confidential. Include assumptions as a notes section at the bottom.
 - **Competitors**: Competitive analysis per proposition
 - **Customers**: Buyer profiles per market
-- **Summary**: Portfolio statistics and completion status
+- **Summary**: Portfolio statistics and completion status (include margin health summary if cost models exist)
 
 To create the XLSX file, use the `document-skills:xlsx` skill. Prepare the data as structured content and delegate spreadsheet creation. If `document-skills:xlsx` is not available, offer CSV files instead — one per sheet, in `output/csv/`.
 
@@ -167,7 +168,7 @@ Run `$CLAUDE_PLUGIN_ROOT/scripts/project-status.sh <project-dir>` to get the `re
 - **Full export**: Generate high-tier proposals first. When listing generated files, group by tier so the user sees what matters most.
 
 ### 3b. Read Source Data
-- **Proposals** need: the proposition, its feature, its product, the market, the customer profile, the competitor analysis, and the solution (if available)
+- **Proposals** need: the proposition, its feature, its product, the market, the customer profile, the competitor analysis, and the solution (if available). **Important**: Never include `cost_model` data in customer-facing proposals — internal costs, margins, and role rates are confidential. Only the `pricing` tiers (price, scope) and `implementation` phases appear in proposals.
 - **Briefs** need: the market, all propositions targeting it, customer profile, and all competitor analyses for those propositions
 - **Workbook** needs: everything
 

@@ -82,6 +82,10 @@ Write `output/README.md` as the main messaging repository. The structure is desi
 
 ## Solution Overview
 [For each solution: proposition, implementation phases summary, pricing tiers table (PoV/S/M/L)]
+[If any solutions have cost_model: add a Margin Health Summary table showing
+each solution's margin_pct per tier, flagging any below target_margin_pct.
+Mark this section as INTERNAL / CONFIDENTIAL — it should not appear in
+customer-facing exports.]
 
 ## Market Deep Dives
 [For each market:]

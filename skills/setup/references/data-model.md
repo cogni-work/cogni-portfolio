@@ -20,9 +20,32 @@
 ```
 
 Required fields: `slug`, `company.name`, `company.description`, `company.industry`
-Optional fields: `language`, `created`, `updated`
+Optional fields: `language`, `delivery_defaults`, `created`, `updated`
 
 The `language` field is a lowercase ISO 639-1 code (e.g., `"de"`, `"en"`, `"fr"`). If absent, defaults to `"en"`. It controls the language of all generated user-facing text content (descriptions, statements, messaging, proposals, briefs, profile text). JSON field names and slugs always remain in English.
+
+The `delivery_defaults` object provides company-wide defaults for solution cost modeling:
+
+```json
+{
+  "delivery_defaults": {
+    "roles": [
+      { "role": "Solution Architect", "rate_day": 1800, "currency": "EUR" },
+      { "role": "Implementation Engineer", "rate_day": 1200, "currency": "EUR" },
+      { "role": "Project Manager", "rate_day": 1400, "currency": "EUR" }
+    ],
+    "target_margin_pct": 35,
+    "assumptions": [
+      "Standard 8-hour workday",
+      "Remote delivery unless on-site explicitly scoped"
+    ]
+  }
+}
+```
+
+- `roles` (array): Default delivery roles with day rates. Solutions inherit these unless overridden.
+- `target_margin_pct` (number): Company's target gross margin percentage. Used by quality gates to flag solutions priced below target.
+- `assumptions` (string array): Company-wide delivery assumptions inherited by all solutions. Solution-specific assumptions are additive.
 
 ### products/{slug}.json
 
@@ -168,7 +191,7 @@ Each evidence entry can be a structured object with `statement` (string, require
 
 ### solutions/{feature-slug}--{market-slug}.json
 
-A solution attaches an implementation plan and pricing tiers to a proposition (same slug). It provides the commercial grounding for customer business cases.
+A solution attaches an implementation plan, pricing tiers, and internal cost model to a proposition (same slug). It provides the commercial grounding for customer business cases. The `cost_model` captures the internal economics — effort estimates, role rates, bill of materials, and assumptions — that justify the external pricing and enable margin analysis.
 
 ```json
 {
@@ -213,14 +236,90 @@ A solution attaches an implementation plan and pricing tiers to a proposition (s
       "scope": "Unlimited nodes, full observability stack, 16-week implementation with dedicated CSM"
     }
   },
+  "cost_model": {
+    "assumptions": [
+      "Blended delivery rate: 1,400 EUR/day based on 60/40 senior/junior mix",
+      "Customer provides staging environment access within 5 business days",
+      "No custom integrations beyond standard API connectors",
+      "Target margin: 30-40% on standard tiers, 10-20% on PoV (land-and-expand)"
+    ],
+    "bill_of_materials": {
+      "roles": [
+        { "role": "Solution Architect", "rate_day": 1800, "currency": "EUR" },
+        { "role": "Implementation Engineer", "rate_day": 1200, "currency": "EUR" },
+        { "role": "Project Manager", "rate_day": 1400, "currency": "EUR" }
+      ],
+      "tooling": [
+        { "item": "Monitoring platform license (pilot)", "cost": 0, "note": "Included in PoV" }
+      ],
+      "infrastructure": [
+        { "item": "Cloud hosting for collector agents", "cost_monthly": 500, "currency": "EUR" }
+      ]
+    },
+    "effort_by_tier": {
+      "proof_of_value": {
+        "total_days": 12,
+        "breakdown": [
+          { "role": "Solution Architect", "days": 4 },
+          { "role": "Implementation Engineer", "days": 6 },
+          { "role": "Project Manager", "days": 2 }
+        ],
+        "internal_cost": 16000,
+        "margin_pct": 6.25
+      },
+      "small": {
+        "total_days": 40,
+        "breakdown": [
+          { "role": "Solution Architect", "days": 10 },
+          { "role": "Implementation Engineer", "days": 22 },
+          { "role": "Project Manager", "days": 8 }
+        ],
+        "internal_cost": 35600,
+        "margin_pct": 28.8
+      },
+      "medium": {
+        "total_days": 80,
+        "breakdown": [
+          { "role": "Solution Architect", "days": 18 },
+          { "role": "Implementation Engineer", "days": 45 },
+          { "role": "Project Manager", "days": 17 }
+        ],
+        "internal_cost": 110200,
+        "margin_pct": 8.2
+      },
+      "large": {
+        "total_days": 130,
+        "breakdown": [
+          { "role": "Solution Architect", "days": 28 },
+          { "role": "Implementation Engineer", "days": 75 },
+          { "role": "Project Manager", "days": 27 }
+        ],
+        "internal_cost": 178200,
+        "margin_pct": 28.7
+      }
+    }
+  },
   "created": "2026-03-05"
 }
 ```
 
 Required fields: `slug`, `proposition_slug`, `implementation` (array with at least one phase entry), `pricing` (object with `proof_of_value`, `small`, `medium`, `large` tiers)
-Optional fields: `created`
+Optional fields: `cost_model`, `created`
 
 Each implementation phase has `phase` (string, required), `duration_weeks` (number, required), and `description` (string, required). Each pricing tier has `price` (number, required), `currency` (string, required), and `scope` (string, required).
+
+The `cost_model` object is optional but recommended for rigorous business cases:
+
+- **`assumptions`** (string array): Explicit statements about rate basis, client prerequisites, scope exclusions, and target margins. These are the statements that get challenged in deal reviews — making them explicit prevents hidden assumptions from undermining pricing credibility.
+- **`bill_of_materials`**: Resources required for delivery.
+  - `roles` (array): Each entry has `role` (string), `rate_day` (number), `currency` (string). Roles can reference defaults from `portfolio.json` `delivery_defaults.roles` or be overridden per solution.
+  - `tooling` (array, optional): Each entry has `item` (string), `cost` (number), `note` (string, optional). Software licenses, platforms, or tools consumed during delivery.
+  - `infrastructure` (array, optional): Each entry has `item` (string), `cost_monthly` (number), `currency` (string). Recurring infrastructure costs during the engagement.
+- **`effort_by_tier`**: Effort allocation for each pricing tier. Each tier object has:
+  - `total_days` (number): Total person-days for this tier
+  - `breakdown` (array): Per-role allocation with `role` (string) and `days` (number)
+  - `internal_cost` (number): Computed cost (sum of role days * rates + tooling + infrastructure)
+  - `margin_pct` (number): `(price - internal_cost) / price * 100`
 
 **Naming convention**: Solution file names use the same double-dash (`--`) convention as propositions: `{feature-slug}--{market-slug}.json`
 
@@ -356,6 +455,7 @@ erDiagram
         string proposition_slug FK
         array implementation
         object pricing
+        object cost_model "optional"
     }
     Competitor {
         string slug PK "feature--market"
