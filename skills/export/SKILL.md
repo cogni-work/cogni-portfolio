@@ -151,9 +151,14 @@ When the request is vague ("export my portfolio"), present the options:
 - The portfolio workbook
 - Everything
 
-### 3. Gather Source Data
+### 3a. Get Relevance Tiers
 
-Read all entity files relevant to the export type. Also run `$CLAUDE_PLUGIN_ROOT/scripts/project-status.sh <project-dir>` to get the `relevance_matrix` — this provides pre-computed relevance tiers (high/medium/low/skip) for each Feature x Market pair based on feature readiness and market priority.
+Run `$CLAUDE_PLUGIN_ROOT/scripts/project-status.sh <project-dir>` to get the `relevance_matrix` — this provides pre-computed relevance tiers for each Feature x Market pair based on feature readiness and market priority. Tier assignments are computed by the script; descriptions here are for context:
+
+- **High** — GA feature + beachhead market (strongest differentiation, generate first)
+- **Medium** — other viable combinations (generate after high-tier)
+- **Low** — beta feature + expansion market (generate only if user explicitly requests)
+- **Skip** — planned feature or aspirational market (exclude unless user overrides)
 
 **Use relevance tiers to order deliverables:**
 - **Proposals**: Generate high-tier propositions first, then medium. Skip low-tier and skip-tier unless the user explicitly requests them. Within a tier, order by market (beachhead markets first).
@@ -161,7 +166,7 @@ Read all entity files relevant to the export type. Also run `$CLAUDE_PLUGIN_ROOT
 - **Workbook**: In the Proposition Matrix sheet, sort rows by relevance tier (high → medium → low → skip) so leadership sees the highest-impact pairs first. Add a "Tier" column showing the relevance tier for each pair.
 - **Full export**: Generate high-tier proposals first. When listing generated files, group by tier so the user sees what matters most.
 
-**Source data per export type:**
+### 3b. Read Source Data
 - **Proposals** need: the proposition, its feature, its product, the market, the customer profile, the competitor analysis, and the solution (if available)
 - **Briefs** need: the market, all propositions targeting it, customer profile, and all competitor analyses for those propositions
 - **Workbook** needs: everything

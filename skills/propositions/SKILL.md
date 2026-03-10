@@ -35,17 +35,20 @@ Propositions are where the portfolio comes alive — transforming market-indepen
 The workflow adapts to what the user brings. Each path has a distinct feel — don't collapse them into the same response:
 
 - **User wants to explore** ("let's work on propositions") → Conversational and concise. Keep it short — lead with 2-3 sharp observations about the portfolio state ("you have 2 of 8 propositions and both need rework"), then ask 3-5 questions about the buyer's world that you can't answer from the data. Do NOT do a full per-proposition critique or per-pair priority analysis yet — that's the review and batch paths. End with a brief recommendation of where to start and invite dialogue: "I'd focus on X and Y first — what do you think?" The explore response should feel like a 5-minute opening conversation, not a 30-minute consulting memo.
-- **User asks for batch generation** ("generate all missing propositions") → Action-oriented with a gate. Run `$CLAUDE_PLUGIN_ROOT/scripts/project-status.sh <project-dir>` and read the `relevance_matrix` to get pre-computed tiers. Present missing pairs grouped by tier:
-  - **High** (GA feature + beachhead market) — generate first, these carry differentiation
-  - **Medium** (other viable combinations) — generate after high-tier pairs are confirmed
-  - **Low** (beta + expansion) — generate only if the user explicitly wants them
-  - **Skip** (planned features or aspirational markets) — exclude from generation, explain why
-
-  Open with a one-line snapshot ("4 features x 2 markets = 8 pairs, 2 exist, 6 missing: 3 high-priority, 2 medium, 1 skipped"). If existing propositions have quality issues, flag briefly. End with the confirmation gate: "I'll start with the 3 high-priority pairs — confirm and I'll draft." The batch response should reach the gate within the first half.
+- **User asks for batch generation** ("generate all missing propositions") → Action-oriented with a gate. Run `$CLAUDE_PLUGIN_ROOT/scripts/project-status.sh <project-dir>` and read the `relevance_matrix` to get pre-computed tiers (see Batch Generation Tiers below). Open with a one-line snapshot ("4 features x 2 markets = 8 pairs, 2 exist, 6 missing: 3 high-priority, 2 medium, 1 skipped"). Present missing pairs grouped by tier. If existing propositions have quality issues, flag briefly. End with the confirmation gate: "I'll start with the 3 high-priority pairs — confirm and I'll draft." The batch response should reach the gate within the first half.
 - **User brings a specific pair** ("write a proposition for X in market Y") → Craft it collaboratively, but assess whether the messaging reveals upstream issues
 - **User asks to review existing propositions** → Jump straight to critique. No discovery questions — the user already has propositions and wants them evaluated. Lead with your sharpest diagnosis, then provide concrete rewrites. End with specific action items, not open-ended questions.
 
 In all cases, read `portfolio.json` for company context and scan `features/` and `markets/` for existing entities. If features or markets don't exist yet, tell the user to define them first.
+
+### Batch Generation Tiers
+
+Tier assignments are computed by `project-status.sh` based on feature readiness and market priority. Descriptions here are for context:
+
+- **High** — GA feature + beachhead market. Generate first — these carry your strongest differentiation.
+- **Medium** — other viable combinations. Generate after high-tier pairs are confirmed.
+- **Low** — beta feature + expansion market. Generate only if the user explicitly wants them.
+- **Skip** — planned feature or aspirational market. Exclude from generation and explain why.
 
 ## Strategic Assessment (when the user is exploring or starting fresh)
 
