@@ -153,7 +153,15 @@ When the request is vague ("export my portfolio"), present the options:
 
 ### 3. Gather Source Data
 
-Read all entity files relevant to the export type:
+Read all entity files relevant to the export type. Also run `$CLAUDE_PLUGIN_ROOT/scripts/project-status.sh <project-dir>` to get the `relevance_matrix` — this provides pre-computed relevance tiers (high/medium/low/skip) for each Feature x Market pair based on feature readiness and market priority.
+
+**Use relevance tiers to order deliverables:**
+- **Proposals**: Generate high-tier propositions first, then medium. Skip low-tier and skip-tier unless the user explicitly requests them. Within a tier, order by market (beachhead markets first).
+- **Briefs**: Order markets by priority — beachhead first, then expansion, then aspirational.
+- **Workbook**: In the Proposition Matrix sheet, sort rows by relevance tier (high → medium → low → skip) so leadership sees the highest-impact pairs first. Add a "Tier" column showing the relevance tier for each pair.
+- **Full export**: Generate high-tier proposals first. When listing generated files, group by tier so the user sees what matters most.
+
+**Source data per export type:**
 - **Proposals** need: the proposition, its feature, its product, the market, the customer profile, the competitor analysis, and the solution (if available)
 - **Briefs** need: the market, all propositions targeting it, customer profile, and all competitor analyses for those propositions
 - **Workbook** needs: everything

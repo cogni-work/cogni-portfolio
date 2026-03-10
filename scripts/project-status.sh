@@ -228,6 +228,63 @@ fi
 missing_arr="$missing_arr]"
 missing_sol_arr="$missing_sol_arr]"
 
+# Compute relevance matrix: tier each Feature x Market pair
+relevance_matrix="[]"
+if [ "$FEATURES" -gt 0 ] && [ "$MARKETS" -gt 0 ]; then
+  relevance_matrix=$(python3 -c "
+import json, os, glob
+
+features = {}
+for f in glob.glob('$PROJECT_DIR/features/*.json'):
+    try:
+        d = json.load(open(f))
+        features[os.path.basename(f)[:-5]] = d
+    except Exception:
+        pass
+
+markets = {}
+for m in glob.glob('$PROJECT_DIR/markets/*.json'):
+    try:
+        d = json.load(open(m))
+        markets[os.path.basename(m)[:-5]] = d
+    except Exception:
+        pass
+
+matrix = []
+for f_slug, feat in sorted(features.items()):
+    readiness = feat.get('readiness', 'ga')
+    for m_slug, mkt in sorted(markets.items()):
+        priority = mkt.get('priority', 'expansion')
+        pair = f'{f_slug}--{m_slug}'
+        has_proposition = os.path.exists(os.path.join('$PROJECT_DIR', 'propositions', pair + '.json'))
+
+        # Skip tier: planned features or aspirational markets
+        if readiness == 'planned' or priority == 'aspirational':
+            tier = 'skip'
+        # High tier: GA feature + beachhead market
+        elif readiness == 'ga' and priority == 'beachhead':
+            tier = 'high'
+        # Low tier: beta feature + expansion market
+        elif readiness == 'beta' and priority == 'expansion':
+            tier = 'low'
+        # Medium tier: everything else
+        else:
+            tier = 'medium'
+
+        matrix.append({
+            'pair': pair,
+            'feature_slug': f_slug,
+            'market_slug': m_slug,
+            'readiness': readiness,
+            'priority': priority,
+            'tier': tier,
+            'has_proposition': has_proposition
+        })
+
+print(json.dumps(matrix))
+" 2>/dev/null || echo "[]")
+fi
+
 MISSING_COUNT=$((EXPECTED_PROPOSITIONS - PROPOSITIONS))
 if [ "$MISSING_COUNT" -lt 0 ]; then MISSING_COUNT=0; fi
 
@@ -515,6 +572,7 @@ cat << EOF
   "regions": $region_summary,
   "missing_propositions": $missing_arr,
   "missing_solutions": $missing_sol_arr,
+  "relevance_matrix": $relevance_matrix,
   "phase": "$PHASE",
   "next_actions": $next_actions,
   "completion": {
