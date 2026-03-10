@@ -138,6 +138,46 @@ for cat, slugs in cats.items():
 " 2>/dev/null)
 fi
 
+# Feature description quality warnings: short desc, tautology, no mechanism verb
+if [ -d "$PROJECT_DIR/features" ]; then
+  while IFS='|' read -r slug msg; do
+    add_warning "feature" "$slug" "$msg"
+  done < <(python3 -c "
+import json, os, glob, re
+MECHANISM_VERBS = {'monitors','analyzes','aggregates','transforms','routes','encrypts',
+    'validates','orchestrates','correlates','indexes','provisions','automates',
+    'detects','classifies','normalizes','synchronizes','deploys','compiles',
+    'processes','integrates','schedules','optimizes','caches','replicates',
+    'streams','parses','generates','scans','filters','connects','extracts',
+    'loads','maps','converts','distributes','manages','tracks','audits',
+    'authenticates','authorizes','balances','batches','bridges','buffers',
+    'captures','chains','chunks','clusters','compresses','computes','configures'}
+for f in glob.glob('$PROJECT_DIR/features/*.json'):
+    try:
+        d = json.load(open(f))
+        slug = os.path.basename(f)[:-5]
+        name = d.get('name', '')
+        desc = d.get('description', '')
+        words = desc.split()
+        # Check 1: description too short (<15 words)
+        if len(words) < 15:
+            print(f'{slug}|Description has only {len(words)} words (minimum 15 recommended)')
+        # Check 2: tautology (>50% word overlap between name and description)
+        name_words = set(w.lower().strip('.,;:') for w in name.split() if len(w) > 2)
+        desc_words = set(w.lower().strip('.,;:') for w in words if len(w) > 2)
+        if name_words and desc_words:
+            overlap = len(name_words & desc_words) / len(name_words)
+            if overlap > 0.5:
+                print(f'{slug}|Description may be tautological (>{int(overlap*100)}% word overlap with name)')
+        # Check 3: no mechanism verb in description
+        desc_lower_words = set(w.lower().strip('.,;:()') for w in words)
+        if not desc_lower_words & MECHANISM_VERBS:
+            print(f'{slug}|Description lacks a mechanism verb -- describe HOW the feature works')
+    except Exception:
+        pass
+" 2>/dev/null)
+fi
+
 # Valid region codes from the taxonomy
 VALID_REGIONS="de dach eu uk nordics us na cn apac jp latam mea global"
 
@@ -173,6 +213,60 @@ with open('$m') as fh:
       fi
     fi
   done
+
+  # Market overlap detection and SAM/TAM ratio warnings
+  while IFS='|' read -r slug msg; do
+    add_warning "market" "$slug" "$msg"
+  done < <(python3 -c "
+import json, os, glob
+markets = []
+for f in sorted(glob.glob('$PROJECT_DIR/markets/*.json')):
+    try:
+        d = json.load(open(f))
+        d['_slug'] = os.path.basename(f)[:-5]
+        markets.append(d)
+    except Exception:
+        pass
+
+# SAM/TAM and SOM/SAM ratio warnings
+for m in markets:
+    tam_v = (m.get('tam') or {}).get('value')
+    sam_v = (m.get('sam') or {}).get('value')
+    som_v = (m.get('som') or {}).get('value')
+    if tam_v and sam_v and tam_v > 0:
+        ratio = sam_v / tam_v
+        if ratio > 0.5:
+            print(f'{m[\"_slug\"]}|SAM/TAM ratio is {ratio:.0%} (>50%) -- SAM may be overestimated')
+    if sam_v and som_v and sam_v > 0:
+        ratio = som_v / sam_v
+        if ratio > 0.2:
+            print(f'{m[\"_slug\"]}|SOM/SAM ratio is {ratio:.0%} (>20%) -- SOM may be overestimated')
+
+# Overlap detection: same region + overlapping employee/ARR ranges + shared verticals
+for i, a in enumerate(markets):
+    for b in markets[i+1:]:
+        if a.get('region') != b.get('region'):
+            continue
+        sa = a.get('segmentation', {})
+        sb = b.get('segmentation', {})
+        # Check employee range overlap
+        a_emin = sa.get('employees_min')
+        a_emax = sa.get('employees_max')
+        b_emin = sb.get('employees_min')
+        b_emax = sb.get('employees_max')
+        emp_overlap = True  # assume overlap if ranges not defined
+        if all(v is not None for v in [a_emin, a_emax, b_emin, b_emax]):
+            emp_overlap = a_emin <= b_emax and b_emin <= a_emax
+        # Check vertical overlap
+        a_verts = set(sa.get('vertical_codes', []))
+        b_verts = set(sb.get('vertical_codes', []))
+        vert_overlap = True  # assume overlap if verticals not defined
+        if a_verts and b_verts:
+            vert_overlap = bool(a_verts & b_verts)
+        if emp_overlap and vert_overlap:
+            print(f'{a[\"_slug\"]}|Potential overlap with {b[\"_slug\"]} in region {a.get(\"region\")} (shared employee range and verticals)')
+            print(f'{b[\"_slug\"]}|Potential overlap with {a[\"_slug\"]} in region {a.get(\"region\")} (shared employee range and verticals)')
+" 2>/dev/null)
 fi
 
 # Validate propositions reference valid features and markets

@@ -96,6 +96,25 @@ After analyzing the portfolio, present your proposed messaging strategy with a c
 
 Do not just ask "does this look right?" — present a point of view. "I'd prioritize 6 propositions across your two highest-value markets. Three of your existing propositions need sharper DOES statements — they read like feature descriptions, not buyer benefits. And I'd skip the IoT market entirely for now because none of your features address their core connectivity pain" is better than "here are some propositions, let me know what you think."
 
+## Feature Quality Pre-check
+
+Before generating any proposition, run the validation script to check for feature quality warnings:
+
+```bash
+$CLAUDE_PLUGIN_ROOT/scripts/validate-entities.sh <project-dir>
+```
+
+If the referenced feature has quality warnings (short description, tautology, no mechanism verb), **refuse to generate the proposition**. Instead:
+
+1. Show the specific warnings for the feature
+2. Explain why a proposition built on a weak feature will itself be weak — vague features produce vague IS statements, which cascade into generic DOES/MEANS messaging
+3. Direct the user to fix the feature first using the `features` skill
+4. Offer to continue with other Feature x Market pairs that have no warnings
+
+This pre-check applies to both single-proposition and batch generation paths. In batch mode, exclude features with warnings from the generation set and report them separately: "3 features have quality warnings and were skipped — fix these with the features skill before generating their propositions."
+
+The `project-status.sh` script also reports `feature_quality_warnings` count and `feature_quality_warning_slugs` — use these for a quick overview without running full validation.
+
 ## From Consulting to Capture
 
 After presenting your assessment, the user will confirm, adjust, or push back on your priorities. Once you have agreement, transition to drafting — don't stay in assessment mode indefinitely. The pattern:

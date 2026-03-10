@@ -82,7 +82,12 @@ A target market defined by region, segmentation criteria, and sized by TAM/SAM/S
   "segmentation": {
     "company_size": "50-500 employees",
     "revenue_range": "$5M-$100M ARR",
-    "vertical": "Software as a Service"
+    "vertical": "Software as a Service",
+    "employees_min": 50,
+    "employees_max": 500,
+    "arr_min": 5000000,
+    "arr_max": 100000000,
+    "vertical_codes": ["saas"]
   },
   "tam": {
     "value": 5000000000,
@@ -114,6 +119,13 @@ Valid `priority` values: `beachhead` (primary go-to-market target), `expansion` 
 The `region` field must be a valid region code from the standard taxonomy in `$CLAUDE_PLUGIN_ROOT/skills/setup/references/regions.json`. Valid codes: `de`, `dach`, `eu`, `uk`, `nordics`, `us`, `na`, `cn`, `apac`, `jp`, `latam`, `mea`, `global`.
 
 The `segmentation` object captures non-geographic criteria (company size, revenue, vertical, etc.). Geographic scope is expressed solely through `region` -- do not duplicate it in `segmentation.geography`.
+
+**Normalized segmentation fields** (optional, used for overlap detection):
+- `employees_min` / `employees_max` (integer): headcount range boundaries
+- `arr_min` / `arr_max` (number): annual recurring revenue range in the market's currency
+- `vertical_codes` (string array): lowercase identifiers for industry verticals (e.g., `["saas", "fintech"]`)
+
+These normalized fields enable automated overlap detection between markets sharing the same region. The free-text fields (`company_size`, `revenue_range`, `vertical`) remain for human readability.
 
 `source_file` (optional, all entity types): Filename of the document in `uploads/` from which this entity was extracted during ingestion.
 

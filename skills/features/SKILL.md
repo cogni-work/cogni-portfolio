@@ -109,7 +109,9 @@ Once you and the user agree on the feature set, structure each feature:
 }
 ```
 
-Required: `slug`, `product_slug`, `name`, `description`. Optional: `category`, `created`.
+Required: `slug`, `product_slug`, `name`, `description`. Optional: `category`, `readiness`, `created`, `updated`.
+
+Valid `readiness` values: `ga` (generally available), `beta` (limited availability / pilot), `planned` (roadmap only, not yet built).
 
 Write each feature as a JSON file to `features/{slug}.json`.
 
@@ -122,6 +124,24 @@ Present the proposed features as a table with your consulting commentary:
 | cloud-monitoring | cloud-platform | Cloud Infrastructure Monitoring | observability |
 
 Then deliver your assessment — not as a checklist but as a coherent perspective on the feature set's strengths, gaps, and what to prioritize next. End with a clear recommendation: "Build propositions for X and Y first, because they carry your differentiation."
+
+## Quality Gate
+
+After creating or editing features, run the validation script to check for description quality warnings:
+
+```bash
+$CLAUDE_PLUGIN_ROOT/scripts/validate-entities.sh <project-dir>
+```
+
+The validator checks three quality signals for every feature description:
+
+1. **Short description** (<15 words): Descriptions this brief can't convey what a feature does or how. They produce weak propositions downstream.
+2. **Tautology** (>50% word overlap with feature name): "Data Transformation — Transforms data" tells the reader nothing new. The description should explain the mechanism, not restate the name.
+3. **No mechanism verb**: Descriptions should use at least one verb that explains HOW the feature works (monitors, transforms, orchestrates, correlates, etc.). A description without a mechanism verb reads like a label, not a capability.
+
+**When listing or reviewing features**, always run validation first and surface any quality warnings prominently. Features with warnings are not ready for proposition generation — the propositions skill will refuse to generate for them. Flag warnings in your listing table and recommend specific fixes before moving to propositions.
+
+**When editing features**, re-run validation after the edit to confirm the warning is resolved. If it's not, work with the user to strengthen the description before moving on.
 
 ## Validate Against Portfolio
 

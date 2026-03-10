@@ -126,8 +126,14 @@ Once you and the user agree on the market set, structure each market.
   "segmentation": {
     "company_size": "50-500 employees",
     "revenue_range": "EUR 5M-100M ARR",
-    "vertical": "Software as a Service"
+    "vertical": "Software as a Service",
+    "employees_min": 50,
+    "employees_max": 500,
+    "arr_min": 5000000,
+    "arr_max": 100000000,
+    "vertical_codes": ["saas"]
   },
+  "priority": "beachhead",
   "tam": {
     "value": 5000000000,
     "currency": "EUR",
@@ -150,7 +156,11 @@ Once you and the user agree on the market set, structure each market.
 }
 ```
 
-Required: `slug`, `name`, `region`, `description`. Optional: `segmentation`, `tam`, `sam`, `som`.
+Required: `slug`, `name`, `region`, `description`. Optional: `segmentation`, `tam`, `sam`, `som`, `priority`, `created`, `updated`.
+
+Valid `priority` values: `beachhead` (primary go-to-market target), `expansion` (secondary growth), `aspirational` (long-term opportunity).
+
+**Normalized segmentation fields** (optional but recommended): Always populate `employees_min`, `employees_max`, `arr_min`, `arr_max`, and `vertical_codes` alongside the free-text fields. These enable automated overlap detection between markets sharing the same region. Use lowercase identifiers for `vertical_codes` (e.g., `["saas", "fintech"]`).
 
 The `region` must be a valid code from the region taxonomy (`$CLAUDE_PLUGIN_ROOT/skills/setup/references/regions.json`). Use the region's default currency for TAM/SAM/SOM values. Slug format: `{segment}-{region}`. Do not put geography in `segmentation` — that is expressed by `region`.
 
@@ -232,9 +242,9 @@ When the user asks to review or improve their market set (or when you notice iss
 
 1. Read all markets, features, products, and the portfolio context
 2. **Segmentation quality**: Test each market against the five checks (identifiable, reachable, sizable, distinct, winnable). Flag markets that fail any check.
-3. **Overlap detection**: Flag markets with overlapping segmentation and recommend specific merges
+3. **Overlap detection**: Run `$CLAUDE_PLUGIN_ROOT/scripts/validate-entities.sh <project-dir>` and check for market overlap warnings. The validator automatically detects markets in the same region with overlapping employee/ARR ranges and shared vertical codes. For markets flagged as overlapping, recommend specific merges or explain why the overlap is intentional (different buyer personas, different product packaging, etc.).
 4. **Feature-market fit**: Cross-reference the feature set against each market. Markets where few features apply may be poor fits. Features that apply to no market suggest an untapped segment.
-5. **Sizing coherence**: Check that TAM > SAM > SOM ratios are reasonable across markets. Flag SAM/TAM ratios above 50% (constraints not real) or SOM/SAM ratios above 20% (overconfident).
+5. **Sizing coherence**: Run validation and check for SAM/TAM ratio warnings (>50%) and SOM/SAM ratio warnings (>20%). These automated checks catch the most common sizing errors. For flagged markets, push for bottom-up recalculation rather than simply adjusting percentages.
 6. **Portfolio shape**: Assess the overall market portfolio — diversification, regional coverage, beachhead clarity, expansion logic
 7. **Competitive positioning**: Which markets are crowded vs. underserved? Where does the company have structural advantages?
 
