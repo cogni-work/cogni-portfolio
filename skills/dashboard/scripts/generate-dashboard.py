@@ -42,8 +42,8 @@ DEFAULT_THEME = {
         "info": "#1565C0",
     },
     "fonts": {
-        "headers": "'DM Sans', Inter, Calibri, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-        "body": "'DM Sans', Inter, Calibri, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        "headers": "'Bricolage Grotesque', 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        "body": "'Outfit', 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
         "mono": "'JetBrains Mono', 'Fira Code', Consolas, monospace",
     },
 }
@@ -1096,10 +1096,192 @@ body::after {{
 @media (max-width: 480px) {{
   .cards {{ grid-template-columns: 1fr; }}
 }}
+
+/* Sticky navigation */
+.topnav {{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 24px;
+  margin: 0 -24px 24px;
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+  transition: box-shadow 0.3s;
+}}
+.topnav.scrolled {{
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+}}
+.topnav a {{
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 14px;
+  border-radius: 20px;
+  color: var(--text2);
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+  font-family: var(--font-body);
+  letter-spacing: 0.01em;
+}}
+.topnav a:hover {{
+  background: var(--surface2);
+  color: var(--text);
+}}
+.topnav a.active {{
+  background: var(--surface-dark);
+  color: var(--accent);
+  font-weight: 600;
+}}
+.topnav .nav-brand {{
+  font-family: var(--font-headers);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--primary);
+  margin-right: 12px;
+  letter-spacing: -0.02em;
+}}
+
+/* Priority badges */
+.priority-badge {{
+  display: inline-block;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  text-transform: lowercase;
+  letter-spacing: 0.03em;
+  font-family: var(--font-mono);
+}}
+.priority-beachhead {{ background: rgba(46,125,50,0.12); color: var(--green); }}
+.priority-expansion {{ background: rgba(229,161,0,0.12); color: var(--yellow); }}
+.priority-aspirational {{ background: rgba(107,114,128,0.12); color: var(--text2); }}
+
+/* Readiness indicator */
+.readiness {{
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  margin-left: 8px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+}}
+.readiness::before {{
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}}
+.readiness-ga {{ color: var(--green); }}
+.readiness-ga::before {{ background: var(--green); box-shadow: 0 0 6px color-mix(in srgb, var(--green) 40%, transparent); }}
+.readiness-beta {{ color: var(--yellow); }}
+.readiness-beta::before {{ background: var(--yellow); }}
+.readiness-planned {{ color: var(--text2); }}
+.readiness-planned::before {{ background: var(--text2); opacity: 0.5; }}
+
+/* Revenue model chip */
+.revenue-chip {{
+  display: inline-block;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--surface2);
+  color: var(--text2);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}}
+
+/* Packages */
+.package-grid {{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 16px;
+}}
+.package-card {{
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  cursor: pointer;
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}}
+.package-card:hover {{
+  border-color: var(--accent-muted);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}}
+.package-card::after {{
+  content: "";
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-dark), var(--accent), var(--accent-muted));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+}}
+.package-card:hover::after {{ transform: scaleX(1); }}
+.package-tier {{
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-top: 10px;
+  border: 1px solid var(--border);
+  transition: border-color 0.2s;
+}}
+.package-tier:hover {{ border-color: var(--accent-muted); }}
+.included-solution {{
+  display: inline-block;
+  font-size: 11px;
+  padding: 2px 8px;
+  background: var(--surface2);
+  border-radius: 4px;
+  margin: 2px;
+  font-family: var(--font-mono);
+  color: var(--text2);
+  letter-spacing: 0.01em;
+  transition: background 0.2s, color 0.2s;
+}}
+.included-solution:hover {{
+  background: var(--accent);
+  color: var(--bg);
+}}
+@media (max-width: 768px) {{
+  .package-grid {{ grid-template-columns: 1fr; }}
+  .topnav {{ padding: 8px 16px; margin: 0 -16px 16px; }}
+  .topnav .nav-brand {{ display: none; }}
+}}
 </style>
 </head>
 <body>
 <div class="container">
+
+<!-- Navigation -->
+<nav class="topnav" id="topnav">
+  <span class="nav-brand">{company_name}</span>
+  <a href="#" data-section="Entity">Overview</a>
+  <a href="#" data-section="Matrix">Matrix</a>
+  <a href="#" data-section="Markets">Markets</a>
+  <a href="#" data-section="Products">Products</a>
+  <a href="#" data-section="Solutions">Solutions</a>
+  <a href="#" data-section="Packages">Packages</a>
+  <a href="#" data-section="Margin">Margins</a>
+  <a href="#" data-section="Claims">Claims</a>
+  <a href="#" data-section="Next">Actions</a>
+</nav>
 
 <!-- Header -->
 <div class="header">
@@ -1220,6 +1402,8 @@ body::after {{
             region = escape_html(m.get("region", "?"))
             name = escape_html(m.get("name", ms))
             desc = escape_html(m.get("description", ""))
+            priority = m.get("priority", "")
+            priority_cls = f"priority-{priority}" if priority else ""
             tam = m.get("tam", {})
             sam = m.get("sam", {})
             som = m.get("som", {})
@@ -1232,7 +1416,7 @@ body::after {{
             som_pct = (som_val / max_tam * 100) if max_tam else 0
 
             html += f"""    <div class="market-card" onclick="openMarket('{escape_js_string(ms)}')">
-      <div class="region-badge">{region}</div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px"><span class="region-badge" style="margin-bottom:0">{region}</span>{f'<span class="priority-badge {priority_cls}">{escape_html(priority)}</span>' if priority else ''}</div>
       <h4>{name}</h4>
       <div class="desc">{desc}</div>
       <div class="sizing-bars">
@@ -1254,13 +1438,15 @@ body::after {{
         for ps, p in sorted(data["products"].items()):
             pname = escape_html(p.get("name", ps))
             maturity = escape_html(p.get("maturity", ""))
+            revenue_model = escape_html(p.get("revenue_model", ""))
             positioning = escape_html(p.get("positioning", ""))
             product_features = {fs: f for fs, f in data["features"].items() if f.get("product_slug") == ps}
             fcount = len(product_features)
+            rev_badge = f'<span class="revenue-chip" style="margin-left:8px">{revenue_model}</span>' if revenue_model else ''
 
             html += f"""  <div class="product-group">
     <div class="product-header" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
-      <h4>{pname} {f'<span style="font-size:12px;color:var(--text2);font-weight:400;margin-left:8px">{maturity}</span>' if maturity else ''}</h4>
+      <h4>{pname} {f'<span style="font-size:12px;color:var(--text2);font-weight:400;margin-left:8px">{maturity}</span>' if maturity else ''}{rev_badge}</h4>
       <span class="badge">{fcount} feature{"s" if fcount != 1 else ""}</span>
     </div>
     <div class="product-features">
@@ -1269,7 +1455,9 @@ body::after {{
             for fs, f in sorted(product_features.items()):
                 fname = escape_html(f.get("name", fs))
                 fdesc = escape_html(f.get("description", ""))
-                html += f'      <div class="feature-item"><span class="fname">{fname}</span><br><span class="fdesc">{fdesc}</span></div>\n'
+                readiness = f.get("readiness", "")
+                readiness_html = f'<span class="readiness readiness-{escape_html(readiness)}">{escape_html(readiness)}</span>' if readiness else ''
+                html += f'      <div class="feature-item"><span class="fname">{fname}{readiness_html}</span><br><span class="fdesc">{fdesc}</span></div>\n'
             html += "    </div>\n  </div>\n"
         html += "</div>\n"
 
@@ -1407,6 +1595,75 @@ body::after {{
             html += "      </tbody>\n    </table>\n  </div>\n"
 
         html += "</div>\n"
+
+    # --- Packages ---
+    if data["packages"]:
+        html += """
+<!-- Packages -->
+<div class="section reveal">
+  <div class="section-title">Packages</div>
+  <div class="package-grid stagger">
+"""
+        for pkg_slug, pkg in sorted(data["packages"].items()):
+            pkg_name = escape_html(pkg.get("name", pkg_slug))
+            pkg_type = escape_html(pkg.get("package_type", "project"))
+            prod_slug = pkg.get("product_slug", "")
+            mkt_slug = pkg.get("market_slug", "")
+            prod = data["products"].get(prod_slug, {})
+            mkt = data["markets"].get(mkt_slug, {})
+            prod_name = escape_html(prod.get("name", prod_slug))
+            mkt_name = escape_html(mkt.get("name", mkt_slug))
+            positioning = escape_html(pkg.get("positioning", ""))
+            savings = pkg.get("bundle_savings_pct")
+            tiers = pkg.get("tiers", [])
+
+            html += f"""    <div class="package-card" onclick="openPackage('{escape_js_string(pkg_slug)}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div>
+          <h4 style="font-size:16px;font-weight:600;margin-bottom:2px">{pkg_name}</h4>
+          <div style="font-size:12px;color:var(--text2)">{prod_name} &rarr; {mkt_name}</div>
+        </div>
+        <span class="revenue-chip">{pkg_type}</span>
+      </div>"""
+            if positioning:
+                html += f'      <div style="font-size:13px;color:var(--text2);margin-bottom:12px">{positioning}</div>\n'
+
+            for tier in tiers:
+                tier_name = escape_html(tier.get("name", tier.get("tier", "?")))
+                scope = escape_html(tier.get("scope", ""))
+                included = tier.get("included_solutions", [])
+                if pkg.get("package_type") in ("subscription", "hybrid"):
+                    pm = tier.get("price_monthly")
+                    pa = tier.get("price_annual")
+                    curr = tier.get("currency", "EUR")
+                    if pm is not None and pm > 0:
+                        price_display = format_currency(pm, curr) + "/mo"
+                    elif pa is not None and pa > 0:
+                        price_display = format_currency(pa, curr) + "/yr"
+                    else:
+                        price_display = "Free" if pm == 0 else "Custom"
+                else:
+                    price = tier.get("price")
+                    curr = tier.get("currency", "EUR")
+                    price_display = format_currency(price, curr) if price else "\u2014"
+
+                html += f"""      <div class="package-tier">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span style="font-weight:600;font-size:14px">{tier_name}</span>
+          <span class="price" style="font-size:14px">{price_display}</span>
+        </div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:6px">{scope}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px">
+"""
+                for sol_slug in included:
+                    html += f'          <span class="included-solution">{escape_html(sol_slug)}</span>\n'
+                html += "        </div>\n      </div>\n"
+
+            if savings:
+                html += f'      <div style="font-size:12px;color:var(--green);margin-top:8px;font-weight:500">Bundle savings: {savings}%</div>\n'
+
+            html += "    </div>\n"
+        html += "  </div>\n</div>\n"
 
     # --- Margin Health ---
     # Check if any solutions have cost_model data
@@ -1616,23 +1873,80 @@ function openProposition(slug) {{
   }}
 
   if (s) {{
-    html += '<div class="section-label">Implementation</div>';
-    html += '<table><thead><tr><th>Phase</th><th>Duration</th><th>Description</th></tr></thead><tbody>';
-    (s.implementation || []).forEach(ph => {{
-      html += '<tr><td style="font-weight:500">' + esc(ph.phase) + '</td><td class="mono">' + (isNaN(ph.duration_weeks) ? esc(String(ph.duration_weeks)) : ph.duration_weeks + 'w') + '</td><td style="color:var(--text2)">' + esc(ph.description) + '</td></tr>';
-    }});
-    html += '</tbody></table>';
+    var sType = s.solution_type || 'project';
+    html += '<div class="section-label">Solution <span class="revenue-chip">' + esc(sType) + '</span></div>';
 
-    html += '<div class="section-label">Pricing</div>';
-    html += '<table><thead><tr><th>Tier</th><th>Price</th><th>Scope</th></tr></thead><tbody>';
-    ['proof_of_value','small','medium','large'].forEach(tier => {{
-      const t = (s.pricing || {{}})[tier];
-      if (t) {{
-        const label = tier === 'proof_of_value' ? 'Proof of Value' : tier.charAt(0).toUpperCase() + tier.slice(1);
-        html += '<tr><td style="font-weight:500">' + label + '</td><td class="price">' + fmtCurrency(t.price, t.currency) + '</td><td style="color:var(--text2)">' + esc(t.scope) + '</td></tr>';
+    // Implementation / Onboarding / Program phases
+    var phases = s.implementation || (s.onboarding && s.onboarding.phases) || (s.program && s.program.stages) || [];
+    if (phases.length) {{
+      var phLabel = sType === 'partnership' ? 'Stage' : 'Phase';
+      html += '<table><thead><tr><th>' + phLabel + '</th><th>Duration</th><th>Description</th></tr></thead><tbody>';
+      phases.forEach(function(ph) {{
+        var dur = ph.duration_weeks != null ? (isNaN(ph.duration_weeks) ? esc(String(ph.duration_weeks)) : ph.duration_weeks + 'w') : (ph.duration_months != null ? ph.duration_months + 'mo' : '\u2014');
+        html += '<tr><td style="font-weight:500">' + esc(ph.phase || ph.stage || '') + '</td><td class="mono">' + dur + '</td><td style="color:var(--text2)">' + esc(ph.description || ph.commitment || '') + '</td></tr>';
+      }});
+      html += '</tbody></table>';
+    }}
+
+    // Pricing by solution type
+    if (sType === 'project' || (!sType && s.pricing)) {{
+      html += '<div class="section-label">Pricing Tiers</div>';
+      html += '<table><thead><tr><th>Tier</th><th>Price</th><th>Scope</th></tr></thead><tbody>';
+      ['proof_of_value','small','medium','large'].forEach(function(tier) {{
+        var t = (s.pricing || {{}})[tier];
+        if (t) {{
+          var label = tier === 'proof_of_value' ? 'Proof of Value' : tier.charAt(0).toUpperCase() + tier.slice(1);
+          html += '<tr><td style="font-weight:500">' + label + '</td><td class="price">' + fmtCurrency(t.price, t.currency) + '</td><td style="color:var(--text2)">' + esc(t.scope || '') + '</td></tr>';
+        }}
+      }});
+      html += '</tbody></table>';
+    }} else if (sType === 'subscription' || sType === 'hybrid') {{
+      var sub = s.subscription || {{}};
+      var stiers = sub.tiers || {{}};
+      var cur = sub.currency || 'EUR';
+      html += '<div class="section-label">Subscription Tiers</div>';
+      html += '<table><thead><tr><th>Tier</th><th>Monthly</th><th>Annual</th><th>Scope</th></tr></thead><tbody>';
+      ['free','starter','pro','professional','enterprise'].forEach(function(tk) {{
+        var t = stiers[tk];
+        if (t) {{
+          var pm = t.price_monthly != null ? (t.price_monthly === 0 ? 'Free' : fmtCurrency(t.price_monthly, cur) + '/mo') : '\u2014';
+          var pa = t.price_annual != null ? (t.price_annual === 0 ? 'Free' : fmtCurrency(t.price_annual, cur) + '/yr') : '\u2014';
+          html += '<tr><td style="font-weight:500">' + tk.charAt(0).toUpperCase() + tk.slice(1) + '</td><td class="price">' + pm + '</td><td class="price">' + pa + '</td><td style="color:var(--text2)">' + esc(t.scope || t.note || '') + '</td></tr>';
+        }}
+      }});
+      html += '</tbody></table>';
+      var ps = s.professional_services;
+      if (ps && ps.options && ps.options.length) {{
+        html += '<div class="section-label">Professional Services</div>';
+        ps.options.forEach(function(opt) {{
+          html += '<div style="background:var(--surface);border-radius:8px;padding:10px 14px;margin-bottom:6px;border:1px solid var(--border)">';
+          html += '<div style="font-weight:500;font-size:13px">' + esc(opt.name || '') + ' <span class="price">' + fmtCurrency(opt.price, opt.currency) + '</span></div>';
+          html += '<div style="font-size:12px;color:var(--text2)">' + esc(opt.scope || '') + '</div></div>';
+        }});
       }}
-    }});
-    html += '</tbody></table>';
+    }} else if (sType === 'partnership') {{
+      var prog = s.program || {{}};
+      var rev = prog.revenue_share || {{}};
+      if (rev.partner_pct != null) {{
+        html += '<div class="section-label">Revenue Share</div>';
+        html += '<div style="background:var(--surface);border-radius:8px;padding:14px 18px;border:1px solid var(--border)">';
+        html += '<div style="font-size:24px;font-weight:700;font-family:var(--font-mono);color:var(--accent-dark)">' + rev.partner_pct + '%</div>';
+        html += '<div style="font-size:12px;color:var(--text2)">' + esc(rev.model || '') + ' \u2014 ' + esc(rev.description || '') + '</div>';
+        html += '</div>';
+      }}
+    }}
+
+    // Cost model summary (if present)
+    var cm = s.cost_model;
+    if (cm && cm.unit_economics) {{
+      var ue = cm.unit_economics;
+      html += '<div class="section-label">Unit Economics</div>';
+      html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">';
+      if (ue.gross_margin_pct != null) html += '<div style="background:var(--surface);border-radius:8px;padding:10px 14px;text-align:center;border:1px solid var(--border)"><div style="font-size:20px;font-weight:700;font-family:var(--font-mono)">' + ue.gross_margin_pct + '%</div><div style="font-size:10px;color:var(--text2);text-transform:uppercase">Gross Margin</div></div>';
+      if (ue.ltv_cac_ratio != null) html += '<div style="background:var(--surface);border-radius:8px;padding:10px 14px;text-align:center;border:1px solid var(--border)"><div style="font-size:20px;font-weight:700;font-family:var(--font-mono)">' + ue.ltv_cac_ratio + 'x</div><div style="font-size:10px;color:var(--text2);text-transform:uppercase">LTV/CAC</div></div>';
+      if (ue.churn_monthly_pct != null) html += '<div style="background:var(--surface);border-radius:8px;padding:10px 14px;text-align:center;border:1px solid var(--border)"><div style="font-size:20px;font-weight:700;font-family:var(--font-mono)">' + ue.churn_monthly_pct + '%</div><div style="font-size:10px;color:var(--text2);text-transform:uppercase">Churn/mo</div></div>';
+      html += '</div>';
+    }}
   }}
 
   if (c && c.competitors && c.competitors.length) {{
@@ -1720,6 +2034,53 @@ function openMarket(slug) {{
   requestAnimationFrame(function() {{ ov.classList.add('open'); }});
 }}
 
+function openPackage(slug) {{
+  var pkg = E.packages[slug];
+  if (!pkg) return;
+  var prod = E.products[pkg.product_slug] || {{}};
+  var mkt = E.markets[pkg.market_slug] || {{}};
+
+  var html = '<button class="panel-close" onclick="closePanel()">&times;</button>';
+  html += '<h3>' + esc(pkg.name || slug) + '</h3>';
+  html += '<div class="panel-sub">' + esc(prod.name || pkg.product_slug) + ' &rarr; ' + esc(mkt.name || pkg.market_slug) + ' &bull; <span class="revenue-chip">' + esc(pkg.package_type || '') + '</span></div>';
+
+  if (pkg.positioning) html += '<div class="stmt">' + esc(pkg.positioning) + '</div>';
+
+  html += '<div class="section-label">Tiers</div>';
+  (pkg.tiers || []).forEach(function(tier) {{
+    html += '<div style="background:var(--surface);border-radius:10px;padding:16px 18px;margin-bottom:10px;border:1px solid var(--border)">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
+    html += '<span style="font-weight:600;font-size:15px">' + esc(tier.name || tier.tier || '') + '</span>';
+    var price;
+    if (tier.price_monthly != null) {{
+      price = tier.price_monthly === 0 ? 'Free' : fmtCurrency(tier.price_monthly, tier.currency) + '/mo';
+    }} else if (tier.price != null) {{
+      price = fmtCurrency(tier.price, tier.currency);
+    }} else {{ price = 'Custom'; }}
+    html += '<span class="price" style="font-size:16px">' + price + '</span>';
+    html += '</div>';
+    if (tier.scope) html += '<div style="font-size:13px;color:var(--text2);margin-bottom:8px">' + esc(tier.scope) + '</div>';
+    if (tier.included_solutions && tier.included_solutions.length) {{
+      html += '<div style="display:flex;flex-wrap:wrap;gap:4px">';
+      tier.included_solutions.forEach(function(ss) {{
+        var hasSol = !!E.solutions[ss];
+        html += '<span class="included-solution" style="cursor:pointer' + (hasSol ? '' : ';opacity:0.5') + '" onclick="event.stopPropagation();openProposition(\\''+ss+'\\')\">' + esc(ss) + '</span>';
+      }});
+      html += '</div>';
+    }}
+    html += '</div>';
+  }});
+
+  if (pkg.bundle_savings_pct) {{
+    html += '<div style="margin-top:12px;font-size:14px;color:var(--green);font-weight:600">Bundle savings: ' + pkg.bundle_savings_pct + '%</div>';
+  }}
+
+  document.getElementById('panel').innerHTML = html;
+  var ov = document.getElementById('overlay');
+  ov.style.display = 'flex';
+  requestAnimationFrame(function() {{ ov.classList.add('open'); }});
+}}
+
 function esc(s) {{
   if (s == null) return '';
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -1748,6 +2109,39 @@ function fmtCurrency(val, cur) {{
   document.querySelectorAll('.reveal').forEach(function(el) {{
     observer.observe(el);
   }});
+
+  /* Nav: smooth scroll to sections and active state tracking */
+  var nav = document.getElementById('topnav');
+  var navLinks = nav ? nav.querySelectorAll('a[data-section]') : [];
+  navLinks.forEach(function(a) {{
+    a.addEventListener('click', function(e) {{
+      e.preventDefault();
+      var title = a.dataset.section;
+      var el = Array.from(document.querySelectorAll('.section-title')).find(function(t) {{ return t.textContent.indexOf(title) >= 0; }});
+      if (el) {{
+        var section = el.closest('.section') || el.parentElement;
+        var y = section.getBoundingClientRect().top + window.pageYOffset - 60;
+        window.scrollTo({{ top: y, behavior: 'smooth' }});
+      }}
+    }});
+  }});
+  if (nav) {{
+    var secTitles = document.querySelectorAll('.section-title');
+    var navObs = new IntersectionObserver(function(entries) {{
+      entries.forEach(function(entry) {{
+        if (entry.isIntersecting) {{
+          var text = entry.target.textContent;
+          navLinks.forEach(function(a) {{
+            a.classList.toggle('active', text.indexOf(a.dataset.section) >= 0);
+          }});
+        }}
+      }});
+    }}, {{ threshold: 0.5, rootMargin: '-80px 0px -60% 0px' }});
+    secTitles.forEach(function(t) {{ navObs.observe(t); }});
+    window.addEventListener('scroll', function() {{
+      nav.classList.toggle('scrolled', window.scrollY > 20);
+    }}, {{ passive: true }});
+  }}
 
   /* Animate overlay transitions */
   const overlay = document.getElementById('overlay');

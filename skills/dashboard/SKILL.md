@@ -53,14 +53,15 @@ Tell the user the dashboard is open. If they want to refresh after making change
 
 The generated HTML includes these sections, all in a single-page app with drill-down panels:
 
-1. **Header** — Company name, industry, project slug, last updated
+0. **Sticky Navigation** — Pill-style nav bar with section links, active state tracking via scroll detection, backdrop blur. Click any link to smooth-scroll to that section.
+1. **Header** — Company name, industry, project slug, last updated. Bricolage Grotesque typography with gradient mesh background.
 2. **Phase & Progress** — Current workflow phase with visual progress bar, completion percentages per entity type
-3. **Entity Counts** — Card grid showing products, features, markets, propositions, solutions, competitors, customers with counts and expected totals
-4. **Feature x Market Matrix** — Interactive grid. Each cell is color-coded (green = proposition + solution, yellow = proposition only, red = missing). Click a cell to expand IS/DOES/MEANS, pricing tiers, and competitor summary
-5. **Markets Overview** — Cards per market with TAM/SAM/SOM bars, region badge, segmentation criteria. Click to see customer profiles and all propositions targeting that market
-6. **Products & Features** — Grouped by product, showing feature descriptions and which markets each feature targets
+3. **Entity Counts** — Card grid showing products, features, markets, propositions, solutions, packages, competitors, customers with counts, completion bars, and expected totals
+4. **Feature x Market Matrix** — Interactive grid. Each cell is color-coded (green = proposition + solution, yellow = proposition only, red = missing). Click a cell to expand IS/DOES/MEANS, pricing tiers (type-aware: project/subscription/partnership), unit economics, and competitor summary
+5. **Markets Overview** — Cards per market with TAM/SAM/SOM bars, region badge, priority badge (beachhead/expansion/aspirational), segmentation criteria. Click to see customer profiles and all propositions targeting that market
+6. **Products & Features** — Grouped by product with revenue model chip (subscription/project/partnership/hybrid), maturity stage. Features show readiness indicator (GA/Beta/Planned) with color-coded dot.
 7. **Solutions & Pricing** — Solutions grouped by type. Project solutions show implementation timeline and pricing tiers (PoV/S/M/L). Subscription solutions show onboarding, subscription tiers (Free/Pro/Enterprise), and professional services. Partnership solutions show program stages and revenue-share terms.
-8. **Packages** — Product bundles grouped by product. Each package shows market, tier names, included solutions per tier, pricing (project or subscription), and bundle savings. Highlight coverage: how many solutions are bundled vs available.
+8. **Packages** — Product bundles as clickable cards. Each package shows product→market, package type chip, positioning, and tier cards with pricing and included solution pills. Click to drill down into full tier detail with bundle savings.
 9. **Margin Health** (if any solutions have `cost_model`) — Separated by solution type. Project solutions show effort-based margins per tier. Subscription solutions show unit economics (LTV/CAC, gross margin, churn). Color-coded: green for healthy, yellow for below-target, red for negative/failing. This section is marked INTERNAL/CONFIDENTIAL.
 10. **Competitive Landscape** — Per-proposition competitor cards with strengths/weaknesses
 11. **Claims Status** — Verification summary (verified, unverified, deviated, resolved) with progress bar
