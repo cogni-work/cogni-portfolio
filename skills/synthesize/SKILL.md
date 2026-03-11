@@ -159,9 +159,9 @@ The user may want to iterate — go back and add missing entities, then re-synth
 
 ## Session Management
 
-Synthesis is a capstone operation — it typically signals the end of a productive work phase. After completing synthesis, always recommend starting a fresh session for next steps:
+Synthesis is a capstone operation — it typically signals the end of a productive work phase. After completing synthesis, first invoke `/dashboard` to generate the portfolio dashboard — this gives the user a visual overview of everything accomplished so far. Then recommend starting a fresh session for next steps:
 
-> "Synthesis complete — the messaging repository is ready at `output/README.md`. For next steps like [export/verify/compete], I'd recommend starting a fresh session with `/resume-portfolio`. That picks up the current state cleanly and gives you full context for the next phase."
+> "Synthesis complete — the messaging repository is ready at `output/README.md`. I've generated the dashboard so you can see the full picture. For next steps like [export/verify/compete], I'd recommend starting a fresh session with `/resume-portfolio`. That picks up the current state cleanly and gives you full context for the next phase."
 
 If synthesis runs after other heavy skills in the same session (batch propositions, dashboard, etc.), be especially proactive about this recommendation — output quality benefits from fresh context.
 

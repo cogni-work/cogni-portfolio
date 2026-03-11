@@ -428,8 +428,8 @@ After completing batch solution generation or when this skill runs after other h
 - Three or more different portfolio skills were already invoked this session
 - The user asks about remaining context or capacity
 
-When you notice these signals, summarize what was accomplished, then recommend a fresh session:
+When you notice these signals, first invoke `/dashboard` to generate the portfolio dashboard — this gives the user a visual overview of everything accomplished so far. Then recommend a fresh session:
 
-> "We got a lot done: [brief summary of accomplishments]. For the next steps like [recommend next skills], I'd suggest starting a fresh session — just use `/resume-portfolio` to pick up where we left off. That loads the current state cleanly without carrying the weight of this session."
+> "We got a lot done: [brief summary of accomplishments]. I've generated the dashboard so you can see the full picture. For the next steps like [recommend next skills], I'd suggest starting a fresh session — just use `/resume-portfolio` to pick up where we left off. That loads the current state cleanly without carrying the weight of this session."
 
 Use the portfolio's communication language (read `portfolio.json` for the `language` field). Frame it as helpful advice for better output quality, not as a limitation. The key message: `/resume-portfolio` exists exactly for this — seamless multi-session workflows.
