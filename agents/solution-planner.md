@@ -120,6 +120,22 @@ Before setting prices, build the internal cost model that justifies them. This p
 
 **Bill of materials**: Identify non-labor costs — tooling (licenses, platforms), infrastructure (cloud, hosting), and any third-party services. Mark items included in the product price vs. billed separately.
 
+## Content Length Constraints
+
+All text fields must be concise. Verbose descriptions undermine commercial credibility.
+
+| Field | Target |
+|-------|--------|
+| `implementation[].description` | 1 sentence |
+| `pricing.*.scope` | 1 sentence |
+| `cost_model.assumptions[]` | Max 6 items, 1 sentence each |
+| `bill_of_materials.*.note` | 1 short phrase or omit |
+| `onboarding.phases[].description` | 1 sentence |
+| `subscription.tiers.*.scope` | 1 sentence |
+| `professional_services.options[].scope` | 1 sentence |
+
+For German content, cut filler words rather than exceeding limits. Every sentence should be specific and auditable.
+
 ## Web Research
 
 When the task requests research-backed pricing, search for:
@@ -151,14 +167,19 @@ Write the solution to the path specified in the task:
     "proof_of_value": {
       "price": 15000,
       "currency": "EUR",
-      "scope": "Single environment, 2-week guided pilot with defined success criteria"
+      "scope": "Single environment, 2-week pilot with defined success criteria"
     },
-    "small": { "price": 50000, "currency": "EUR", "scope": "..." },
-    "medium": { "price": 120000, "currency": "EUR", "scope": "..." },
-    "large": { "price": 250000, "currency": "EUR", "scope": "..." }
+    "small": { "price": 50000, "currency": "EUR", "scope": "One team, basic setup, 8-week delivery" },
+    "medium": { "price": 120000, "currency": "EUR", "scope": "Department-wide, full features, 12 weeks" },
+    "large": { "price": 250000, "currency": "EUR", "scope": "Organization-wide with dedicated CSM, 16 weeks" }
   },
   "cost_model": {
-    "assumptions": ["..."],
+    "assumptions": [
+      "Blended rate 1,400 EUR/day (60/40 senior/junior)",
+      "Customer provides staging access within 5 days",
+      "No custom integrations beyond standard API connectors",
+      "Target margin 30-40% standard, 10-20% PoV"
+    ],
     "bill_of_materials": {
       "roles": [
         { "role": "Solution Architect", "rate_day": 1800, "currency": "EUR" }
@@ -254,16 +275,16 @@ Instead of effort-based costing, subscription solutions use unit economics:
   "onboarding": {
     "description": "Initial setup and enablement",
     "phases": [
-      { "phase": "Kickoff & Setup", "duration_weeks": 1, "description": "..." }
+      { "phase": "Kickoff & Setup", "duration_weeks": 1, "description": "Account creation, workspace config, data connections" }
     ],
     "pricing": { "included": true, "price": 0, "note": "Included in first month" }
   },
   "subscription": {
     "model": "tiered",
     "tiers": {
-      "free": { "price_monthly": 0, "price_annual": 0, "scope": "...", "limits": "..." },
-      "pro": { "price_monthly": 149, "price_annual": 1490, "scope": "...", "limits": "..." },
-      "enterprise": { "price_monthly": null, "price_annual": null, "scope": "...", "note": "Custom pricing" }
+      "free": { "price_monthly": 0, "price_annual": 0, "scope": "Core features, community support", "limits": "3 projects/month" },
+      "pro": { "price_monthly": 149, "price_annual": 1490, "scope": "All features, priority support", "limits": "Unlimited" },
+      "enterprise": { "price_monthly": null, "price_annual": null, "scope": "SSO, SLA, dedicated CSM", "note": "Custom pricing" }
     },
     "currency": "EUR",
     "billing_cycle": "monthly | annual",
@@ -273,11 +294,15 @@ Instead of effort-based costing, subscription solutions use unit economics:
     "available": true,
     "description": "Optional services for accelerated adoption",
     "options": [
-      { "name": "Onboarding Workshop", "price": 3000, "currency": "EUR", "scope": "..." }
+      { "name": "Onboarding Workshop", "price": 3000, "currency": "EUR", "scope": "Half-day workshop: use-case mapping and team training" }
     ]
   },
   "cost_model": {
-    "assumptions": ["..."],
+    "assumptions": [
+      "Hosting cost per seat: 15 EUR/month",
+      "Support cost per Pro seat: 10 EUR/month",
+      "Workshop: 1 consultant x 0.5 days = 900 EUR internal"
+    ],
     "unit_economics": {
       "cac": 500,
       "ltv": 8940,

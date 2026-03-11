@@ -20,7 +20,7 @@ Competitive analysis is scoped to propositions, not features or markets alone. A
 
 ### 1. Select Propositions to Analyze
 
-List existing propositions (read the `propositions/` directory in the project root) and identify those without corresponding competitor files in `competitors/`. If no propositions exist yet, tell the user they need to create propositions first (via the `propose` skill) before competitive analysis can begin.
+List existing propositions (read the `propositions/` directory in the project root) and identify those without corresponding competitor files in `competitors/`. If no propositions exist yet, tell the user they need to create propositions first (via the `propositions` skill) before competitive analysis can begin.
 
 Present options to the user:
 
@@ -46,10 +46,10 @@ Multiple agents can be launched in parallel for different propositions.
 For each competitor, capture:
 
 - **Name**: Company or product name
-- **Positioning**: Their stated value proposition for this market
-- **Strengths**: What they do well (3-5 points)
-- **Weaknesses**: Where they fall short (3-5 points)
-- **Differentiation**: How the user's proposition is specifically different/better
+- **Positioning**: 1 sentence — their stated value proposition for this market
+- **Strengths**: Max 5 items, 1 phrase each
+- **Weaknesses**: Max 5 items, 1 phrase each
+- **Differentiation**: 1 sentence — how the user's proposition is specifically different/better
 
 ### 4. Write Competitor Entities
 
@@ -63,10 +63,10 @@ Write to `competitors/{feature-slug}--{market-slug}.json` (same slug as the prop
     {
       "name": "Datadog",
       "source_url": "https://example.com/datadog-review",
-      "positioning": "Full-stack observability for cloud-scale",
+      "positioning": "Full-stack observability for cloud-scale companies",
       "strengths": ["Brand recognition", "Broad integrations"],
-      "weaknesses": ["Expensive at scale", "Complex for mid-market"],
-      "differentiation": "Purpose-built for mid-market complexity at 40% lower cost"
+      "weaknesses": ["Expensive at scale", "Overkill for mid-market"],
+      "differentiation": "40% lower cost, deploys in hours vs. weeks, purpose-built for mid-market."
     }
   ],
   "created": "2026-01-25"

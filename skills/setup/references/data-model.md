@@ -107,7 +107,7 @@ A target market defined by region, segmentation criteria, and sized by TAM/SAM/S
   "slug": "mid-market-saas-dach",
   "name": "Mid-Market SaaS Companies (DACH)",
   "region": "dach",
-  "description": "SaaS companies with 50-500 employees and $5M-$100M ARR in DACH region.",
+  "description": "SaaS companies, 50-500 employees, $5M-$100M ARR in DACH.",
   "segmentation": {
     "company_size": "50-500 employees",
     "revenue_range": "$5M-$100M ARR",
@@ -121,20 +121,20 @@ A target market defined by region, segmentation criteria, and sized by TAM/SAM/S
   "tam": {
     "value": 5000000000,
     "currency": "EUR",
-    "description": "Total addressable market for cloud monitoring in global SaaS",
+    "description": "Global cloud monitoring in SaaS",
     "source": "Gartner 2025 Cloud Monitoring Report"
   },
   "sam": {
     "value": 500000000,
     "currency": "EUR",
-    "description": "Serviceable market in DACH mid-market SaaS",
+    "description": "DACH mid-market SaaS segment",
     "source": "Internal estimate based on DACH SaaS census"
   },
   "som": {
     "value": 15000000,
     "currency": "EUR",
-    "description": "Realistically obtainable share in first 3 years",
-    "source": "Bottom-up estimate: 150 customers x 100K EUR ACV"
+    "description": "150 customers x 100K ACV in 3 years",
+    "source": "Bottom-up estimate"
   },
   "created": "2026-01-15"
 }
@@ -169,19 +169,14 @@ A proposition maps one feature to one target market with market-specific messagi
   "slug": "cloud-monitoring--mid-market-saas",
   "feature_slug": "cloud-monitoring",
   "market_slug": "mid-market-saas",
-  "is_statement": "Real-time cloud infrastructure monitoring with automated alerting for servers, containers, and network components.",
-  "does_statement": "Reduces mean-time-to-resolution (MTTR) by 60% through intelligent alert correlation and root-cause analysis, eliminating alert fatigue that plagues growing engineering teams.",
-  "means_statement": "Mid-market SaaS companies maintain 99.95% uptime SLAs without hiring additional SRE staff, protecting revenue and customer trust during rapid scaling phases.",
+  "is_statement": "Real-time cloud monitoring with automated alerting for servers, containers, and networks.",
+  "does_statement": "Reduces MTTR by 60% via intelligent alert correlation, eliminating alert fatigue in growing teams.",
+  "means_statement": "Maintain 99.95% uptime SLAs without additional SRE hires, protecting revenue during scaling.",
   "evidence": [
     {
-      "statement": "Average MTTR reduction of 58% across beta customers (n=12)",
+      "statement": "58% average MTTR reduction across 12 beta customers",
       "source_url": "https://example.com/case-study",
       "source_title": "Cloud Monitoring Case Study 2025"
-    },
-    {
-      "statement": "3 of 5 mid-market SaaS customers eliminated dedicated on-call rotation",
-      "source_url": null,
-      "source_title": null
     }
   ],
   "created": "2026-01-20"
@@ -212,47 +207,47 @@ Traditional implementation-based solutions with phased delivery and project pric
     {
       "phase": "Discovery & Setup",
       "duration_weeks": 2,
-      "description": "Requirements gathering, environment audit, monitoring strategy definition"
+      "description": "Requirements gathering, environment audit, success criteria definition"
     },
     {
       "phase": "Core Deployment",
       "duration_weeks": 4,
-      "description": "Agent rollout, alerting rules, dashboard configuration, integration with existing tools"
+      "description": "Agent rollout, alerting rules, dashboard config, tool integration"
     },
     {
       "phase": "Tuning & Handover",
       "duration_weeks": 2,
-      "description": "Alert threshold optimization, team training, runbook documentation"
+      "description": "Alert threshold optimization, team training, runbook handover"
     }
   ],
   "pricing": {
     "proof_of_value": {
       "price": 15000,
       "currency": "EUR",
-      "scope": "Single environment, 2-week guided pilot with defined success criteria"
+      "scope": "Single environment, 2-week pilot with defined success criteria"
     },
     "small": {
       "price": 50000,
       "currency": "EUR",
-      "scope": "Up to 50 nodes, basic alerting, 8-week implementation"
+      "scope": "Up to 50 nodes, basic alerting, 8-week delivery"
     },
     "medium": {
       "price": 120000,
       "currency": "EUR",
-      "scope": "Up to 200 nodes, advanced alerting and dashboards, 12-week implementation"
+      "scope": "Up to 200 nodes, full alerting and dashboards, 12 weeks"
     },
     "large": {
       "price": 250000,
       "currency": "EUR",
-      "scope": "Unlimited nodes, full observability stack, 16-week implementation with dedicated CSM"
+      "scope": "Unlimited nodes, full stack with dedicated CSM, 16 weeks"
     }
   },
   "cost_model": {
     "assumptions": [
-      "Blended delivery rate: 1,400 EUR/day based on 60/40 senior/junior mix",
-      "Customer provides staging environment access within 5 business days",
+      "Blended rate 1,400 EUR/day (60/40 senior/junior)",
+      "Customer provides staging access within 5 days",
       "No custom integrations beyond standard API connectors",
-      "Target margin: 30-40% on standard tiers, 10-20% on PoV (land-and-expand)"
+      "Target margin 30-40% standard, 10-20% PoV"
     ],
     "bill_of_materials": {
       "roles": [
@@ -261,7 +256,7 @@ Traditional implementation-based solutions with phased delivery and project pric
         { "role": "Project Manager", "rate_day": 1400, "currency": "EUR" }
       ],
       "tooling": [
-        { "item": "Monitoring platform license (pilot)", "cost": 0, "note": "Included in PoV" }
+        { "item": "Monitoring platform license (pilot)", "cost": 0, "note": "Included in PoV tier" }
       ],
       "infrastructure": [
         { "item": "Cloud hosting for collector agents", "cost_monthly": 500, "currency": "EUR" }
@@ -329,7 +324,7 @@ Recurring-revenue solutions with onboarding, subscription tiers, and optional pr
       {
         "phase": "Kickoff & Workspace-Setup",
         "duration_weeks": 1,
-        "description": "Account-Erstellung, Workspace-Konfiguration, initiale Datenanbindung"
+        "description": "Account-Erstellung, Workspace-Konfiguration, Datenanbindung"
       }
     ],
     "pricing": {
@@ -372,13 +367,13 @@ Recurring-revenue solutions with onboarding, subscription tiers, and optional pr
         "name": "Onboarding-Workshop",
         "price": 3000,
         "currency": "EUR",
-        "scope": "Halbtägiger Workshop: Use-Case-Mapping, Workflow-Konfiguration, Team-Training"
+        "scope": "Halbtägiger Workshop: Use-Case-Mapping und Team-Training"
       },
       {
         "name": "Adoption-Paket",
         "price": 7500,
         "currency": "EUR",
-        "scope": "4-Wochen-Begleitung: Wöchentliche Check-ins, Use-Case-Optimierung, Best-Practice-Transfer"
+        "scope": "4 Wochen Begleitung: Check-ins, Use-Case-Optimierung, Best-Practice-Transfer"
       }
     ]
   },
@@ -415,13 +410,13 @@ Revenue-share or co-investment programs with staged partner engagement.
         "stage": "Pilot-Partnerschaft",
         "duration_months": 3,
         "description": "Gemeinsame Entwicklung eines Referenz-Use-Cases",
-        "commitment": "1 dedizierter Entwickler, wöchentliche Syncs"
+        "commitment": "1 Entwickler, wöchentliche Syncs"
       },
       {
         "stage": "Zertifizierte Partnerschaft",
         "duration_months": 12,
         "description": "Co-Marketing, Lead-Sharing, gemeinsame Kundenansprache",
-        "commitment": "Zertifizierung von 2+ Beratern, quartalsweise Reviews"
+        "commitment": "2+ zertifizierte Berater, quartalsweise Reviews"
       }
     ],
     "revenue_share": {
@@ -645,10 +640,10 @@ Competitive landscape for a specific proposition (same slug as the proposition i
     {
       "name": "Datadog",
       "source_url": "https://example.com/datadog-review",
-      "positioning": "Full-stack observability platform for cloud-scale companies",
-      "strengths": ["Brand recognition", "Broad integration ecosystem", "APM + logs + metrics unified"],
-      "weaknesses": ["Expensive at scale", "Complexity overkill for mid-market", "Opaque pricing"],
-      "differentiation": "Our focused monitoring approach costs 40% less and deploys in hours vs. weeks, purpose-built for mid-market operational complexity."
+      "positioning": "Full-stack observability for cloud-scale companies",
+      "strengths": ["Brand recognition", "Broad integrations", "Unified APM + logs + metrics"],
+      "weaknesses": ["Expensive at scale", "Overkill for mid-market", "Opaque pricing"],
+      "differentiation": "40% lower cost, deploys in hours vs. weeks, purpose-built for mid-market."
     }
   ],
   "created": "2026-01-25"
@@ -673,9 +668,9 @@ Ideal customer profile for a target market (same slug as the market).
       "role": "VP Engineering",
       "seniority": "C-1",
       "pain_points": [
-        "Growing infrastructure complexity outpacing team capacity",
-        "Alert fatigue leading to missed critical incidents",
-        "Pressure to maintain SLAs with flat headcount"
+        "Infrastructure complexity outpacing team capacity",
+        "Alert fatigue causing missed critical incidents",
+        "SLA pressure with flat headcount"
       ],
       "buying_criteria": [
         "Time to value under 2 weeks",

@@ -46,8 +46,8 @@ For each profile capture:
 
 - **Role**: Job title or function (e.g., "VP Engineering")
 - **Seniority**: Level in organization (e.g., "C-1", "Director-level")
-- **Pain points**: Top 3-5 problems they face daily (relevant to the portfolio's features)
-- **Buying criteria**: What they evaluate when choosing a solution (e.g., "Time to value under 2 weeks")
+- **Pain points**: Max 5 items, 1 sentence each — specific problems relevant to the portfolio's features
+- **Buying criteria**: Max 5 items, 1 short phrase each (e.g., "Time to value under 2 weeks")
 - **Information sources**: Where they learn about solutions (e.g., "Peer recommendations", "Industry podcasts")
 - **Decision role**: Their role in the purchase (economic buyer, technical evaluator, champion, etc.)
 

@@ -69,12 +69,12 @@ Write the proposition to the path specified in the task:
   "slug": "{feature-slug}--{market-slug}",
   "feature_slug": "{feature-slug}",
   "market_slug": "{market-slug}",
-  "is_statement": "...",
-  "does_statement": "...",
-  "means_statement": "...",
+  "is_statement": "Real-time cloud monitoring with automated alerting for servers, containers, and networks.",
+  "does_statement": "Reduces MTTR by 60% via intelligent alert correlation, eliminating alert fatigue in growing teams.",
+  "means_statement": "Maintain 99.95% uptime SLAs without additional SRE hires, protecting revenue during scaling.",
   "evidence": [
     {
-      "statement": "Evidence statement from web research",
+      "statement": "58% average MTTR reduction across 12 beta customers",
       "source_url": "https://example.com/source",
       "source_title": "Source Title"
     }
@@ -85,6 +85,19 @@ Write the proposition to the path specified in the task:
 
 Required: `slug`, `feature_slug`, `market_slug`, `is_statement`, `does_statement`, `means_statement`
 Optional: `evidence`, `created`
+
+## Content Length Constraints
+
+Every field has a strict length target. Concise messaging is sharper — if a statement needs two sentences, the first sentence was too vague.
+
+| Field | Target |
+|-------|--------|
+| `is_statement` | 1 sentence, max 150 characters |
+| `does_statement` | 1-2 sentences, max 200 characters |
+| `means_statement` | 1-2 sentences, max 200 characters |
+| `evidence[].statement` | 1 sentence |
+
+For German content (~15% longer), prioritize precision over completeness — cut filler words, not meaning. If a statement exceeds the limit, tighten wording rather than splitting into multiple sentences.
 
 ## Quality Checklist
 

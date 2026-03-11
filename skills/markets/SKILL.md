@@ -115,6 +115,17 @@ When the user brings their own segment list, don't just validate or reject — a
 
 Once you and the user agree on the market set, structure each market.
 
+### Content Length Constraints
+
+| Field | Target |
+|-------|--------|
+| `description` | 1 sentence |
+| `tam.description` | 1 short phrase |
+| `sam.description` | 1 short phrase |
+| `som.description` | 1 short phrase |
+
+Market descriptions should state segment + size + region in one line. TAM/SAM/SOM descriptions are labels, not explanations — the `source` field carries the detail.
+
 ### Market JSON Schema
 
 ```json
@@ -122,7 +133,7 @@ Once you and the user agree on the market set, structure each market.
   "slug": "mid-market-saas-dach",
   "name": "Mid-Market SaaS Companies (DACH)",
   "region": "dach",
-  "description": "SaaS companies with 50-500 employees and EUR 5M-100M ARR in DACH region.",
+  "description": "SaaS companies, 50-500 employees, EUR 5M-100M ARR in DACH.",
   "segmentation": {
     "company_size": "50-500 employees",
     "revenue_range": "EUR 5M-100M ARR",
@@ -137,20 +148,20 @@ Once you and the user agree on the market set, structure each market.
   "tam": {
     "value": 5000000000,
     "currency": "EUR",
-    "description": "Total addressable market for cloud monitoring in global SaaS",
+    "description": "Global cloud monitoring in SaaS",
     "source": "Gartner 2025"
   },
   "sam": {
     "value": 500000000,
     "currency": "EUR",
-    "description": "Serviceable market in DACH mid-market SaaS",
+    "description": "DACH mid-market SaaS segment",
     "source": "Internal estimate"
   },
   "som": {
     "value": 15000000,
     "currency": "EUR",
-    "description": "Obtainable share in first 3 years",
-    "source": "Bottom-up: 150 customers x 100K EUR ACV"
+    "description": "150 customers x 100K ACV in 3 years",
+    "source": "Bottom-up estimate"
   },
   "created": "2026-01-15"
 }

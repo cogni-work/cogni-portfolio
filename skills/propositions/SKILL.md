@@ -163,6 +163,19 @@ Craft each proposition with the user:
 - Connects operational advantage to commercial impact
 - Passes the "so what?" test: would a CFO approve budget for this?
 
+### Content Length Constraints
+
+Every field has a strict length target. Concise messaging is sharper messaging — if a statement needs two sentences, the first sentence was too vague.
+
+| Field | Target |
+|-------|--------|
+| `is_statement` | 1 sentence, max 150 characters |
+| `does_statement` | 1-2 sentences, max 200 characters |
+| `means_statement` | 1-2 sentences, max 200 characters |
+| `evidence[].statement` | 1 sentence |
+
+These limits apply to all languages. For German (which runs ~15% longer than English), prioritize precision over completeness — cut filler words, not meaning. If a statement exceeds the limit, tighten the wording rather than splitting into multiple sentences.
+
 ### Proposition JSON Schema
 
 Write each proposition to `propositions/{feature-slug}--{market-slug}.json`:
@@ -172,19 +185,14 @@ Write each proposition to `propositions/{feature-slug}--{market-slug}.json`:
   "slug": "cloud-monitoring--mid-market-saas",
   "feature_slug": "cloud-monitoring",
   "market_slug": "mid-market-saas",
-  "is_statement": "Real-time cloud infrastructure monitoring with automated alerting for servers, containers, and network components.",
-  "does_statement": "Reduces mean-time-to-resolution by 60% through intelligent alert correlation, eliminating alert fatigue in growing engineering teams.",
-  "means_statement": "Mid-market SaaS companies maintain 99.95% uptime SLAs without hiring additional SRE staff, protecting revenue during rapid scaling.",
+  "is_statement": "Real-time cloud monitoring with automated alerting for servers, containers, and networks.",
+  "does_statement": "Reduces MTTR by 60% via intelligent alert correlation, eliminating alert fatigue in growing teams.",
+  "means_statement": "Maintain 99.95% uptime SLAs without additional SRE hires, protecting revenue during scaling.",
   "evidence": [
     {
-      "statement": "Average MTTR reduction of 58% across beta customers (n=12)",
+      "statement": "58% average MTTR reduction across 12 beta customers",
       "source_url": "https://example.com/case-study",
       "source_title": "Cloud Monitoring Case Study 2025"
-    },
-    {
-      "statement": "3 of 5 mid-market SaaS customers eliminated dedicated on-call rotation",
-      "source_url": null,
-      "source_title": null
     }
   ],
   "created": "2026-01-20"

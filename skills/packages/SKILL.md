@@ -71,6 +71,15 @@ The product's `revenue_model` determines the package structure:
 - `"hybrid"` → **Hybrid package**: subscription tiers with optional project add-ons
 - `"partnership"` → Partnership products rarely need packages (single-feature arrangements). Skip unless the user specifically requests it.
 
+### Content Length Constraints
+
+| Field | Target |
+|-------|--------|
+| `positioning` | 1 sentence, max 80 characters |
+| `tiers[].scope` | 1 sentence |
+
+Package positioning is a headline, not a paragraph. Tier scopes describe what's included in one concise line.
+
 ### 4. Design Package Tiers
 
 Propose 2-4 tiers. Each tier should represent a meaningfully different capability level, not just more features.

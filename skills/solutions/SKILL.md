@@ -291,6 +291,24 @@ Before writing the solution, run the gates appropriate to the solution type.
 2. **Commitment proportionality test**: Is the commitment level appropriate for each stage? A pilot shouldn't require a year-long contract.
 3. **Revenue model clarity test**: Are the revenue-share terms unambiguous? Qualifying conditions, duration, calculation method must be explicit.
 
+### Content Length Constraints
+
+All text fields in solution entities must be concise. Verbose descriptions undermine the commercial clarity that makes solutions credible.
+
+| Field | Target |
+|-------|--------|
+| `implementation[].description` | 1 sentence |
+| `pricing.*.scope` | 1 sentence |
+| `cost_model.assumptions[]` | Max 6 items, 1 sentence each |
+| `bill_of_materials.*.note` | 1 short phrase or omit |
+| `onboarding.phases[].description` | 1 sentence |
+| `subscription.tiers.*.scope` | 1 sentence |
+| `professional_services.options[].scope` | 1 sentence |
+| `unit_economics.*.purpose` (if present) | 1 sentence |
+| `margin_analysis.*.note` (if present) | 1 sentence |
+
+For German content, cut filler words rather than exceeding limits. Every sentence should be specific and auditable — "Requirements gathering and success criteria definition" not "In this phase we conduct comprehensive requirements gathering sessions with key stakeholders to define success criteria."
+
 ### 6. Write Solution Entity
 
 Once the solution is agreed and passes quality gates, write to `solutions/{feature-slug}--{market-slug}.json`. Always include `solution_type`. See `$CLAUDE_PLUGIN_ROOT/skills/setup/references/data-model.md` for the complete JSON schemas per solution type.
